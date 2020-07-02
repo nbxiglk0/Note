@@ -57,26 +57,6 @@ encryptable
 
 [C++使用流的例子](https://docs.microsoft.com/zh-cn/windows/win32/fileio/using-streams)
 
-</br>
-
-</br>
-
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-
 ## **创建文件夹**
 ---
 绕过权限限制,在拒绝创建子文件夹但可以创建文件的文件夹中利用创建文件时手动添加数据流类型为文件夹对应的$INDEX_ALLOCATION类型创建文件夹绕过   
@@ -99,14 +79,6 @@ select "test" into outfile D:\\mysql\lib::$INDEX_ALLOCATION
 会报错,但是lib文件夹已经被创建了,同理可继续创建plugin目录  
 ![2](NTFS_16.jpg)  
 
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-
 ## **绕过HTTP BASIC认证**
 ---
 据说在IIS6.0+PHP IIS7.5+(PHP/ASP)上如果对某个目录设置了HTTP BASIC认证的话可以通过/test::$INDEX_ALLOCATION/index.php绕过认证访问  
@@ -116,22 +88,6 @@ select "test" into outfile D:\\mysql\lib::$INDEX_ALLOCATION
 </br>  
 
 ![2](NTFS_19.jpg)
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
 
 ## **bypass黑名单**
 ---
@@ -143,27 +99,6 @@ select "test" into outfile D:\\mysql\lib::$INDEX_ALLOCATION
 </br>
 但文件落地时的后缀仍是php  
 ![2](NTFS_24.jpg)
-</br>
-
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-
 ## **执行程序**
 ---
 利用type命令把程序写入到文件的数据流名称中,再通过使用该文件的完整流名称来调用隐藏的程序,有很多方法从ADS中来执行恶意程序,包括二进制,vbs,dll,reg等等
@@ -177,22 +112,11 @@ select "test" into outfile D:\\mysql\lib::$INDEX_ALLOCATION
 
 ![2](NTFS_18.jpg)
 
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
+
 
 但在win7,08下测试虽然不能直接通过start运行(strat执行会提示找不到文件),但还是可以通过wmic进行调用运行  
 
 ![2](NTFS_3.jpg)  
-</br>
-</br>
 
 ### **DLL**
 触发方式:control.exe rundll32.exe Mavinject.exe   
@@ -202,26 +126,7 @@ select "test" into outfile D:\\mysql\lib::$INDEX_ALLOCATION
 ![2](NTFS_21.jpg)  
 ![2](NTFS_22.jpg)  
 </br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
+
 
 ## **隐藏webshell**
 ---
@@ -246,21 +151,7 @@ php的include函数可以正常解析数据流中的信息,可以将一句话加
 
 ![2](NTFS_20.jpg)
 通过`notepad config.php:payload.php即可看到内容`  
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
+
 
 ## **创建"找不到"和无法删除的文件夹**
 ---
@@ -285,29 +176,6 @@ windows无法创建带.的文件夹名称,但通过指定数据流类型可创�
 </br>
 
 ![2](NTFS_12.jpg)   
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
 </br>
 
 ## **隐藏数据流**
@@ -334,36 +202,6 @@ windows无法创建带.的文件夹名称,但通过指定数据流类型可创�
 </br>
 
 ![2](NTFS_27.jpg)   
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
 
 # **ADS 添加 导出 执行方法清单**
 参考:[从ADS中执行程序的方法汇总](https://gist.github.com/api0cradle/cdd2d0d0ec9abb686f0e89306e277b8f)
