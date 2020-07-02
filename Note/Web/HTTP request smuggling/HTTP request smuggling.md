@@ -15,7 +15,6 @@
 ## CL&TE
 CL: Content-Length  
 TE: Transfer-Encoding: chunked
-
 ### CL&TE
 前端服务器根据Content-Length来确定post数据包大小,并将对应大小的数据发送给后端服务器,但后端服务器根据Transfer-Encoding指定的编码方式来确定post数据大小进行处理  
 
