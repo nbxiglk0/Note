@@ -2,6 +2,7 @@ package basicinfo
 //Todo
 //1.乱码
 //2.结果保存
+//3.多线程
 import (
 	"../nfuncions"
 	"bufio"
