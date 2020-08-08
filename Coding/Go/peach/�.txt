@@ -1,0 +1,2 @@
+Url:www.baidu.com       Code:200     Title:百度一下，你就知道                    Server:BWS/1.1                      Proto:HTTP/1.1       Location:                              
+Url:www.qq.com          Code:200     Title:��Ѷ��ҳ                       Server:squid/3.5.24                 Proto:HTTP/2.0       Location:                              
