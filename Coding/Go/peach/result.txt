@@ -1,6 +1,5 @@
-Url:                    Code:200     Title:<title>百度一下，你就知道</title>         Server:BWS/1.1                      Proto:HTTP/1.1       Location:                              
-Url:                    Code:200     Title:<title>��Ѷ��ҳ</title>         Server:squid/3.5.24                 Proto:HTTP/2.0       Location:                              
-Url:http://www.baidu.com    Port:80    Code:200    Title:百度一下，你就知道    Server:BWS/1.1    Proto:HTTP/1.1    Location:NULL    ip:182.61.200.7,182.61.200.6,
-Url:https://www.baidu.com    Port:443    Code:200    Title:NULL    Server:BWS/1.1    Proto:HTTP/1.1    Location:NULL    ip:182.61.200.7,182.61.200.6,
-Url:http://www.qq.com    Port:80    Code:200    Title:��Ѷ��ҳ    Server:squid/3.5.24    Proto:HTTP/1.1    Location:NULL    ip:58.250.137.36,
-Url:https://www.qq.com    Port:443    Code:200    Title:��Ѷ��ҳ    Server:squid/3.5.24    Proto:HTTP/1.1    Location:NULL    ip:58.250.137.36,
+Url:http://www.baidu.com    Port:80    Code:200    Title:百度一下，你就知道    Server:BWS/1.1    Proto:HTTP/1.1    Location:NULL    ip:182.254.50.164,
+Url:https://www.baidu.com    Port:443    Code:200    Title:NULL    Server:BWS/1.1    Proto:HTTP/1.1    Location:NULL    ip:182.254.50.164,
+Url:http://www.qq.com    Port:80    Code:200    Title:��Ѷ��ҳ    Server:squid/3.5.24    Proto:HTTP/1.1    Location:NULL    ip:182.254.50.164,
+Url:https://www.qq.com    Port:443    Code:200    Title:��Ѷ��ҳ    Server:squid/3.5.24    Proto:HTTP/1.1    Location:NULL    ip:182.254.50.164,
+ation:NULL    ip:182.61.200.7,182.61.200.6,

@@ -25,7 +25,7 @@ func parse() *callback{//参数解析
 	switch *function {
 	case 1://获取url GET 信息
 		if filepath != nil {
-			fmt.Println(*filepath)
+			//fmt.Println(*filepath)
 			backInfo.method = 1
 			backInfo.argv["filepath"] = *filepath
 			return &backInfo
