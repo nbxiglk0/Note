@@ -60,3 +60,7 @@ func checkport(ip string) []int{
 	}
 	return ports
 }
+
+func ipHandle(ip []string){
+
+}

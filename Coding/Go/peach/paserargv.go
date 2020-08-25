@@ -24,13 +24,13 @@ func parse() *callback{//参数解析
 	flag.Parse()//解析参数
 	switch *function {
 	case 1://获取url GET 信息
-		if filepath != nil {
+		if filepath != nil {//导入域名
 			//fmt.Println(*filepath)
 			backInfo.method = 1
 			backInfo.argv["filepath"] = *filepath
 			return &backInfo
-		}else {
-			fmt.Println("Please input domain.txt")
+		}else{
+			fmt.Println("Please input domain(ip).txt")
 			os.Exit(0)
 		}
 	case 2://字典去重

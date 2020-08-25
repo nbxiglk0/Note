@@ -28,7 +28,9 @@ func handleresult(result saveres) {//保存结果
 
 func savefile(result saveres){
 	filename := "result.txt"
+	//urlfilename := "url.txt"
 	file, err := os.OpenFile(filename, os.O_CREATE,0644)
+	//fil1, err1 := os.OpenFile(filename, os.O_CREATE,0644)
 	if err != nil {
 		fmt.Println("Savefile Open fail")
 	}
@@ -38,7 +40,7 @@ func savefile(result saveres){
 		for _,ip := range info.ip{
 			ips = ips+ip+","
 		}
-		res_string := fmt.Sprintf("Url:%s    Port:%d    Code:%d    Title:%s    Server:%-s    Proto:%s    Location:%s    ip:%s",info.url,info.port,info.Statuscode,info.Title,info.Server,info.Proto,info.Location,ips)//格式化字符串
+		res_string := fmt.Sprintf("Url:%s    Port:%d    Code:%d    Title:%s    Server:%-s     Location:%s    ip:%s",info.url,info.port,info.Statuscode,info.Title,info.Server,info.Location,ips)//格式化字符串
 		if err == nil {
 			file.WriteString(res_string)
 			file.WriteString("\n")
@@ -59,7 +61,7 @@ func printout(result saveres) {
 				ips = ips + ip + ","
 			}
 		}
-		res_string := fmt.Sprintf("Url:%s    Port:%d    Code:%d    Title:%s    Server:%-s    Proto:%s    Location:%s    ip:%s", info.url, info.port, info.Statuscode, info.Title, info.Server, info.Proto, info.Location, ips) //格式化字符串
+		res_string := fmt.Sprintf("Url:%s    Port:%d    Code:%d    Title:%s    Server:%-s     Location:%s    ip:%s", info.url, info.port, info.Statuscode, info.Title, info.Server, info.Location, ips) //格式化字符串
 		fmt.Println(res_string)
 	}
 }

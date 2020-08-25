@@ -4,6 +4,7 @@ import (
 	"../nfuncions"
 	"crypto/tls"
 	"fmt"
+	"github.com/axgle/mahonia"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -84,15 +85,16 @@ func handleresp(response *http.Response) *respinfo{
 	redirect := []int{302, 307, 301, 308}//跳转状态码
 	var result respinfo
 	//enc :=mahonia.NewDecoder("gbk")
+	reg1 = regexp.MustCompile(`charset=utf-8`)
 	body, err := ioutil.ReadAll(response.Body)//读取返回内容
 	if err != nil{
 	//	fmt.Println("Get response body error")
 		return nil
 	}
-	convtbody:=string(body)
+	convtbody:=mahonia.NewDecoder("gbk").ConvertString(string(body))
 	reg := regexp.MustCompile(`<title>(.*)</title>`)
 	if reg.FindStringSubmatch(convtbody) == nil {
-		result.Title = "NULL"
+		result.Title = "None"
 	}else{
 		result.Title = reg.FindStringSubmatch(convtbody)[1]//title
 	}
@@ -100,9 +102,9 @@ func handleresp(response *http.Response) *respinfo{
 	if nfuncions.IsContain(response.StatusCode,redirect){//获取跳转地址
 		result.Location = response.Header.Get("Location")
 	}else {
-		result.Location ="NULL"
+		result.Location ="None"
 	}
-	result.Proto = response.Proto //协议
+	//result.Proto = response.Proto //协议
 	result.Server = response.Header.Get("Server") //Server
 	return &result
 }

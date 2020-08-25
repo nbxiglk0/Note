@@ -13,7 +13,7 @@ func main(){
 	callback := parse()
 	switch callback.method {
 	case 1:
-		basicinfo.Main(callback.argv["filepath"])
+		basicinfo.Main(callback.argv)
 	case 2:
 		getdict.Main(callback.argv["dict1"],callback.argv["dict2"])
 	}
