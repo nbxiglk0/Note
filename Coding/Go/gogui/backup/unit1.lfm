@@ -1,0 +1,10 @@
+object Peach: TPeach
+  Left = 1202
+  Height = 300
+  Top = 600
+  Width = 400
+  Caption = 'Peach'
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  LCLVersion = '2.0.10.0'
+end
