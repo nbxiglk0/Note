@@ -18,5 +18,5 @@ func main(){
 		getdict.Main(callback.argv["dict1"],callback.argv["dict2"])
 	}
 	cost := time.Since(start)
-	fmt.Printf("cost=[%s]",cost)
+	fmt.Printf("The Task cost time %s",cost)
 }

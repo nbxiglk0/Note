@@ -1,7 +1,6 @@
 package basicinfo
 //Todo
-//2.ip
-//3.socks proxy
+//1.ip
 import (
 	"bufio"
 	"fmt"
@@ -13,13 +12,13 @@ type respinfo struct {// 信息结构体
 	Title string // Ttile
 	//Proto string // 协议
 	Location string //跳转地址
-	url string //url
-	ip []string  //ip
-	port int //端口
+	Url string //url
+	Ip []string  //ip
+	Port int //端口
 }
 type saveres struct {
-	infos []respinfo //每个url的信息结构体
-	len int //访问的url数量
+	Infos []respinfo //每个url的信息结构体
+	Len int //访问的url数量
 }
 type domaininfo struct {
 	url string
@@ -31,13 +30,8 @@ func Main(argv map[string]string)  {
 	if _,ok := argv["filepath"];ok {
 		filepath := argv["filepath"]
 
-		domain,flag := getinfo(filepath)
-		if flag==0 {
-			parseresult := domainHandle(domain)
-		}
-		else {
-			parseresult := ipHandle(domain)
-		}
+		domain,_ := getinfo(filepath)
+		parseresult := domainHandle(domain)
 		result := sendrequest(parseresult)
 		handleresult(result)
 	}
@@ -46,8 +40,6 @@ func Main(argv map[string]string)  {
 		println(iprange)
 	}
 }
-
-
 //从文件中读取域名或者ip
 //ip 1
 //domain 0
@@ -66,8 +58,3 @@ func getinfo (filedir string) ([]string, int){//
 	}
 	return urls,0//返回url切片
 }
-
-//func process (now int,total int){
-//	pgb := pgbar.New("开始扫描")
-//	b := pgb.NewBar("1st", 20000)
-//}//进度条

@@ -11,12 +11,12 @@ func domainHandle(domain []string) []domaininfo {
 	var channel []domaininfo
 	var mutex sync.Mutex
 	var wg sync.WaitGroup
-	var ips []string
 	for _, url := range domain {
 		wg.Add(1)
 		go func(insideurl string) {
 			defer wg.Add(-1)
 			var results domaininfo
+			var ips []string
 			ip := domain2ip(insideurl)
 			if ip == nil{
 				return
@@ -48,7 +48,7 @@ func domain2ip(domain string) *[]string{//解析域名
 	return &ips
 }
 func checkport(ip string) []int{
-	scanports :=[] int {80,443}//扫描的端口
+	scanports :=[] int {80,443,8080}//扫描的端口
 	var ports []int
 	for _,port := range scanports {
 		reqip := ip+":"+strconv.Itoa(port)
@@ -59,8 +59,4 @@ func checkport(ip string) []int{
 		}
 	}
 	return ports
-}
-
-func ipHandle(ip []string){
-
 }
