@@ -26,18 +26,21 @@ type domaininfo struct {
 	ip []string
 	ipflag int
  }
-func Main(argv map[string]string)  {
+func Main(argv map[string]string,scanmode string)  {
 	if _,ok := argv["filepath"];ok {
 		filepath := argv["filepath"]
 
 		domain,_ := getinfo(filepath)
-		parseresult := domainHandle(domain)
+		parseresult := domainHandle(domain,scanmode)
 		result := sendrequest(parseresult)
 		handleresult(result)
 	}
 	if _,ok := argv["iprange"];ok{
 		iprange := argv["iprange"]
-		println(iprange)
+		resultip := Handleip(iprange)
+		parseresult := domainHandle(resultip,scanmode)
+		result := sendrequest(parseresult)
+		handleresult(result)
 	}
 }
 //从文件中读取域名或者ip

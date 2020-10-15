@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 )
-import "./getdict"
 
 func main(){
 //	gui.Main()
@@ -13,9 +12,9 @@ func main(){
 	callback := parse()
 	switch callback.method {
 	case 1:
-		basicinfo.Main(callback.argv)
+		basicinfo.Main(callback.argv,callback.scanmode)
 	case 2:
-		getdict.Main(callback.argv["dict1"],callback.argv["dict2"])
+	//	getdict.Main(callback.argv["dict1"],callback.argv["dict2"])
 	}
 	cost := time.Since(start)
 	fmt.Printf("The Task cost time %s",cost)

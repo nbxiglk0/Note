@@ -3,11 +3,12 @@ package basicinfo
 import (
 	"net"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
 
-func domainHandle(domain []string) []domaininfo {
+func domainHandle(domain []string,scanmode string) []domaininfo {
 	var channel []domaininfo
 	var mutex sync.Mutex
 	var wg sync.WaitGroup
@@ -17,11 +18,16 @@ func domainHandle(domain []string) []domaininfo {
 			defer wg.Add(-1)
 			var results domaininfo
 			var ips []string
-			ip := domain2ip(insideurl)
-			if ip == nil{
-				return
+			if scanmode == "domain" {
+				ip := domain2ip(insideurl)
+				if ip == nil {
+					return
+				}
+				ips = *ip
+			}else {
+				ip := insideurl
+				ips = append(ips,ip)
 			}
-			ips = *ip
 			portresult := checkport(ips[0])
 			results.url = insideurl
 			results.port = portresult
@@ -59,4 +65,17 @@ func checkport(ip string) []int{
 		}
 	}
 	return ports
+}
+func Handleip(iprange string )[]string{
+	var parseres []string
+	ip := strings.Split(iprange,"-")
+	index := strings.LastIndex(ip[0],".")
+	indexip := ip[0][:index]+"."
+	start,_ := strconv.Atoi(strings.Split(ip[0],".")[3])//起始IP
+	end,_ := strconv.Atoi(ip[1])//结束IP
+	for i := start;i<=end; i++{
+			temp := indexip+strconv.Itoa(i)
+			parseres = append(parseres,temp)
+	}
+	return parseres
 }
