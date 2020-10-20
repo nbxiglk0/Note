@@ -1,0 +1,7 @@
+package removal
+
+
+
+func Main(){
+
+}

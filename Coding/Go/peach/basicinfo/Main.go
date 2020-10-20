@@ -29,16 +29,17 @@ type domaininfo struct {
 func Main(argv map[string]string,scanmode string)  {
 	if _,ok := argv["filepath"];ok {
 		filepath := argv["filepath"]
-
+		ports := argv["ports"]
 		domain,_ := getinfo(filepath)
-		parseresult := domainHandle(domain,scanmode)
+		parseresult := domainHandle(domain,scanmode,ports)
 		result := sendrequest(parseresult)
 		handleresult(result)
 	}
 	if _,ok := argv["iprange"];ok{
 		iprange := argv["iprange"]
 		resultip := Handleip(iprange)
-		parseresult := domainHandle(resultip,scanmode)
+		ports := argv["ports"]
+		parseresult := domainHandle(resultip,scanmode,ports)
 		result := sendrequest(parseresult)
 		handleresult(result)
 	}

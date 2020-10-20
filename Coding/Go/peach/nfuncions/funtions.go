@@ -125,3 +125,10 @@ func Istls(ip string , port int)bool{
 		return false
 	}
 }
+//合并切片
+func MergeSilce(s1 []string, s2 []string) []string{
+	slice := make([]string,len(s1)+len(s2))
+	copy(slice,s1)
+	copy(slice[len(s1):],s2)
+	return slice
+}

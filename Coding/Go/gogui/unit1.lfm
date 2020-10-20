@@ -1,44 +1,48 @@
 object Peach: TPeach
-  Left = 560
-  Height = 616
-  Top = 366
-  Width = 1142
+  Left = 1204
+  Height = 862
+  Top = 447
+  Width = 1599
   Caption = 'Peach'
-  ClientHeight = 616
-  ClientWidth = 1142
-  DesignTimePPI = 120
+  ClientHeight = 862
+  ClientWidth = 1599
+  DesignTimePPI = 168
   OnCreate = FormCreate
   LCLVersion = '2.0.10.0'
   object Home: TButton
     Left = 0
-    Height = 48
+    Height = 67
     Top = 0
-    Width = 128
+    Width = 179
     Caption = 'Home'
     OnClick = HomeClick
+    ParentFont = False
     TabOrder = 0
   end
   object Scan: TButton
-    Left = 128
-    Height = 48
+    Left = 179
+    Height = 67
     Top = 0
-    Width = 128
+    Width = 179
     Caption = 'Scan'
+    ParentFont = False
     TabOrder = 1
   end
   object Button3: TButton
-    Left = 256
-    Height = 48
+    Left = 358
+    Height = 67
     Top = 0
-    Width = 128
+    Width = 179
     Caption = 'Button3'
+    ParentFont = False
     TabOrder = 2
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 250
-    Top = 48
-    Width = 560
+    Height = 808
+    Top = 64
+    Width = 1599
+    ParentFont = False
     TabOrder = 3
   end
 end

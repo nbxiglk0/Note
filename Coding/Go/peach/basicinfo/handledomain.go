@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func domainHandle(domain []string,scanmode string) []domaininfo {
+func domainHandle(domain []string,scanmode string,ports string) []domaininfo {
 	var channel []domaininfo
 	var mutex sync.Mutex
 	var wg sync.WaitGroup
@@ -28,7 +28,7 @@ func domainHandle(domain []string,scanmode string) []domaininfo {
 				ip := insideurl
 				ips = append(ips,ip)
 			}
-			portresult := checkport(ips[0])
+			portresult := checkport(ips[0],ports)
 			results.url = insideurl
 			results.port = portresult
 			results.ip = ips
@@ -53,15 +53,17 @@ func domain2ip(domain string) *[]string{//解析域名
 	}
 	return &ips
 }
-func checkport(ip string) []int{
-	scanports :=[] int {80,443,8080}//扫描的端口
+func checkport(ip string,scanports string) []int{
+
+	scanport := strings.Split(scanports,",")//扫描的端口
 	var ports []int
-	for _,port := range scanports {
-		reqip := ip+":"+strconv.Itoa(port)
+	for _,port := range scanport {
+		reqip := ip+":"+port
 		timeout := 3*time.Second
 		_, err := net.DialTimeout("tcp", reqip,timeout)
 		if err == nil{
-			ports = append(ports,port)
+			temp,_ := strconv.Atoi(port)
+			ports = append(ports,temp)
 		}
 	}
 	return ports

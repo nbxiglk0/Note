@@ -3,7 +3,6 @@ package main
 
 import (
     "github.com/ying32/govcl/vcl"
-    "./guipkg"
 )
 
 func main() {
@@ -11,6 +10,6 @@ func main() {
     vcl.Application.SetTitle("project1")
     vcl.Application.Initialize()
     vcl.Application.SetMainFormOnTaskBar(true)
-    vcl.Application.CreateForm(&guipkg.Peach)
+    vcl.Application.CreateForm(&Peach)
     vcl.Application.Run()
 }

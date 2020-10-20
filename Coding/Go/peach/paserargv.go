@@ -6,7 +6,6 @@ import (
 )
 import "flag"
 
-
 type callback struct {
 	method int
 	argv map[string]string
@@ -17,10 +16,11 @@ var Scanmode string
 func parse() *callback{//参数解析
 	filepath := flag.String("filepath","","input domainfile path")
 	function := flag.Int("func",0,"Select function")
+	ports := flag.String("ports","80,443","Input Ports range(default 80,443)")
 	firstdict := flag.String("dict1","","first dict.txt path")
 	secondict := flag.String("dict2","","second dict.txt path")
 	iprange := flag.String("iprange","","input IP range")
-	keyword :=  flag.String("keyword","","input keyword")
+	keyword :=  flag.String("keywords","","input keywords")
 	var backInfo callback
 	resu := make(map[string]string)
 	backInfo.argv =resu
@@ -30,12 +30,14 @@ func parse() *callback{//参数解析
 		if *filepath != ""&& *iprange== "" {//导入域名
 			//fmt.Println(*filepath)
 			backInfo.method = 1
+			backInfo.argv["ports"] = * ports
 			backInfo.argv["filepath"] = *filepath
 			backInfo.scanmode = "domain"
 			return &backInfo
 		}
 		if *iprange != ""&&*filepath == "" {//获取IP范围
 			backInfo.method = 1
+			backInfo.argv["ports"] = * ports
 			backInfo.argv["iprange"] = *iprange
 			backInfo.scanmode = "ip"
 			return  &backInfo
@@ -45,7 +47,7 @@ func parse() *callback{//参数解析
 		}
 	case 2://关键字字典
 		backInfo.method = 2
-		backInfo.argv["key"] = *keyword
+		backInfo.argv["keywords"] = *keyword
 		return &backInfo
 	case 3://字典去重
 		if firstdict != nil && secondict!=nil{
@@ -68,6 +70,6 @@ func parse() *callback{//参数解析
 }
 
 func usage(){
-	usage := "function nums:\n 1.getinfo \n 2.Generate dict \n 3.getdict \n 4.fuzzparams\n\n Ex:\n peach.exe -func 1 -filepath domain.txt\n peach.exe -func 1 -iprange 192.168.1.1-255"
+	usage := "function nums:\n 1.getinfo \n 2.Generate dict \n 3.getdict \n 4.fuzzparams\n\n Ex:\n peach.exe -func 1 -filepath domain.txt (-ports 80,443,...)\n peach.exe -func 1 -iprange 192.168.1.1-255\n peach.exe -func 2 -keywords baidu,tenxun"
 	fmt.Println(usage)
 }
