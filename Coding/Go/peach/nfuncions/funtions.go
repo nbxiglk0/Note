@@ -104,16 +104,20 @@ func Istls(ip string , port int)bool{
 	Target :=ip
 	port = port
 	Time, _ := time.ParseDuration("2s")
-	conn, _ := net.DialTimeout("tcp", Target+":"+strconv.Itoa(port), Time )
+	conn, err := net.DialTimeout("tcp", Target+":"+strconv.Itoa(port), Time )
 
-	//if err != nil {
-	//	fmt.Println("ERR::" + strconv.Itoa(port) + ">" + err.Error())
-	//	os.Exit(1)
-	//}
+	if err != nil {
+		fmt.Println("ERR::" + strconv.Itoa(port) + ">" + err.Error())
+		return false
+	}
 	conn.Write(t)
 	recvBuf := make([]byte, 2048)
 	conn.SetReadDeadline(time.Now().Add(time.Second * 2))
-	_, _ = conn.Read(recvBuf[:])
+	_, err = conn.Read(recvBuf[:])
+	if err != nil {
+		//fmt.Println("ERR::" + strconv.Itoa(port) + ">" + err.Error())
+		return false
+	}
 	conn.SetReadDeadline(time.Time{})
 /*	fmt.Println("tlsinfo:")
 	fmt.Println( string(recvBuf[:]))*/
