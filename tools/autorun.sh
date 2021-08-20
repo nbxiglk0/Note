@@ -1,1 +1,0 @@
-python3 oneforall.py --target ./domain.txt --alive --brute True --alive True --dns True --takeover True --format csv run
