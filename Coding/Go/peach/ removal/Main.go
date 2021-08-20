@@ -1,7 +1,0 @@
-package removal
-
-
-
-func Main(){
-
-}

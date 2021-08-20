@@ -1,8 +1,0 @@
-﻿  pch.c
-  dllmain.c
-D:\coding\C\Dll1\dllmain.c(26,84): warning C4133: “=”: 从“HHOOK”到“HMODULE”的类型不兼容
-D:\coding\C\Dll1\dllmain.c(31,33): warning C4133: “函数”: 从“HMODULE”到“HHOOK”的类型不兼容
-D:\coding\C\Dll1\dllmain.c(36,35): warning C4133: “函数”: 从“HMODULE”到“HHOOK”的类型不兼容
-    正在创建库 D:\coding\C\Dll1\Debug\Dll1.lib 和对象 D:\coding\C\Dll1\Debug\Dll1.exp
-LINK : warning LNK4039: 用 /SECTION 选项指定的节“share_data”不存在
-  Dll1.vcxproj -> D:\coding\C\Dll1\Debug\Dll1.dll

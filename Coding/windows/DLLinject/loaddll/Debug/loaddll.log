@@ -1,3 +1,0 @@
-﻿  mainload.c
-D:\coding\C\loaddll\mainload.c(7,41): warning C4133: “函数”: 从“char [11]”到“LPCWSTR”的类型不兼容
-  loaddll.vcxproj -> D:\coding\C\loaddll\Debug\loaddll.exe
