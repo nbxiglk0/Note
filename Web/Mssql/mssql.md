@@ -387,8 +387,8 @@ Content-Length: 40
 %89%95%97%A4%A3%F1=%A7%A7%A7%A7%A7%A7%A7
 ```
 
-1.添加HTTP头 x-up-devcap-post-charset来表明使用的字符集，代替charset字段
-2.添加UserAgent： UP xxx
-3.参数键值都要编码
+1.添加HTTP头 x-up-devcap-post-charset来表明使用的字符集，代替charset字段  
+2.添加UserAgent： UP xxx  
+3.参数键值都要编码  
 
 
