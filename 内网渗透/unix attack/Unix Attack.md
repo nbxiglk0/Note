@@ -15,3 +15,5 @@ B、重启cron的方法
 #/etc/rc.d/init.d/crond restart
 Usage: /etc/rc.d/init.d/crond {start|stop|status|reload|restart|condrestart}
 ```
+# ssh登录记录
+who /var/log/wtmp![image](https://user-images.githubusercontent.com/24366795/130317209-f5dc1dab-af27-4515-a4f0-87567db6c5ef.png)
