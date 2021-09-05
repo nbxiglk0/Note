@@ -1,4 +1,5 @@
 # XMLDecoder反序列化
+java jdk自带的xmldedoder用于将xml格式的数据反序列化转换为相应的对象实例,在反序列化过程中如果xml数据可控,则会产生反序列化漏洞.
 ## 示例代码
 ```java
 package test;
@@ -25,6 +26,8 @@ class main {
     }
 }
 ```
+## XMLDecoder解析流程
+[参考](https://blog.csdn.net/fnmsd/article/details/89889144)
 ## 调用链
 在`XMLDocumentFragmentScannerImpl.scanDocument`前主要是初始化xml解析器,然后进入`scanDocument`正式开始处理xml数据,在这之前的调用链如下  
 ```
@@ -96,3 +99,7 @@ arguments- 此表达式的 arguments。如果该参数为null，则使用一个�
 ![1](17.png)
 # 思路总结
 主要原理即在对各个标签的解析当中,可以将取得的object标签值进行对象实例化,并通过链表的方式从其它标签中获取其对象的参数值,最后使用了Expression()方法来调用了对象的指定方法造成了我们可以实例化一个ProcessBuilder对象,并调用其start方法来执行命令.
+
+# 参考
+https://xz.aliyun.com/t/7944
+https://blog.csdn.net/fnmsd/article/details/89889144
