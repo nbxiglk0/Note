@@ -80,6 +80,11 @@ public class client {
 ```
 ## Attack RMI
 对于RMI的攻击主要原理为RMI支持动态加载类,即`java.rmi.server.codebase`属性,该属性指定了一个地址,使得客户端和服务端都可以从这个地址来远程下载自己本地classpath找不到的类,而codebase属性可以在RMI中随着序列化的数据一起传输的,使得我们可以搭建一个恶意的远程地址来加载我们构造的恶意对象,因为rmi传输都是基于序列化和反序列化的,所以加载了远程类之后则会使用反序列化恢复对象,从而加载恶意对象.
+## JRMP优势
+1. JRMP反序列化的Payload更短，防止请求包数据过大，直接造成返回状态码413(Request Entity Too Large)，无法执行反序列化，这个例子挺常见的，比如测试shiro反序列化漏洞时，就有可能因为Payload过长，无法正常反序列化。
+2. 如果靶机出网可以像URLDNS一样，用作快速检测，JRMP通过上述分析，是利用报错进行反序列化的，既然报错那就存在回显的情况
+3. 可以绕过一些反序列化的黑名单，因为使用JRMP的链条时，只会反序列化JRMP相关的组件，不会加载常见恶意类,可以将其理解成为二次URL编码绕过一样，只不过这里变成了二次反序列化
+
 **利用条件:**
 1. 安装并配置SecurityManager.
 2. Java版本低于7u21,6u45,或者设置了java.rmi.server.useCodebaseOnly=false,因为Java版本在7u21,6u45时官方将java.rmi.server.useCodebaseOnly的默认值由false改为了true.在java.rmi.server.useCodebaseOnly配置为true的情况下,Java虚拟机将只信任预先配置好的codebase.不再支持从RMI请求中获取.
