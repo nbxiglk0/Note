@@ -1,6 +1,7 @@
 # JMX反序列化
 影响:
 ```
+JBoss AS 4.x及之前版本
 Jboss AS 5.x
 Jboss AS 6.x
 ```
