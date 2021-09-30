@@ -1,19 +1,14 @@
-<a name="IJjUW"></a>
 # NTLM 协议
 
 ---
 
 NTLM(NT LAN Manager)是一种身份验证协议,可用于本地计算机验证和域用户验证.
-<a name="ne8ax"></a>
 ##### NTLMv1(Net-NTLMv1)
 NTLM协议主要用于服务器端和客户端挑战应答模式中,v1版本同时使用NT和LM哈希,具体由配置决定.只存在于很老的系统中.
-<a name="cc7kP"></a>
 ##### NTLMv2(Net-NTLMv2)
 现在系统主要使用的NTLM协议版本,算法不同,更难进行破解.
-<a name="IhgvV"></a>
 ##### NTLM2
 安全性比NTLMV2弱的但比NTLMV1强的版本.
-<a name="E0kyo"></a>
 ##### NTLM Hash
 对服务器质询的响应,由NT HASH进行计算,也叫NET-NTLM 哈希或者NTLM响应.
 <a name="Jn3ED"></a>
@@ -102,6 +97,7 @@ _NTLM 认证流程_
 ## v1和v2差异
 主要提现在安全性提高,加入了时间戳和一个包含了域名,主机名等Avparis的字段,在认证消息中含有一个MIC值来检验消息是否被篡改,但在V1中响应并不根据标志位来决定,所以在NTLMv1中只要把MIC标识位移除便可以修改消息,在V2中会根据标志位强制检验MIC值.
 <a name="IGNBM"></a>
+
 # AcitveDiretory中的NTLM认证
 在AD中使用NTLM认证的话则服务端需要向DC请求验证,因为用户的NT哈希只存在DC中,服务端向DC发送一个Netlogon请求来请求DC验证客户端返回的NTLM响应是否正确,DC验证成功之后返回一些相关信息,如会话密钥(Session Key)来加密后续客户端和服务端的通信.
 ```
@@ -137,10 +133,10 @@ AD下默认使用Kerberos认证,但是通过使用IP的方式而非主机名的�
 dir \\dc01\C$ --->Kerboers
 dir \\192.168.7.1\C$ --->NTLM
 ```
-<a name="GoMef"></a>
 ## NTLM->信息收集
 在服务端向客户端返回挑战信息时,AvParis的TargetInfo字段含有服务器的一些信息,如主机名,域名等信息.<br />![image.png](https://cdn.nlark.com/yuque/0/2021/png/12610959/1627403037561-7f0e3f74-85fa-4b71-b4e3-f223d0300291.png#clientId=u9e933a68-158e-4&from=paste&height=788&id=MttAz&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1576&originWidth=3710&originalType=binary&ratio=1&size=339524&status=done&style=none&taskId=ua828da30-51a3-4c79-9d79-64baa824737&width=1855)<br />[NTLMRecon](https://github.com/pwnfoo/NTLMRecon)<br />[ntlm-info](https://gitlab.com/Zer1t0/ntlm-info)
 <a name="VhkQB"></a>
+
 ## Pash The Hash
 因为NTLM认证中使用的是由用户密码产生NT Hash进行计算的,所以只要得到NT Hash即使不知道明文密码也可以完成认证从而模拟该Hash用户的权限.
 <a name="Zrr8e"></a>
@@ -167,7 +163,7 @@ dir \\192.168.7.1\C$ --->NTLM
 - 如果为0,则表示内置rid为500的管理员能够不受UAC限制远程执行任务,不影响其它用户,只影rid为500的用户.
 - 如果为1,则表示内置rid为500的管理员也会受UAC限制远程执行任务,除非`LocalAccountTokenFilterPolicy`为1.
 
-​
+
 
 矩阵(粗体为默认):<br />![image.png](https://cdn.nlark.com/yuque/0/2021/png/12610959/1628439264738-89b5de2c-4448-44bb-b2f1-5d3e59a2b7af.png#clientId=u40f70810-e33a-4&from=paste&id=ub8e6bc05&margin=%5Bobject%20Object%5D&name=image.png&originHeight=209&originWidth=1341&originalType=url&ratio=1&size=19882&status=done&style=none&taskId=u254bcfac-3ac8-427a-999f-d5646655159)
 <a name="FhWRP"></a>
@@ -200,7 +196,7 @@ dir \\192.168.7.1\C$ --->NTLM
 ### 签名协商
 在NTLM协议的协商阶段,客户端和服务端会就是否对后续会话进行签名进行协商,该标识位为NETGOTIATE_SIGN字段.该字段标识为1则标识客户端有能力进行签名,服务端如果也支持签名则也将该字段设置为1.<br />![image.png](https://cdn.nlark.com/yuque/0/2021/png/12610959/1627918395213-86371eff-b00f-47cc-9780-3f44fa94acf8.png#clientId=u20ec19f2-2fb0-4&from=paste&id=u74a42606&margin=%5Bobject%20Object%5D&name=image.png&originHeight=463&originWidth=658&originalType=url&ratio=1&size=84085&status=done&style=none&taskId=u095f77b2-1942-46ba-990c-09351e79a8d)<br />​
 
-​<br />
+<br />
 <a name="ba3QO"></a>
 ### 是否强制签名
 具体到协议上之后,就需要根据协议对签名要求做出对应的设置,通常有两三个选项来决定.
@@ -268,3 +264,7 @@ Key = HMAC_MD5(NTLMv2 Hash, HMAC_MD5(NTLMv2 Hash, NTLMv2 Response + Challenge))
 <a name="LowmZ"></a>
 ##### 相关漏洞
 [CVE-2015-0005](https://www.coresecurity.com/core-labs/advisories/windows-pass-through-authentication-methods-improper-validation)<br />该漏洞中域内机器可不经过验证获取任意其它服务器的会话密钥.
+
+### 参考
+
+https://mp.weixin.qq.com/s?__biz=MzI5Nzc0OTkxOQ==&mid=2247483756&idx=1&sn=bda30341cd0eecd692a72258608ceb4a&chksm=ecb11d9cdbc6948af8dcede1617a96e2e85134d00eebfa70e806accdc672d6c20a6c0fb3818a&scene=21#wechat_redirect

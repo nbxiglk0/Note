@@ -1,5 +1,7 @@
 # Potato系列
 
+主要原理为中继攻击,使用低权限用户滥用可高权限运行的服务来向我们监听的端口发起请求,并在响应中要求NTLM认证来获得高权限的NTLM认证信息最后中继回本地的SMB或者进行本地的令牌模拟来提权.
+
 主要用于服务账户到system账户的权限提升,如iis,sqlserver用户.
 
 ## 0X01 Hot Potato
@@ -40,10 +42,6 @@ IE浏览器默认会访问`http://wpad/wpad.dat`来加载网络代理配置.同�
 
 主要是利用window的一些系统服务进行请求时会使用IE的代理配置来请求获取代理配置(且我们已经请求的URL为`http://wpad/wpad.dat`),我们使用NBNS欺骗使目标使用我们开启的http服务作为代理,那么所有流量都会经过我们的http服务,并将其重定向到强制到要求401认证的页面来获取其NTLM协议认证信息,最后将其中继回本地的SMB协议中来获取请求目标的权限.
 
-### 参考
-
-https://foxglovesecurity.com/2016/01/16/hot-potato/
-
 ## 0X02 Rotten Potato
 
 在Hot Potato中使用的是windows服务并结合NBNS欺骗来获取高权用户的NTLM认证信息,但在不同的系统上,windows服务表现并不一致,并且windows服务的触发也不稳定,导致该利用并不通用和稳定.
@@ -52,7 +50,7 @@ https://foxglovesecurity.com/2016/01/16/hot-potato/
 
 ### DCOM请求
 
-从IStorage中根据Guid获取一个BITSv1的实例,并且从127.0.0.1:6666端口来加载该实例.
+主要是滥用DCOM服务,当DCOM如果以服务的方式远程连接,那么权限为System,如以下代码利用BITS DCOM服务,该DCOM服务会以SYSTEM权限进行加载.从IStorage中根据Guid获取一个BITSv1的实例,并且从127.0.0.1:6666端口来加载该实例.
 
 ```C
 public static void BootstrapComMarshal()
@@ -76,11 +74,37 @@ CoGetInstanceFromIStorage(null, ref clsid, null, CLSCTX.CLSCTX_LOCAL_SERVER, c, 
 
 ### DCOM <-> Middle <-> RPC
 
+当接收到DCOM(system权限)请求时,将其中继到135端口的RPC端口上,然后充当中间人使DCOM和RPC通信,直到进行NTLM认证时获取到system的NTLM认证信息.
 
+### Local Token Negotiation
 
+利用NTLM身份验证进行本地安全令牌模拟(作为中间人替换数据包中的一些字段信息).想模拟令牌,最好以具有 SeImpersonate 权限（或同等权限,如SeAssignPrimaryToken）的帐户身份(IIS,Sqlserver)运行.
 
+### Summary
 
-
+相比于原始的Potato利用,该版本使用DCOM和RPC来替代windows服务获取system用户的NTLM认证信息,最后使用该认证信息进行本地的安全令牌协商.
 
 ## 0x03 Juicy Potato
+
+在Rotten Potato中利用的DCOM为BITS 组件,而其实只要具有以下几个特点的DCOM组件都可以进行利用
+
+1. 可以被当前用户(具有模拟权限(SeImpersonate.,SeAssignPrimaryToken)的服务账户)实例化.
+2. 实现`IMarshal`接口(没看懂这个接口).
+3. 以高权限用户运行.
+
+可利用的CLSID参考:https://github.com/ohpe/juicy-potato/blob/master/CLSID/README.md
+
+
+
+### 参考
+
+https://3gstudent.github.io/Windows%E6%9C%AC%E5%9C%B0%E6%8F%90%E6%9D%83%E5%B7%A5%E5%85%B7Juicy-Potato%E6%B5%8B%E8%AF%95%E5%88%86%E6%9E%90
+
+https://github.com/ohpe/juicy-potato
+
+https://foxglovesecurity.com/2016/01/16/hot-potato/
+
+https://foxglovesecurity.com/2016/09/26/rotten-potato-privilege-escalation-from-service-accounts-to-system/
+
+https://www.freebuf.com/column/232232.html
 
