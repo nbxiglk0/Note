@@ -1,5 +1,7 @@
-<a name="Dqcl3"></a>
+# GraphQL 安全
+
 ## Json --> form-urlencoded --> CSRF
+
 正常GraphQL查询的content-type为application/json
 ```
 POST /graphql HTTP/1.1

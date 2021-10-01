@@ -1,6 +1,6 @@
-# XXE安全
+# XML安全
 
-## XML语言
+## 0x01 XML语言
 
 XML 指可扩展标记语言(EXtensible Markup Language)
 
@@ -31,15 +31,50 @@ standalone值是yes的时候表示DTD仅用于验证文档结构,从而外部实
 
 ### DTD(document type definition)
 
-## XML注入
+文档类型定义,一个控制XML格式规范的文件,可以嵌入XML文档内部
+
+也可以独立放在一个dtd文件中.
+
+##### 引入DTD
+
+内部引用,直接插入XML文档内部
+
+```xml
+<!DOCTYPE 根元素名称 [元素声明]>
+```
+
+外部引用
+
+<!DOCTYPE 根元素名称 [元素声明]>
+
+<!DOCTYPE 根元素名称 [元素声明]>
+
+<!DOCTYPE 根元素名称 [元素声明]>
+
+#### 实体引用
+
+XML元素以形如 `<tag>foo</tag>` 的标签开始和结束,如果元素内部出现如`<` 的特殊字符,解析就会失败,为了避免这种情况,XML用实体引用（entity reference）替换特殊字符.XML预定义五个实体引用,即用`< > & ' "` 替换 `< > & ' "` .
+
+
+## 0x02 XML注入
 
 
 
 
 
-## XML外部实体注入(XXE)
+## 0x03 XML外部实体注入(XXE)
 
 ### 外带通道(OOB)
+
+### 防御
+
+1. 使用开发语言自带的方法禁用外部实体.
+2. 过滤用户提交的XML数据.
+3. 不允许用户提交自己DTD文件.
+
+参考OWASP:https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+
+## 
 
 
 
@@ -47,4 +82,8 @@ standalone值是yes的时候表示DTD仅用于验证文档结构,从而外部实
 
 https://xz.aliyun.com/t/6887
 
-## 
+https://xz.aliyun.com/t/7105
+
+https://xz.aliyun.com/t/9519
+
+https://bbs.ichunqiu.com/thread-44650-1-7.html

