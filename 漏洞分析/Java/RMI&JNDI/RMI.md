@@ -1,3 +1,9 @@
+- [# RMI](#-rmi)
+- [JAVA RMI远程方法调用过程](#java-rmi远程方法调用过程)
+  - [Stub获取](#stub获取)
+  - [实例代码](#实例代码)
+- [Attack RMI](#attack-rmi)
+- [JRMP优势](#jrmp优势)
 # RMI
 ---
 Remote methed Invocation,远程方法调用,远程服务器实现具体的Java方法并提供接口，客户端本地仅需根据接口类的定义，提供相应的参数即可调用远程方法并获取执行结果.

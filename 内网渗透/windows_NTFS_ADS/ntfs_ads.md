@@ -1,5 +1,19 @@
-# **NTFS 利用总结**
-## **NTFS Alternate Streams**
+- [NTFS 利用总结](#ntfs-利用总结)
+  - [NTFS Alternate Streams](#ntfs-alternate-streams)
+  - [## **创建文件夹**](#-创建文件夹)
+    - [**实际利用**](#实际利用)
+      - [**UDF提权**](#udf提权)
+  - [## **绕过HTTP BASIC认证**](#-绕过http-basic认证)
+  - [## **bypass黑名单**](#-bypass黑名单)
+  - [## **执行程序**](#-执行程序)
+    - [**二进制程序**](#二进制程序)
+    - [**DLL**](#dll)
+  - [## **隐藏webshell**](#-隐藏webshell)
+  - [## **创建"找不到"和无法删除的文件夹**](#-创建找不到和无法删除的文件夹)
+  - [## **隐藏数据流**](#-隐藏数据流)
+- [**ADS 添加 导出 执行方法清单**](#ads-添加-导出-执行方法清单)
+# NTFS 利用总结
+## NTFS Alternate Streams
 [微软官方文档](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fscc/c54dec26-1551-4d3a-a0ea-4fa40f848eb3)  
 </br>
 ```

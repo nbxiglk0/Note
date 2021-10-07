@@ -1,3 +1,9 @@
+- [无powershell.exe运行powershell工具](#无powershellexe运行powershell工具)
+  - [C](#c)
+    - [PowerLine](#powerline)
+    - [nps](#nps)
+    - [Powershdll](#powershdll)
+    - [Nopowershell](#nopowershell)
 # 无powershell.exe运行powershell工具
 ## C#
 基本原理 : 使用C#调用system.management.automation  

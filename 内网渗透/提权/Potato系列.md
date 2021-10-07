@@ -1,3 +1,20 @@
+- [Potato系列](#potato系列)
+  - [0X01 Hot Potato](#0x01-hot-potato)
+    - [Local NBNS Spoofer](#local-nbns-spoofer)
+      - [NBNS协议](#nbns协议)
+      - [响应欺骗](#响应欺骗)
+    - [Fake WPAD Proxy](#fake-wpad-proxy)
+      - [WPAD](#wpad)
+      - [Fake proxy](#fake-proxy)
+    - [HTTP -> SMB NTLM Relay](#http---smb-ntlm-relay)
+    - [Summary](#summary)
+  - [0X02 Rotten Potato](#0x02-rotten-potato)
+    - [DCOM请求](#dcom请求)
+    - [DCOM <-> Middle <-> RPC](#dcom---middle---rpc)
+    - [Local Token Negotiation](#local-token-negotiation)
+    - [Summary](#summary-1)
+  - [0x03 Juicy Potato](#0x03-juicy-potato)
+    - [参考](#参考)
 # Potato系列
 
 主要原理为中继攻击,使用低权限用户滥用可高权限运行的服务来向我们监听的端口发起请求,并在响应中要求NTLM认证来获得高权限的NTLM认证信息最后中继回本地的SMB或者进行本地的令牌模拟来提权.

@@ -1,3 +1,13 @@
+- [XMLDecoder反序列化](#xmldecoder反序列化)
+  - [示例代码](#示例代码)
+  - [XMLDecoder解析流程](#xmldecoder解析流程)
+  - [调用链](#调用链)
+    - [XMLDocumentFragmentScannerImpl.scanDocument](#xmldocumentfragmentscannerimplscandocument)
+      - [stringHandler](#stringhandler)
+      - [第一个voidHandler](#第一个voidhandler)
+      - [ArrayHandler](#arrayhandler)
+      - [第二个voidHandler](#第二个voidhandler)
+- [思路总结](#思路总结)
 # XMLDecoder反序列化
 java jdk自带的xmldedoder用于将xml格式的数据反序列化转换为相应的对象实例,在反序列化过程中如果xml数据可控,则会产生反序列化漏洞.
 ## 示例代码

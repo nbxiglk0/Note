@@ -1,3 +1,11 @@
+- [JNDI](#jndi)
+  - [动态转换](#动态转换)
+  - [命名引用](#命名引用)
+  - [JNDI注入](#jndi注入)
+    - [RMI](#rmi)
+    - [LDAP](#ldap)
+  - [打法总结](#打法总结)
+  - [补丁](#补丁)
 # JNDI
 JNDI全称为Java Naming and Directory Interface,也就是Java命名和目录接口.Java中使用最多的基本就是rmi和ldap的目录服务系统.
 ## 动态转换

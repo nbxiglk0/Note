@@ -1,5 +1,20 @@
-[toc]
-
+- [MySql](#mysql)
+  - [基础语句](#基础语句)
+    - [数据连接情况](#数据连接情况)
+    - [xx 库中所有字段名带 pass|pwd 的表](#xx-库中所有字段名带-passpwd-的表)
+    - [获取正在执行的sql语句](#获取正在执行的sql语句)
+  - [提权](#提权)
+    - [UDF(User Defined Function)提权](#udfuser-defined-function提权)
+  - [Getshell](#getshell)
+      - [直接写文件Getwebshell](#直接写文件getwebshell)
+      - [日志general_log Getshell](#日志general_log-getshell)
+      - [慢日志slow_query_logGetshell](#慢日志slow_query_loggetshell)
+  - [mysql8](#mysql8)
+    - [新增的表](#新增的表)
+      - [information_schema.TABLESPACES_EXTENSIONS](#information_schematablespaces_extensions)
+    - [新增功能](#新增功能)
+      - [table](#table)
+  - [参考](#参考)
 # MySql
 
 ## 基础语句
@@ -16,8 +31,7 @@ show processlist;
 select distinct table_name from information_schema.columns where table_schema="xx" and column_name like "%pass%" or column_name like "%pwd%"
 ```
 
-#### 获取正在执行的sql语句
-
+### 获取正在执行的sql语句
 使用information.schema.processlist 表读取正在执行的sql语句，从而得到表名与列名.
 
 
@@ -46,17 +60,14 @@ select distinct table_name from information_schema.columns where table_schema="x
    select sys_eval('whoami');//
    ```
 
-#### Tips
+**Tips:**
 
 1. 4.1以前随意注册,无限制.
 
 2. 在4.1到5之后创建函数时,不能包含`\`和`/`.所以需要释放到system32目录中.
 
 3. 5.1之后需要导出到指定的插件目录,即`%plugin%`变量的位置,默认文件夹不存在,需要手动创建(利用NTFS流).
-
-   
-
-### MOF提权
+## MOF提权
 
 > mof是windows系统的一个文件（在c:/windows/system32/wbem/mof/nullevt.mof）叫做"托管对象格式"其作用是每隔五秒就会去监控进程创建和死亡。有了mysql的root权限了以后，然后使用root权限去执行我们上传的mof。隔了一定时间以后这个mof就会被执行，这个mof当中有一段是vbs脚本，这个vbs大多数的是cmd的添加管理员用户的命令。
 
@@ -66,7 +77,6 @@ select distinct table_name from information_schema.columns where table_schema="x
 2. mysql高权运行.
 
 #### 步骤
-
 1. 
    创建mof文件
 

