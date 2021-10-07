@@ -115,6 +115,12 @@ select sys_eval('id');
 drop function sys_eval;
 ```
 ## CVE-2019-9193
+
+#### 利用条件
+
+- 版本9.3-11.2
+- 超级用户或者pg_read_server_files组中的任何用户
+
 9.3-11.2版本中存在一处“特性”,由于9.3增加一个“COPY TO/FROM PROGRAM”功能.这个功能就是允许数据库的超级用户以及pg_read_server_files组中的任何用户执行操作系统命令,管理员或具有“COPY TO/FROM PROGRAM”权限的用户,可以使用这个特性执行任意命令。  
 **POC:**  
 ```sql
