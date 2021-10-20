@@ -1,4 +1,4 @@
-<a name="iurdI"></a>
+
 ###### Powershell命令执行记录
 ```powershell
 type (Get-PSReadlineOption).HistorySavePath

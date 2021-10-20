@@ -14,7 +14,8 @@ Version: 5.0.0<=ThinkPHP5<=5.0.10
     }
 `````
 
-而init()如下,默认$option=null,所以`$connect=self::connect(Config::get('cache'))`,该值默认为`File`
+而init()如下,默认`$option=null`,所以`$connect=self::connect
+(Config::get('cache'))`,该值默认为`File`
 
 ```php
     public static function init(array $options = [])
