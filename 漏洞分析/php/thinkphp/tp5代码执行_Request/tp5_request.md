@@ -4,7 +4,7 @@ version:5.0.0<=ThinkPHP5<=5.0.23, 5.1.0<=ThinkPHP<=5.1.32
 
 ## Request类任意方法调用
 
-在Request类中的method方法中,$this->method的值为POST请求中_method(默认值)的值,而后再把整个POST数组传递给该方法作为参数,导致可以请求Request类中的任意方法,且参数可控
+在Request类中的method方法中,$this->method的值为POST请求中_method(默认值)的值,而后再把整个POST数组传递给该方法作为参数,导致可以请求Request类中的任意方法,且参数可控.
 
 ```php
     public function method($method = false)
@@ -26,7 +26,7 @@ version:5.0.0<=ThinkPHP5<=5.0.23, 5.1.0<=ThinkPHP<=5.1.32
     }
 ```
 
-而在Request类的构造函数中还可以进行变量覆盖,在构造函数中循环检查变量在该类中是否存在,若存在则进行赋值
+而在Request类的构造函数中还可以进行变量覆盖,在构造函数中循环检查变量在该类中是否存在,若存在则进行赋值.
 
 ```php
     protected function __construct($options = [])
