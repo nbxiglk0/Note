@@ -1,23 +1,4 @@
 # FastJson 反序列化
-- [FastJson 反序列化](#fastjson-反序列化)
-  - [前置知识](#前置知识)
-    - [JAVA对象->Json](#java对象-json)
-      - [序列化方法](#序列化方法)
-    - [Json->JAVA对象](#json-java对象)
-      - [自省](#自省)
-      - [反序列化方法](#反序列化方法)
-    - [利用思路](#利用思路)
-      - [寻找利用类思路](#寻找利用类思路)
-  - [Fastjson <= 1.2.24 利用思路](#fastjson--1224-利用思路)
-    - [TemplatesImpl恶意类](#templatesimpl恶意类)
-      - [利用分析](#利用分析)
-    - [JNDI注入](#jndi注入)
-      - [JdbcRowSetImpl类](#jdbcrowsetimpl类)
-  - [关于CheckAutoType](#关于checkautotype)
-  - [1.2.25-1.2.41 ByPass](#1225-1241-bypass)
-  - [<=1.2.42 ByPass](#1242-bypass)
-  - [<=1.2.47 ByPass](#1247-bypass)
-  - [参考](#参考)
 ## 前置知识
 
 ### JAVA对象->Json
@@ -310,7 +291,7 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 
 ![image-20211024152019833](1.2.24反序列化/image-20211024152019833.png)
 
-因为这次的ByPass关键在于`checkAutoType`以下代码段,从该段代码得知,`clazz`可以有有个地方获取
+因为这次的ByPass关键在于`checkAutoType`以下代码段,从该段代码得知,`clazz`可以有2个地方获取
 
 * clazz = TypeUtils.getClassFromMapping(typename)
 * clazz = this.deserializers.findclass(typename)
@@ -320,6 +301,8 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 但在之前在开启`AutoType`的情况下还有一次黑名单的校验,但要同时满足缓存中没有该类才会抛出异常,即`TypeUtils.getClassFromMapping(typeName) == null`,这也是ByPass的一个关键点.
 
 ![image-20211024154458876](1.2.24反序列化/image-20211024154458876.png)
+
+### TypeUtils.getClassFromMappin
 
 首先来看第一次获取`clazz`跟进`TypeUtils.getClassFromMapping(typeName)`,里面直接返回了`mappings.get(className)`.
 
@@ -443,6 +426,10 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 **总结:**
 
 该次绕过主要是利用一个缓存机制,FastJson为了提高运行效率,在`AutoType`进行过滤的时候,会先从缓存中去寻找指定类,如果有的话则会直接返回该类而不进行后续操作,从而ByPass.
+
+### deserializers.findclass
+
+该方法中主要是存放一些常用的类进行缓存,不可控,忽略.
 
 **修复:**
 

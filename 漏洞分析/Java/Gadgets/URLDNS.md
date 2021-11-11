@@ -2,7 +2,7 @@
   - [分析](#分析)
   - [利用](#利用)
 # URLDNS
-该链无实际利用价值,主要用于无回显的情况下确定是否有反序列化漏洞,该链最后会向指定URL发送一次dns请求,因此用来确定是否被成功反序列化
+该链无实际利用价值,主要用于无回显可出网的情况下确定是否有反序列化漏洞,该链最后会向指定URL发送一次dns请求,因此用来确定是否被成功反序列化
 ## 分析
 在HashMap类中重写了readObject()方法,其中在最后调用了hash()方法
 ```java
@@ -79,10 +79,9 @@ private void readObject(java.io.ObjectInputStream s)
             //...
 ```
 ## 利用
-所以最后只要反序列化HashMap类时hashcode的值为-1即可,利用反射机制即可获取该属性并调用set设值即可
-
-![](/Code-Aduit/JAVA/pic/1.png)
+所以最后只要反序列化HashMap类时hashcode的值为-1即可,利用反射机制即可获取该属性并调用set设值即可.
 **利用链**:
+
 1. HashMap->readObject()
 2. HashMap->hash()
 3. URL->hashCode()
