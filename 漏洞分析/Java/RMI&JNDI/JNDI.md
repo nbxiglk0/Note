@@ -4,6 +4,7 @@
   - [JNDI注入](#jndi注入)
     - [RMI](#rmi)
     - [LDAP](#ldap)
+  - [JNDI回显](#jndi回显)
   - [打法总结](#打法总结)
   - [补丁](#补丁)
 # JNDI
@@ -23,6 +24,7 @@ JNDI注入简单来说就是在JNDI接口在初始化时，如：InitialContext.
 ### RMI
 
 ### LDAP
+## JNDI回显
 ## 打法总结
 1. 打Registry注册中心
 通过使用Registry连接到注册中心，然后把gadget chain对象bind注册到注册中心，从而引起注册中心反序列化RCE
@@ -49,3 +51,4 @@ jdk8u121版本开始，Oracle通过默认设置系统变量com.sun.jndi.rmi.obje
 https://paper.seebug.org/1091/#weblogic-rmi  
 https://blog.csdn.net/li_w_ch/article/details/110114397  
 https://xz.aliyun.com/t/7079
+https://www.blackhat.com/docs/us-16/materials/us-16-Munoz-A-Journey-From-JNDI-LDAP-Manipulation-To-RCE.pdf
