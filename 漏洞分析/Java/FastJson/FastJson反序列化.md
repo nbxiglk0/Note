@@ -1,8 +1,28 @@
 # FastJson 反序列化
+- [FastJson 反序列化](#fastjson-反序列化)
+  - [前置知识](#前置知识)
+    - [JAVA对象->Json](#java对象-json)
+      - [序列化方法](#序列化方法)
+    - [Json->JAVA对象](#json-java对象)
+      - [自省](#自省)
+      - [反序列化方法](#反序列化方法)
+    - [利用思路](#利用思路)
+      - [寻找利用类思路](#寻找利用类思路)
+  - [Fastjson <= 1.2.24 利用思路](#fastjson--1224-利用思路)
+    - [TemplatesImpl恶意类](#templatesimpl恶意类)
+      - [利用分析](#利用分析)
+    - [JNDI注入](#jndi注入)
+      - [JdbcRowSetImpl类](#jdbcrowsetimpl类)
+  - [关于CheckAutoType](#关于checkautotype)
+  - [1.2.25-1.2.41 ByPass](#1225-1241-bypass)
+  - [<=1.2.42 ByPass](#1242-bypass)
+  - [<=1.2.47 ByPass](#1247-bypass)
+    - [TypeUtils.getClassFromMappin](#typeutilsgetclassfrommappin)
+    - [deserializers.findclass](#deserializersfindclass)
+  - [实战利用](#实战利用)
+  - [参考](#参考)
 ## 前置知识
-
 ### JAVA对象->Json
-
 #### 序列化方法
 
 * JSON.toJSONString:将一个java对象转化为JSON字符串.
@@ -436,6 +456,7 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 在`TypeUtils.loadClass(strVal, parser.getConfig().getDefaultClassLoader());`处直接设置了`cache`为False.
 
 ![image-20211024231333919](1.2.24反序列化/image-20211024231333919.png)
+## 实战利用
 
 ## 参考
 
