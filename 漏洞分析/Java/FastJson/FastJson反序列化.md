@@ -203,8 +203,7 @@ public class test extends AbstractTranslet {
 ### JNDI注入
 因为第一种的利用方式需要开启相关支持特性,通用性不高.而利用JNDI注入则不受该限制,只受JDK版本限制.
 #### JdbcRowSetImpl类
-在该类的`SetAutoCommit`函数中会对变量`datasourceName`进行Lookup,从而造成JNDI注入.
-
+利用FastJson自动调用set和get方法的特性来调用JdbcRowSetImpl类的`SetAutoCommit`方法,而在该类的`SetAutoCommit`函数中会对变量`datasourceName`进行Lookup,从而造成JNDI注入.
 ## 关于CheckAutoType
 
 CheckAutoType是针对在1.2.24后的补丁,在`DefaultJSONParser.class`的中增加了一个`config.checkAutoType`函数在实例化指定类时来进行过滤,思路即加入黑名单(denylist)和白名单(acceptlist,默认为空),对恶意类进行过滤,当反序列化的类名匹配到黑名单的类时即停止反序列化.
