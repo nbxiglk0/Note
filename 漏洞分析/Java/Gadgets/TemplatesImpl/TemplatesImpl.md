@@ -182,7 +182,7 @@ public class Poc extends AbstractTranslet {
 
 ### 关键点
 1. 通过反射来设置TemplatesImpl的相关属性.
-2. _name属性要不为空.
+2. _name属性要不为空.  
 ![](2021-12-21-19-17-09.png)
 3. _tfactory属性要为TransformerFactoryImpl对象.
 ![](2021-12-21-19-17-47.png)

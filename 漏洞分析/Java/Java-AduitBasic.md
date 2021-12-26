@@ -1,5 +1,5 @@
-# JAVA-AduitBasic
-- [JAVA-AduitBasic](#java-aduitbasic)
+# JAVA-Basic
+- [JAVA-Basic](#java-basic)
   - [JAVA类加载](#java类加载)
     - [加载](#加载)
     - [验证](#验证)
@@ -18,6 +18,7 @@
     - [调用处理器(InvocationHanlder)](#调用处理器invocationhanlder)
     - [创建代理对象](#创建代理对象)
     - [EventHanlder](#eventhanlder)
+  - [AnnotationType注解](#annotationtype注解)
   - [参考](#参考)
 
 ## JAVA类加载
@@ -143,6 +144,8 @@ Invoke call 2
 ```
 ### EventHanlder
 EventHandler是一个内置的实现了InvocationHandler的动态代理类,EventHanlder能够监控接口中的方法被调用了之后执行EventHanlder中成员的变量和方法.
+## AnnotationType注解
 
 ## 参考
-https://www.cnblogs.com/czwbig/p/11127222.html
+https://www.cnblogs.com/czwbig/p/11127222.html  
+https://www.cnblogs.com/-zhong/p/14961183.html
