@@ -58,7 +58,7 @@ public class ConstantTransformer implements Transformer, Serializable {
     }
 }吗,
 ```
-该类的作用是直接将输入的对象返回,方便后续操作.也喝过
+该类的作用是直接将输入的对象返回,方便后续操作.
 ### InvokerTransformer
 InvokerTransformer类也是实现了Transformer接口,实现的Transformer接口如下:
 ```java
