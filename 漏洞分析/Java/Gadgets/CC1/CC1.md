@@ -14,9 +14,10 @@
   - [LazyMap](#lazymap)
     - [AnnotationInvocationHandler#invoke](#annotationinvocationhandlerinvoke)
     - [POC构造](#poc构造-1)
-  - [调用流程](#调用流程)
-  - [8u71之后](#8u71之后)
+  - [调用流程图](#调用流程图)
+  - [8u71和3.2.2之后](#8u71和322之后)
 # CC1链
+依赖包:  commons-collections <= 3.2.1
 该链一共两种触发方式.  
 一种通过TransformedMap在AnnotationInvocationHandler#readObject()中调用setValue时触发设置的修饰回调进入Transformer利用链.  
 一种通过LazyMap在找不到指定值时会调用get()方法,其中又调用了factory.transformer方法进入Transformer利用链.其中利用了Proxy代理机制来进入
@@ -326,12 +327,10 @@ LazyMap和TransformedMap的区别在于触发的途径不同,TransformedMap是�
 调用栈如下:
 ![](2021-12-26-23-29-41.png)
 
-```flow
-graph LR
-A[s] --> B
-```
-## 调用流程
-![](2021-12-27-10-47-31.png)
-## 8u71之后
+## 调用流程图
+![](2021-12-27-22-03-44.png)
+## 8u71和3.2.2之后
 在8u71之后,在AnnotationInvocationHandler#readObject中作了修改,在添加新元素时不再使用我们添加了修饰器的Map,而是新建了一个LinkedHashMap,导致我们的修饰回调不再触发.
-![](2021-12-26-22-48-31.png)
+![](2021-12-26-22-48-31.png)  
+
+而在commons-collections 3.2.2中`TransformedMap`直接删除了`decorate`方法.
