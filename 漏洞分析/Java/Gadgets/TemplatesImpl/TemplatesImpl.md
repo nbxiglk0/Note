@@ -120,8 +120,9 @@ Class defineClass(final byte[] b) {
 4. defineTransletClasses()->TransletClassLoader()
 5. TransletClassLoader()->defineClass()
 6. defineClass()->加载指定类
-7. _class.newInstance()实例化指定类,触发静态代码块或者构造函数中的恶意代码.
+7. _class.newInstance()实例化指定类,触发静态代码块或者构造函数中的恶意代码.  
 
+![](2021-12-27-11-00-33.png)  
 继承了AbstractTranslet的恶意类实例代码:
 ```java
 public class Poc extends AbstractTranslet {

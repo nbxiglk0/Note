@@ -14,6 +14,7 @@
   - [LazyMap](#lazymap)
     - [AnnotationInvocationHandler#invoke](#annotationinvocationhandlerinvoke)
     - [POC构造](#poc构造-1)
+  - [调用流程](#调用流程)
   - [8u71之后](#8u71之后)
 # CC1链
 该链一共两种触发方式.  
@@ -312,7 +313,7 @@ LazyMap和TransformedMap的区别在于触发的途径不同,TransformedMap是�
 ```java
         Map outerMap = LazyMap.decorate(innerMap, transformerChain);
         Class clazz =
-                Class.forName("sun.reflect.annotation.AnnotationInvocationHandler");
+                Class.forName("sunm.reflect.annotation.AnnotationInvocationHandler");
         Constructor construct = clazz.getDeclaredConstructor(Class.class,
                 Map.class);
         construct.setAccessible(true);
@@ -324,6 +325,13 @@ LazyMap和TransformedMap的区别在于触发的途径不同,TransformedMap是�
 ```
 调用栈如下:
 ![](2021-12-26-23-29-41.png)
+
+```flow
+graph LR
+A[s] --> B
+```
+## 调用流程
+![](2021-12-27-10-47-31.png)
 ## 8u71之后
 在8u71之后,在AnnotationInvocationHandler#readObject中作了修改,在添加新元素时不再使用我们添加了修饰器的Map,而是新建了一个LinkedHashMap,导致我们的修饰回调不再触发.
 ![](2021-12-26-22-48-31.png)
