@@ -1,1 +1,56 @@
-漏洞复现及分析
+- 漏洞复现及分析
+  - JAVA
+    - Gadgets
+      - 7u21
+      - CC1
+      - CC2
+      - JdbcRowSetImpl
+      - TemplatesImpl
+      - URLDNS
+    - ADSelfService
+      - CVE-2021-40539
+    - FastJson
+      - FastJson反序列化
+    - Jboss
+      - JMX反序列化
+      - CVE-2017-12149
+      - CVE-2017-7504
+    - Log4j
+      - CVE-2021-44228
+    - WebLogic
+      - CVE-2019-2725反序列化
+      - CVE-2017-3248&CVE-2018-2628反序列化
+      - CVE-2017-12071反序列化
+      - CVE-2014-4210SSRF
+      - Attack T3协议 反序列化
+    - XMLDecoder
+      - XMLDecoder反序列化
+    - XStream
+      - CVE-2013-7285&CVE-2019-10193-反序列化
+      - CVE-2020-26217-远程代码执行
+      - CVE-2020-26258-SSRF
+      - CVE-2020-26259-任意文件删除
+      - CVE-2021-21344(45 47 50 51)-远程代码执行
+    - Shiro
+      - CVE-2016-4437
+      - CVE-2020-1957
+    - MetaBase
+      - CVE-2021-41227
+  - PHP
+    - Thinkphp
+      - tp5代码执行_Request
+      - tp5代码执行_任意模块调用
+      - tp5代码执行_缓存文件
+      - tp5反序列化利用链
+        - 5.0.x
+        - 5.1.x
+        - 5.2.x
+      - tp5文件包含
+    - joomla
+      - CVE-2015-8562
+    - Drupal
+      - CVE-2018-7600
+  - Python
+    - Flask
+      - SSTI
+  - CodeQL Study
