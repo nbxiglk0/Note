@@ -4,6 +4,11 @@
       - 7u21
       - CC1
       - CC2
+      - CC3
+      - CC4 
+      - CC5
+      - CC6
+      - CC7
       - JdbcRowSetImpl
       - TemplatesImpl
       - URLDNS

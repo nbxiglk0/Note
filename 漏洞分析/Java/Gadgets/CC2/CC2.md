@@ -9,7 +9,8 @@
   - [调用流程图](#调用流程图)
   - [commons-collections 4.1](#commons-collections-41)
 # CC2链
-依赖包:  commons-collections 4.0
+条件:  
+* commons-collections 4.0
 ## PriorityQueue
 ### PriorityQueue#readObject
 PriorityQueue类是一个优先队列数据结构,其实现序列化接口并重写了readObject()如下  
