@@ -9,9 +9,11 @@
   - [类加载器](#类加载器)
     - [类的唯一性和类加载器](#类的唯一性和类加载器)
     - [双亲委派模型](#双亲委派模型)
+  - [SercurityMannager](#sercuritymannager)
   - [反序列化](#反序列化)
     - [前置知识](#前置知识)
   - [反射](#反射)
+    - [Class](#class)
   - [Javassist](#javassist)
   - [JAVA代理机制](#java代理机制)
     - [代理类](#代理类)
@@ -56,12 +58,16 @@ JAVA虚拟机把描述一个类的数据从class文件加载到内存中,对其�
 1. Bootstrap 类加载器
 Bootstrap 类加载器是用 C++ 实现的，是虚拟机自身的一部分，如果获取它的对象，将会返回 null
 2. 扩展类加载器和应用类加载器是独立于虚拟机外部，为 Java 语言实现的，均继承自抽象类 java.lang.ClassLoader ，开发者可直接使用这两个类加载器,Application 类加载器对象可以由 ClassLoader.getSystemClassLoader() 方法的返回，所以一般也称它为系统类加载器。它负责加载用户类路径（ClassPath）上所指定的类库，如果应用程序中没有自定义过自己的类加载器，一般情况下这个就是程序中默认的类加载器。
+
+## SercurityMannager
 ## 反序列化
 ### 前置知识
 * 反序列化的类必须要显示声明**Serializable**接口.
 * 反序列化数据的特征:前四个字节为`0xaced(Magic Number)0005(Version).
 ## 反射
-
+反射可以在程序运行时来动态修改Java代码
+###  Class
+在程序运行时,
 ## Javassist
 Javassist是一个用来处理Java字节码的类库.
 ```java

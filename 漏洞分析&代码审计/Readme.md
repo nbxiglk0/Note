@@ -1,17 +1,5 @@
-- 漏洞复现及分析
+- 漏洞复现及分析&代码审计
   - JAVA
-    - Gadgets
-      - 7u21
-      - CC1
-      - CC2
-      - CC3
-      - CC4 
-      - CC5
-      - CC6
-      - CC7
-      - JdbcRowSetImpl
-      - TemplatesImpl
-      - URLDNS
     - ADSelfService
       - CVE-2021-40539
     - FastJson
@@ -41,6 +29,18 @@
       - CVE-2020-1957
     - MetaBase
       - CVE-2021-41227
+    - Gadgets
+      - 7u21
+      - CC1
+      - CC2
+      - CC3
+      - CC4 
+      - CC5
+      - CC6
+      - CC7
+      - JdbcRowSetImpl
+      - TemplatesImpl
+      - URLDNS
   - PHP
     - Thinkphp
       - tp5代码执行_Request
@@ -55,6 +55,10 @@
       - CVE-2015-8562
     - Drupal
       - CVE-2018-7600
+
+  - Go
+    - Apache APISIX Dashboard
+      - CVE-2021-45232
   - Python
     - Flask
       - SSTI

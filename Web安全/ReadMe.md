@@ -1,0 +1,20 @@
+- Web安全
+  - 前端安全
+    - 跨域安全
+    - CSRF
+    - XSS
+  - API安全
+  - GraplQL
+  - HTTP Request smuggling
+  - JAVA安全
+    - JAVA基础
+    - JNDI
+  - Mssql
+  - Mysql
+  - OAuth
+  - PHP安全
+  - Postgresql
+  - Spring
+  - Sqlite
+  - WAF
+  - XML安全
