@@ -29,7 +29,7 @@
       - CVE-2020-1957
     - MetaBase
       - CVE-2021-41227
-    - Gadgets
+    - 反序列化Gadgets
       - 7u21
       - CC1
       - CC2
@@ -59,6 +59,8 @@
   - Go
     - Apache APISIX Dashboard
       - CVE-2021-45232
+    - Grafana
+      - CVE-2021-43798 任意文件读取 
   - Python
     - Flask
       - SSTI
