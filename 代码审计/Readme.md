@@ -58,7 +58,7 @@
 
   - Go
     - Apache APISIX Dashboard
-      - CVE-2021-45232
+      - CVE-2021-45232 远程代码执行
     - Grafana
       - CVE-2021-43798 任意文件读取 
   - Python
