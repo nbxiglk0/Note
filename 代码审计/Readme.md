@@ -27,8 +27,12 @@
     - Shiro
       - CVE-2016-4437
       - CVE-2020-1957
+    - ApacheKylin
+      - CVE-2021-45456
     - MetaBase
       - CVE-2021-41227
+    - H2
+      - CVE-2021-42392
     - 反序列化Gadgets
       - 7u21
       - CC1
