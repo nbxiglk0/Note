@@ -1,7 +1,9 @@
 - 代码审计
   - JAVA
     - ADSelfService
-      - CVE-2021-40539
+      - CVE-2021-40539-RCE
+    - ManageEngine DesktopCentral
+      - CVE-2021-44515-authentication_Bypass&RCE
     - FastJson
       - FastJson反序列化
     - Jboss
@@ -20,19 +22,19 @@
       - XMLDecoder反序列化
     - XStream
       - CVE-2013-7285&CVE-2019-10193-反序列化
-      - CVE-2020-26217-远程代码执行
+      - CVE-2020-26217-RCE
       - CVE-2020-26258-SSRF
-      - CVE-2020-26259-任意文件删除
-      - CVE-2021-21344(45 47 50 51)-远程代码执行
+      - CVE-2020-26259-FileDelete
+      - CVE-2021-21344(45 47 50 51)-RCE
     - Shiro
-      - CVE-2016-4437
-      - CVE-2020-1957
+      - CVE-2016-4437-RCE
+      - CVE-2020-1957-Bypass
     - ApacheKylin
-      - CVE-2021-45456
+      - CVE-2021-45456-RCE
     - MetaBase
-      - CVE-2021-41227
+      - CVE-2021-41227-FileRead
     - H2
-      - CVE-2021-42392
+      - CVE-2021-42392-JNDI Inject
     - 反序列化Gadgets
       - 7u21
       - CC1
@@ -62,9 +64,9 @@
 
   - Go
     - Apache APISIX Dashboard
-      - CVE-2021-45232 远程代码执行
+      - CVE-2021-45232-RCE
     - Grafana
-      - CVE-2021-43798 任意文件读取 
+      - CVE-2021-43798-FileRead 
   - Python
     - Flask
       - SSTI
