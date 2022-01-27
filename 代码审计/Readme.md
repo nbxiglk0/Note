@@ -1,5 +1,8 @@
 - 代码审计
   - JAVA
+    - Jira
+      - CVE-2019-1158 未授权模板注入
+      - CVE-2021-39115 模板注入
     - ADSelfService
       - CVE-2021-40539-RCE
     - ManageEngine DesktopCentral
@@ -48,6 +51,8 @@
       - JdbcRowSetImpl
       - TemplatesImpl
       - URLDNS
+    - Metersphere
+      - 未授权RCE
   - PHP
     - Thinkphp
       - tp5代码执行_Request
