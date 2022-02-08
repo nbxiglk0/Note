@@ -41,7 +41,7 @@
       - CVE-2021-41227-FileRead
     - H2
       - CVE-2021-42392-JNDI Inject
-      - CVE-2021-23221-RCE
+      - CVE-2022-23221-RCE
     - 反序列化Gadgets
       - 7u21
       - CC1
