@@ -70,6 +70,8 @@
       - CVE-2015-8562
     - Drupal
       - CVE-2018-7600
+    - ImpressCMS
+      - CVE-2022-24977
 
   - Go
     - Apache APISIX Dashboard
