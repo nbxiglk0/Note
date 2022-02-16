@@ -34,6 +34,8 @@
     - [解析标签](#解析标签)
     - [php:// 输入输出流](#php-输入输出流)
     - [file_put_content()](#file_put_content)
+    - [upload_progress](#upload_progress)
+    - [str_replace](#str_replace)
 ## PHP配置相关
 和安全相关的php配置.
 ### register_globals(全局变量开关)
@@ -137,3 +139,5 @@ file_get_contents(),highlight_file(),fopen(),readfile(),fgetss(),fgets(),parse_i
 * php://filter: 文件操作过滤器,可读写文件.
 ### file_put_content()
 file_put_contents的第二个参数,可以传入一个数组.PHP会将这个数组拼接成字符串,写入文件中.可以用来绕过关键字检测(将关键字拆分).
+### upload_progress
+### str_replace
