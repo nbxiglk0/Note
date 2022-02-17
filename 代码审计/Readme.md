@@ -3,6 +3,7 @@
     - Jira
       - CVE-2019-1158 未授权模板注入
       - CVE-2021-39115 模板注入
+      - CVE-2021-43947 模板注入
     - Zoho ManageEngine 
       - ADSelfService
         - CVE-2021-40539-RCE
