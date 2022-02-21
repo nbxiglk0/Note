@@ -4,6 +4,9 @@
       - CVE-2019-1158 未授权模板注入
       - CVE-2021-39115 模板注入
       - CVE-2021-43947 模板注入
+    - Druid
+      - CVE-2021-25646 远程代码执行
+      - CVE-2021-26919 远程代码执行
     - Zoho ManageEngine 
       - ADSelfService
         - CVE-2021-40539-RCE
