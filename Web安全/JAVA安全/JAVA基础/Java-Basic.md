@@ -13,6 +13,7 @@
     - [配置](#配置)
   - [反序列化](#反序列化)
     - [前置知识](#前置知识)
+    - [JEP290](#jep290)
   - [反射](#反射)
     - [Class类](#class类)
     - [描述方法Method](#描述方法method)
@@ -166,6 +167,7 @@ directory/- 表示directory目录下的所有的.class及.jar文件，包括子�
 
 * 反序列化的类必须要显示声明**Serializable**接口.
 * 反序列化数据的特征:前四个字节为`0xaced(Magic Number)0005(Version).
+### JEP290
 
 ## 反射
 
@@ -358,7 +360,6 @@ EventHandler是一个内置的实现了InvocationHandler的动态代理类,Event
 2. 使用注解做权限控制。例如，shiro框架中有5个权限注解，我们也可以自定义注解进行权限控制.
 3. 代替配置文件功能，像Spring基于注解的配置，减少了xml的配置
 4. 可以生成文档，像Java代码注释中的@see、@param等。
-
 ## 参考
 
 https://www.cnblogs.com/czwbig/p/11127222.html
