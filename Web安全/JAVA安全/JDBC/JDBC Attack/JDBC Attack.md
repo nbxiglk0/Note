@@ -10,8 +10,8 @@
     - [参考](#参考)
   - [PostgreSQL](#postgresql)
 # JDBC Attack
-主要是当JDBC连接时的url可控时的攻击面  
-条件: JDBC连接时的url可控.  
+主要是当JDBC连接的url可控时的攻击面  
+条件: JDBC连接的url可控.  
 JDBC基础语法:
 ```
 jdbc:mysql://[host][,failoverhost...]
@@ -20,9 +20,10 @@ jdbc:mysql://[host][,failoverhost...]
     [&propertyName2][=propertyValue2]...
 ```
 ## Mysql
+通过在JDBC连接时指定autoDeserialize,queryInterceptors等参数让服务器自动进行反序列化恶意数据。
 ### autoDeserialize
 [官方文档](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-connp-props-blob-clob-processing.html#cj-conn-prop_autoDeserialize)  
-该属性用于指示处理BLOB或者CLOB字段类型时驱动是否自动识别并反序列化BLOB字段的数据,默认为false.
+该属性用于指示处理BLOB类型时驱动是否自动识别并反序列化BLOB字段的数据,默认为false.
 ![](1.png)
 ### queryInterceptors
 [官方文档](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-connp-props-statements.html#cj-conn-prop_queryInterceptors)  
@@ -62,7 +63,7 @@ jdbc:mysql://[host][,failoverhost...]
 ![](18.png)
 根据[参考文章](https://www.anquanke.com/post/id/203086#h2-4)说是由于从5.1.41版本开始，不再使用getObject的方式获取SHOW COLLATION的结果，此方法失效,实测是5.1.39以后,不再直接调用`ResultSetImpl#getObject`,但是对`SHOW COLLATION`结果的第三列直接调用了results.getObject(),最后还是进入的ResultSetImpl#getObject中.
 ![](9.png)
-其中字段类型为-4,-3,-2时会进入`getObjectDeserializingIfNeeded`方法,直接用[恶意mysql服务器](https://github.com/fnmsd/MySQL_Fake_Server)的设置即可满足此条件.    
+其中字段类型为-4,-3,-2(blob,bit,binary)时会进入`getObjectDeserializingIfNeeded`方法,直接用[恶意mysql服务器](https://github.com/fnmsd/MySQL_Fake_Server)的设置即可满足此条件.    
 ![](10.png)
 该方法和之前类似进行了反序列化操作,其中通过`this.connection.getAutoDeserialize()`来确定是否进行反序列化,在url中同之前一样设置`autoDeserialize=true`即可.
 ![](11.png)
