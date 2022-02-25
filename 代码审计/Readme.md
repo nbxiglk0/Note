@@ -46,8 +46,11 @@
     - H2
       - CVE-2021-42392-JNDI Inject
       - CVE-2022-23221-RCE
+    - PostgreSQL
+      - CVE-2022-21724-RCE
     - MySQL
       - CVE-2021-2471-XXE
+      - JDBC Driver反序列化
     - 反序列化Gadgets
       - 7u21
       - CC1

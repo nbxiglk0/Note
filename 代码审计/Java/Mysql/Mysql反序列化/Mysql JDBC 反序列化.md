@@ -1,4 +1,4 @@
-- [JDBC Attack](#jdbc-attack)
+- [Mysql JDBC 反序列化](#mysql-jdbc-反序列化)
   - [Mysql](#mysql)
     - [autoDeserialize](#autodeserialize)
     - [queryInterceptors](#queryinterceptors)
@@ -8,9 +8,8 @@
       - [总结](#总结)
     - [复现](#复现)
     - [参考](#参考)
-  - [PostgreSQL](#postgresql)
-# JDBC Attack
-主要是当JDBC连接的url可控时的攻击面  
+# Mysql JDBC 反序列化
+主要是当JDBC Mysql连接的url可控时的攻击面  
 条件: JDBC连接的url可控.  
 JDBC基础语法:
 ```
@@ -104,5 +103,4 @@ public class JDBC {
 ![](7.png)
 ### 参考
 https://www.anquanke.com/post/id/203086#h2-4
-## PostgreSQL 
 
