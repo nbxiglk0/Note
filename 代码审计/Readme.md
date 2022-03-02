@@ -30,6 +30,8 @@
       - CVE-2017-12071反序列化
       - CVE-2014-4210SSRF
       - Attack T3协议 反序列化
+    - Spring Cloud GateWay
+      - CVE-2022-22947 SPEL表达式注入
     - XMLDecoder
       - XMLDecoder反序列化
     - XStream
@@ -85,7 +87,6 @@
       - CVE-2018-7600
     - ImpressCMS
       - CVE-2022-24977
-
   - Go
     - Apache APISIX Dashboard
       - CVE-2021-45232-RCE
@@ -95,3 +96,4 @@
     - Flask
       - SSTI
   - CodeQL Study
+  - 漏洞修复
