@@ -16,6 +16,8 @@
         - CVE-2021-44077-RCE
     - FastJson
       - FastJson反序列化
+    - Hessian
+      - Hessian反序列化
     - Jboss
       - JMX反序列化
       - CVE-2017-12149
