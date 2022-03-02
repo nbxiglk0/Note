@@ -41,6 +41,8 @@
       - CVE-2020-1957-Bypass
     - ApacheKylin
       - CVE-2021-45456-RCE
+    - ApacheJspWiki
+      - CVE-2021-44140
     - MetaBase
       - CVE-2021-41227-FileRead
     - H2
