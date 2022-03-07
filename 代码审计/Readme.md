@@ -87,6 +87,8 @@
       - CVE-2018-7600
     - ImpressCMS
       - CVE-2022-24977
+    - SuiteCRM
+      - CVE-2021-45897
   - Go
     - Apache APISIX Dashboard
       - CVE-2021-45232-RCE
