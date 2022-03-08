@@ -2,6 +2,18 @@
 ## XSS
 ## CSRF
 ## XXE
+配置相关FEATURE来禁用外部实体。
+```java
+"http://apache.org/xml/features/disallow-doctype-decl", true 
+"http://apache.org/xml/features/nonvalidating/load-external-dtd", false
+"http://xml.org/sax/features/external-general-entities", false
+"http://xml.org/sax/features/external-parameter-entities", false
+```
+```java
+XMLConstants.ACCESS_EXTERNAL_DTD, ""
+XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""
+```
+### 
 ## SQL注入
 ## SPEL表达式注入
 使用`SimpleEvaluationContext`代替`StandardEvaluationContext` .  
