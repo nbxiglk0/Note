@@ -46,7 +46,9 @@
     - ApacheKylin
       - CVE-2021-45456-RCE
     - ApacheJspWiki
-      - CVE-2021-44140
+      - CVE-2021-44140-FileDelete
+    - ApacheAny23
+      - CVE-2022-25312-XXE
     - MetaBase
       - CVE-2021-41227-FileRead
     - H2
