@@ -43,6 +43,8 @@
     - Shiro
       - CVE-2016-4437-RCE
       - CVE-2020-1957-Bypass
+    - ApacheStorm
+      - CVE-2021-40865-反序列化
     - ApacheKylin
       - CVE-2021-45456-RCE
     - ApacheJspWiki
