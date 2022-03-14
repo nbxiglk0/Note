@@ -45,6 +45,7 @@
       - CVE-2020-1957-Bypass
     - ApacheStorm
       - CVE-2021-40865-反序列化
+      - CVE-2021-38294-命令注入
     - ApacheKylin
       - CVE-2021-45456-RCE
     - ApacheJspWiki
