@@ -102,5 +102,8 @@
   - Python
     - Flask
       - SSTI
+  - JS
+    - SqlPad
+      - CVE-2022-0944-模板注入
   - CodeQL Study
   - 漏洞修复
