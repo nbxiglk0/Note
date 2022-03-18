@@ -56,6 +56,9 @@
       - CVE-2021-41227-FileRead
     - Liquibase
       - CVE-2022-0839-XXE
+    - VcenterSrever
+      - CVE-2021-21972-SSRF
+      - CVE-2021-21973-RCE
     - H2
       - CVE-2021-42392-JNDI Inject
       - CVE-2022-23221-RCE
