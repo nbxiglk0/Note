@@ -404,6 +404,9 @@ https://mybatis.org/mybatis-3/zh/index.html
 支持Apache Velocity作为动态语言
 http://mybatis.org/velocity-scripting/
 ## OSGi模型
+https://blog.csdn.net/qq_27298687/article/details/73565191
+https://www.cnblogs.com/jingmoxukong/p/4546947.html
+https://www.jianshu.com/p/5406b2473157
 ## 参考
 https://www.cnblogs.com/czwbig/p/11127222.html
 https://www.cnblogs.com/-zhong/p/14961183.html
