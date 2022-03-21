@@ -1,4 +1,4 @@
-- [JAVA-Basic](#java-basic)
+- [JAVA语言基础](#java语言基础)
   - [JAVA类加载](#java类加载)
     - [加载](#加载)
     - [验证](#验证)
@@ -34,45 +34,41 @@
     - [使用场景](#使用场景)
   - [接口](#接口)
     - [static](#static)
+- [JAVA开发知识](#java开发知识)
+  - [JDBC](#jdbc)
+    - [Hibernate安全](#hibernate安全)
+      - [Native SQL查询](#native-sql查询)
+    - [Mybatis安全](#mybatis安全)
+      - [字符串替换](#字符串替换)
+      - [Bind支持OGNL](#bind支持ognl)
+      - [动态SQL中的插入脚本语言](#动态sql中的插入脚本语言)
+  - [OSGi模型](#osgi模型)
   - [参考](#参考)
-  - [参考](#参考-1)
-# JAVA-Basic
+# JAVA语言基础
 ## JAVA类加载
-
 JAVA虚拟机把描述一个类的数据从class文件加载到内存中,对其进行校验,解析,初始化为一个可以被JAVA虚拟机使用的java类型即为类加载过程.
 ![](2021-12-21-12-25-46.png)
-
 ### 加载
-
 1. 通过全限定类名来获取定义此类的二进制字节流。
 2. 将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。
 3. 在内存中生成一个代表这个类的 java.lang.Class 对象，作为方法区这个类的各种数据的访问入口。
-
 ### 验证
-
 1. 文件格式验证:文件头为0xCAFEBABY,主次版本号是否与虚拟机符合.
 2. 元数据校验:主要检测是否符合语言规范.
 3. 字节码验证:确定程序执行逻辑正确合法.
 4. 符号引用验证:验证是否可以把符号引用转化为直接引用.
    `-Xverify:none`开关可以关闭大部分验证措施来提高加载速度.
-
 ### 准备
-
 为类变量分配内存和设置初始值.
-
 ### 解析
-
 虚拟机将常量池内的符号引用替换为直接引用的过程。
 解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符 7 类符号引用进行。
-
 ### 初始化
-
 此阶段是执行 <clinit>() 方法的过程。
 <clinit>() 方法是由编译器按语句在源文件中出现的顺序，依次自动收集类中的所有类变量的赋值动作和静态代码块中的语句合并产生的。（不包括构造器中的语句。构造器是初始化对象的，类加载完成后，创建对象时候将调用的 <init>() 方法来初始化对象）
 静态语句块中只能访问到定义在静态语句块之前的变量，定义在它之后的变量，在前面的静态语句块可以赋值，但是不能访问.
 
 ## 类加载器
-
 把实现类加载阶段中的“通过一个类的全限定名来获取描述此类的二进制字节流”这个动作的代码模块称为"类加载器",将 class 文件二进制数据放入方法区内，然后在堆内（heap）创建一个 java.lang.Class 对象，Class 对象封装了类在方法区内的数据结构，并且向开发者提供了访问方法区内的数据结构的接口.
 
 ### 类的唯一性和类加载器
@@ -381,12 +377,35 @@ public class test implements sta {
 		sta.show();
 	}
 }
-
-
 ```
+# JAVA开发知识
+## JDBC
+### Hibernate安全
+官方文档:https://hibernate.net.cn/column/1.html
+#### Native SQL查询
+原生SQL查询,通过执行Session.createSQLQuery()获取这个接口.
+原生查询支持位置参数和命名参数：
+```JAVA
+Query query = sess.createSQLQuery("SELECT * FROM CATS WHERE NAME like ?").addEntity(Cat.class);
+List pusList = query.setString(0, "Pus%").list();
+     
+query = sess.createSQLQuery("SELECT * FROM CATS WHERE NAME like :name").addEntity(Cat.class);
+List pusList = query.setString("name", "Pus%").list(); 
+```
+### Mybatis安全
+Mybatis文档
+https://mybatis.org/mybatis-3/zh/index.html
+#### 字符串替换
+![](1.png)
+#### Bind支持OGNL
+![](2.png)
+#### 动态SQL中的插入脚本语言
+![](3.png)
+支持Apache Velocity作为动态语言
+http://mybatis.org/velocity-scripting/
+## OSGi模型
 ## 参考
-## 参考
-
 https://www.cnblogs.com/czwbig/p/11127222.html
 https://www.cnblogs.com/-zhong/p/14961183.html
+https://www.cnblogs.com/jingmoxukong/p/4546947.html
 <<Spring快速入门>>

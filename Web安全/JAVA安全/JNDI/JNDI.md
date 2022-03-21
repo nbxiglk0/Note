@@ -6,7 +6,7 @@
   - [JNDI注入](#jndi注入)
     - [动态转换](#动态转换)
   - [RMI](#rmi)
-    - [## JAVA RMI远程方法调用过程](#-java-rmi远程方法调用过程)
+    - [JAVA RMI远程方法调用过程](#java-rmi远程方法调用过程)
     - [Stub获取](#stub获取)
     - [实例代码](#实例代码)
     - [JRMP](#jrmp)
@@ -71,7 +71,7 @@ Remote methed Invocation,远程方法调用,远程服务器实现具体的Java�
 JAVA对RMI的实现为JRMP协议,Weblogic的实现为T3协议.
 >1. RMI的传输是基于反序列化的。
 >2. 对于任何一个以对象为参数的RMI接口，你都可以发一个自己构建的对象，迫使服务器端将这个对象按任何一个存在于服务端classpath（不在classpath的情况，可以看后面RMI动态加载类相关部分）中的可序列化类来反序列化恢复对象。
-### ## JAVA RMI远程方法调用过程
+### JAVA RMI远程方法调用过程
 ![](1.png)
 通信流程:
 1. Server端监听一个端口，这个端口是JVM随机选择的.
