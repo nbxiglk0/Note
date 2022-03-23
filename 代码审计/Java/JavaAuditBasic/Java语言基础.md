@@ -34,15 +34,6 @@
     - [使用场景](#使用场景)
   - [接口](#接口)
     - [static](#static)
-- [JAVA开发知识](#java开发知识)
-  - [JDBC](#jdbc)
-    - [Hibernate安全](#hibernate安全)
-      - [Native SQL查询](#native-sql查询)
-    - [Mybatis安全](#mybatis安全)
-      - [字符串替换](#字符串替换)
-      - [Bind支持OGNL](#bind支持ognl)
-      - [动态SQL中的插入脚本语言](#动态sql中的插入脚本语言)
-  - [OSGi模型](#osgi模型)
   - [参考](#参考)
 # JAVA语言基础
 ## JAVA类加载
@@ -378,35 +369,6 @@ public class test implements sta {
 	}
 }
 ```
-# JAVA开发知识
-## JDBC
-### Hibernate安全
-官方文档:https://hibernate.net.cn/column/1.html
-#### Native SQL查询
-原生SQL查询,通过执行Session.createSQLQuery()获取这个接口.
-原生查询支持位置参数和命名参数：
-```JAVA
-Query query = sess.createSQLQuery("SELECT * FROM CATS WHERE NAME like ?").addEntity(Cat.class);
-List pusList = query.setString(0, "Pus%").list();
-     
-query = sess.createSQLQuery("SELECT * FROM CATS WHERE NAME like :name").addEntity(Cat.class);
-List pusList = query.setString("name", "Pus%").list(); 
-```
-### Mybatis安全
-Mybatis文档
-https://mybatis.org/mybatis-3/zh/index.html
-#### 字符串替换
-![](1.png)
-#### Bind支持OGNL
-![](2.png)
-#### 动态SQL中的插入脚本语言
-![](3.png)
-支持Apache Velocity作为动态语言
-http://mybatis.org/velocity-scripting/
-## OSGi模型
-https://blog.csdn.net/qq_27298687/article/details/73565191
-https://www.cnblogs.com/jingmoxukong/p/4546947.html
-https://www.jianshu.com/p/5406b2473157
 ## 参考
 https://www.cnblogs.com/czwbig/p/11127222.html
 https://www.cnblogs.com/-zhong/p/14961183.html

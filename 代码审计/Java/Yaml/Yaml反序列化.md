@@ -1,6 +1,8 @@
+- [Yaml反序列化](#yaml反序列化)
+  - [SnakeYaml基础](#snakeyaml基础)
 # Yaml反序列化
-
-## Yaml
+一般来说使用的较多的是snakeyaml组件进行yaml解析.
+## SnakeYaml基础
 Yaml的主要方法
 ```java
 String	dump(Object data)
