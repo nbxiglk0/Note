@@ -60,6 +60,8 @@
       - CVE-2021-21972-SSRF
       - CVE-2021-21973-RCE
       - CVE-2021-21985-RCE
+      - CVE-2021-22005-RCE
+      - CVE-2021-22017-Bypass&RCE
     - VMware Carbon Black
       - CVE-2021-21982-认证绕过漏洞
     - Spring Cloud Function
