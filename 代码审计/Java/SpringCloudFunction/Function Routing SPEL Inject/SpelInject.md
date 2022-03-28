@@ -5,6 +5,7 @@
     - [Function Routing](#function-routing)
     - [functionFromExpression](#functionfromexpression)
   - [漏洞复现](#漏洞复现)
+  - [默认配置下RCE](#默认配置下rce)
   - [补丁](#补丁)
 # SpringCloudFunction Function Routing SPEL 注入
 ## 影响版本
@@ -20,7 +21,7 @@ https://github.com/spring-cloud/spring-cloud-function/releases/tag/v3.2.2
 **静态方式**：使用`spring.cloud.function.definition`Header头,在后面跟要执行的函数名，如`spring.cloud.function.definition=foor|bar`。  
 **动态方式**：使用`spring.cloud.function.routing-expression`Header头，该方式使用SPEL表达式来执行该Header头的值来动态得到要执行的函数功能。
 ### functionFromExpression
-开启动态执行功能需要在配置文件中指定`spring.cloud.function.definition:functionRouter`.
+开启动态执行功能需要在配置文件中指定`spring.cloud.function.definition:functionRuter`.
 ![](2.png)  
 相关代码实现如下：
 查看是否开启`functionRouter`.
@@ -35,7 +36,11 @@ https://github.com/spring-cloud/spring-cloud-function/releases/tag/v3.2.2
 在Header头中指定`spring.cloud.function.routing-expression`为恶意SPEL表达式。
 ![](7.png)  
 相关调用栈如下:
-![](8.png)
+![](12.png)
+## 默认配置下RCE
+来源于:@pen4uin
+在默认配置下即`spring.cloud.function.definition:functionRuter`为空的情况下,通过指定特定的路由`/functionRouter`也可以触发SPEL执行.
+![](11.png)
 ## 补丁
 修复方式主要是判断了表达式的来源，如果使用Header中外部输入的话则使用`SimpleEvaluationContext `上下文计算表达式，如果是内部输入的话才使用`StandardEvaluationContext `.
 ![](9.png)
