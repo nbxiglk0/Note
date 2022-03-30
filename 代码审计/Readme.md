@@ -52,6 +52,8 @@
       - CVE-2021-44140-FileDelete
     - ApacheAny23
       - CVE-2022-25312-XXE
+    - ApacheSpark
+      - SparkShell Command Inject
     - MetaBase
       - CVE-2021-41227-FileRead
     - Liquibase
