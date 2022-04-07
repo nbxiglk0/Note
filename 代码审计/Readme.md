@@ -54,6 +54,8 @@
       - CVE-2022-25312-XXE
     - ApacheSpark
       - SparkShell Command Inject
+    - Confluence
+      - CVE-2021-26084 ONGL Inject
     - MetaBase
       - CVE-2021-41227-FileRead
     - Liquibase
