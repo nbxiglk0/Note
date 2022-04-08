@@ -110,6 +110,8 @@
       - CVE-2022-24977
     - SuiteCRM
       - CVE-2021-45897
+    - Smarty
+      - CVE-2021-26120
   - Go
     - Apache APISIX Dashboard
       - CVE-2021-45232-RCE
