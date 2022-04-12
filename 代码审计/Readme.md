@@ -68,6 +68,8 @@
       - CVE-2021-22017-Bypass&RCE
     - VMware Carbon Black
       - CVE-2021-21982-认证绕过漏洞
+    - VMware WorkSpace ONE Access
+      - CVE-2022-22954-SSTI
     - Spring Cloud Function
       - Function Routing SPEL 注入
     - H2
