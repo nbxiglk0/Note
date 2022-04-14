@@ -70,6 +70,7 @@
       - CVE-2021-21982-认证绕过漏洞
     - VMware WorkSpace ONE Access
       - CVE-2022-22954-SSTI
+      - CVE-2022-22957(22958) JDBC URL Attack
     - Spring Cloud Function
       - Function Routing SPEL 注入
     - H2

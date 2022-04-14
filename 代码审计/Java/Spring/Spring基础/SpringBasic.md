@@ -26,6 +26,7 @@
       - [RequestMappingHandlerMapping](#requestmappinghandlermapping)
       - [BeanNameUrlHandlerMapping](#beannameurlhandlermapping)
       - [SimpleUrlHanlderMapping](#simpleurlhanldermapping)
+    - [跳转](#跳转)
     - [URL参数传递](#url参数传递)
       - [@RequestParam](#requestparam)
       - [@PathVariable](#pathvariable)
@@ -166,6 +167,8 @@ SimpleUrlHandlerMapping则是通过url来实现handler的映射,有两种常见�
 </bean>
 </bean>
 ```
+### 跳转
+https://blog.csdn.net/qq_39696115/article/details/112220405
 ### URL参数传递
 Controller接受参数主要使用@RequestParam和@PathVariable.
 #### @RequestParam
