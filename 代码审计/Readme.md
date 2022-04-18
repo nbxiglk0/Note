@@ -32,6 +32,8 @@
       - Attack T3协议 反序列化
     - Spring Cloud GateWay
       - CVE-2022-22947 SPEL表达式注入
+    - Struts2
+      - CVE-2019-0230(s2-059)OGNL注入
     - XMLDecoder
       - XMLDecoder反序列化
     - XStream
