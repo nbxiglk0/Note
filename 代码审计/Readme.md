@@ -34,6 +34,8 @@
       - CVE-2022-22947 SPEL表达式注入
     - Struts2
       - CVE-2019-0230(s2-059)OGNL注入
+    - Spring MVC
+      - CVE-2022-22965 远程代码执行
     - XMLDecoder
       - XMLDecoder反序列化
     - XStream
