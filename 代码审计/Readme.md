@@ -80,6 +80,8 @@
     - H2
       - CVE-2021-42392-JNDI Inject
       - CVE-2022-23221-RCE
+    - F5 Bigip
+      - CVE-2022-1388 RCE
     - PostgreSQL
       - CVE-2022-21724-RCE
     - MySQL
