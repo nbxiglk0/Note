@@ -34,6 +34,8 @@
       - CVE-2022-22947 SPEL表达式注入
     - Struts2
       - CVE-2019-0230(s2-059)OGNL注入
+      - CVE-2020-17530(s2-061)OGNL Sandbox bypass
+      - OGNL SandBox Escape History
     - Spring MVC
       - CVE-2022-22965 远程代码执行
     - XMLDecoder
