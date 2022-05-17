@@ -60,6 +60,7 @@
     - Struts2
       - CVE-2019-0230(s2-059)OGNL注入
       - CVE-2020-17530(s2-061)OGNL Sandbox bypass
+      - CVE-20210-31895(S2-062)OGNL Sandbox bypass
       - OGNL SandBox Escape History
     - Spring MVC
       - CVE-2022-22965 远程代码执行
