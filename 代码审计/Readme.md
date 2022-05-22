@@ -29,6 +29,7 @@
       - CVE-2019-1158 未授权模板注入
       - CVE-2021-39115 模板注入
       - CVE-2021-43947 模板注入
+      - CVE-2022-0540 authentication_Bypass
     - Zoho ManageEngine 
       - ADSelfService
         - CVE-2021-40539-RCE
@@ -60,6 +61,7 @@
     - Struts2
       - CVE-2019-0230(s2-059)OGNL注入
       - CVE-2020-17530(s2-061)OGNL Sandbox bypass
+      - CVE-20210-31895(S2-062)OGNL Sandbox bypass
       - OGNL SandBox Escape History
     - Spring MVC
       - CVE-2022-22965 远程代码执行
