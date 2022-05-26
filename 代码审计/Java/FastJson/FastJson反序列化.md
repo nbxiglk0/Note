@@ -455,7 +455,6 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 在`TypeUtils.loadClass(strVal, parser.getConfig().getDefaultClassLoader());`处直接设置了`cache`为False.
 
 ![image-20211024231333919](1.2.24反序列化/image-20211024231333919.png)
-## 实战利用
 
 ## 参考
 
