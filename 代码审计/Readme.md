@@ -86,6 +86,7 @@
       - CVE-2017-3248&CVE-2018-2628反序列化
       - CVE-2017-12071反序列化
       - CVE-2014-4210SSRF
+      - CVE-2022-21306反序列化
       - Attack T3协议 反序列化
     - XMLDecoder
       - XMLDecoder反序列化
