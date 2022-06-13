@@ -12,7 +12,8 @@
     - ApacheSpark
       - SparkShell Command Inject
     - Confluence
-      - CVE-2021-26084 ONGL Inject
+      - CVE-2021-26084 OGNL Inject
+      - CVE-2022-26134 OGNL Inject
     - Druid
       - CVE-2021-25646 远程代码执行
       - CVE-2021-26919 远程代码执行
