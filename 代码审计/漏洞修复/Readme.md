@@ -4,10 +4,10 @@
 ## XXE
 配置相关FEATURE来禁用外部实体。
 ```java
-"http://apache.org/xml/features/disallow-doctype-decl", true 
-"http://apache.org/xml/features/nonvalidating/load-external-dtd", false
-"http://xml.org/sax/features/external-general-entities", false
-"http://xml.org/sax/features/external-parameter-entities", false
+"http://apache.org/xml/features/disallow-doctype-decl", true //禁止DOCTYPE 声明
+"http://apache.org/xml/features/nonvalidating/load-external-dtd", false //禁止导入外部dtd文件
+"http://xml.org/sax/features/external-general-entities", false //禁止外部普通实体
+"http://xml.org/sax/features/external-parameter-entities", false //禁止外部参数实体
 ```
 ```java
 XMLConstants.ACCESS_EXTERNAL_DTD, ""

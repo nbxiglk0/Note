@@ -1,5 +1,7 @@
 - 代码审计
   - JAVA
+    - Apache NIFI XXE
+      - CVE-2022-29265-XXE
     - ApacheStorm
       - CVE-2021-40865-反序列化
       - CVE-2021-38294-命令注入
