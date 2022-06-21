@@ -1,5 +1,7 @@
 - 代码审计
   - JAVA
+    - Apache Flume
+      - CVE-2022-25167-JNDI注入
     - Apache NIFI XXE
       - CVE-2022-29265-XXE
     - ApacheStorm
