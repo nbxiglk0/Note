@@ -5,9 +5,11 @@
   - [SQL注入](#sql注入)
   - [命令注入](#命令注入)
   - [SPEL表达式注入](#spel表达式注入)
+    - [StandardEvaluationContext](#standardevaluationcontext)
+      - [参考](#参考)
   - [JNDI 注入](#jndi-注入)
     - [限制协议](#限制协议)
-      - [参考](#参考)
+      - [参考](#参考-1)
 # 漏洞修复方案
 ## XSS
 ## CSRF
@@ -30,8 +32,11 @@ XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""
 ![](1.png)
 2. 对外部传入数据进行过滤。可通过白名单限制字符类型，仅允许字符、数字、下划线；或过滤转义以下符号：|;&$><`（反引号）!
 ## SPEL表达式注入
+### StandardEvaluationContext
 使用`SimpleEvaluationContext`代替`StandardEvaluationContext` .  
 [官方文档](https://docs.spring.io/spring-framework/docs/5.0.6.RELEASE/javadoc-api/org/springframework/expression/spel/support/SimpleEvaluationContext.html)  
+#### 参考
+[CVE-2022-22980](https://github.com/spring-projects/spring-data-mongodb/commit/5e241c6ea55939c9587fad5058a07d7b3f0ccbd3)
 ## JNDI 注入
 ### 限制协议
 1. 只允许java协议

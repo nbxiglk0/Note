@@ -61,6 +61,8 @@
       - JDBC Driver反序列化
     - PostgreSQL
       - CVE-2022-21724-RCE
+    - Spring DataMongdb
+      - CVE-2022-222980 SPEL表达式注入
     - Spring Cloud GateWay
       - CVE-2022-22947 SPEL表达式注入
     - Struts2
