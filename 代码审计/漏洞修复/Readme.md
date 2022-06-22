@@ -1,5 +1,8 @@
 - [漏洞修复方案](#漏洞修复方案)
   - [XSS](#xss)
+    - [Referer XSS](#referer-xss)
+      - [Referrer-Policy](#referrer-policy)
+    - [UA XSS](#ua-xss)
   - [CSRF](#csrf)
   - [XXE](#xxe)
   - [SQL注入](#sql注入)
@@ -12,6 +15,18 @@
       - [参考](#参考-1)
 # 漏洞修复方案
 ## XSS
+### Referer XSS
+#### Referrer-Policy
+Referrer-Policy: no-referrer——不显示Referrer的任何信息在请求头中。  
+Referrer-Policy: no-referrer-when-downgrade——这是默认值。当从https网站跳转到http网站或者请求其资源时（安全降级HTTPS→HTTP），不显示Referrer的信息，其他情况（安全同级HTTPS→HTTPS，或者HTTP→HTTP）则在Referrer中显示完整的源网站的URL信息。  
+*Referrer-Policy: origin——表示浏览器在Referrer字段中只显示源网站的源地址（即协议、域名、端口），而不包括完整的路径。*  
+*Referrer-Policy: origin-when-cross-origin——当发请求给同源网站时，浏览器会在Referrer中显示完整的URL信息，发个非同源网站时，则只显示源地址（协议、域名、端口）*  
+*Referrer-Policy: same-origin——表示浏览器只会显示Referrer信息给同源网站，并且是完整的URL信息。所谓同源网站，是协议、域名、端口都相同的网站。*  
+Referrer-Policy: strict-origin——该策略更为安全些，和origin策略相似，只是不允许Referrer信息显示在从https网站到http网站的请求中（安全降级）。  
+Referrer-Policy: strict-origin-when-cross-origin——和origin-when-cross-origin相似，只是不允许Referrer信息显示在从https网站到http网站的请求中（安全降级）。  
+Referrer-Policy: unsafe-url——浏览器总是会将完整的URL信息显示在Referrer字段中，无论请求发给任何网站。   
+### UA XSS
+好像无利用场景，无危害
 ## CSRF
 ## XXE
 配置相关FEATURE来禁用外部实体。
