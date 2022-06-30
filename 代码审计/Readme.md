@@ -42,6 +42,8 @@
         - CVE-2021-44515-authentication_Bypass&RCE
       - ServiceDesk Plus
         - CVE-2021-44077-RCE
+    - Zimbra Mail
+      - CVE-2022-27925 授权RCE
     - FastJson
       - FastJson反序列化
     - Jboss
