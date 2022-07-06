@@ -35,6 +35,7 @@
       - CVE-2021-39115 模板注入
       - CVE-2021-43947 模板注入
       - CVE-2022-0540 authentication_Bypass
+      - CVE-2022-26135 SSRF
     - Zoho ManageEngine 
       - ADSelfService
         - CVE-2021-40539-RCE
