@@ -92,6 +92,7 @@
     - VMware WorkSpace ONE Access
       - CVE-2022-22954-SSTI
       - CVE-2022-22957(22958) JDBC URL Attack
+      - CVE-2022–31656 authentication_Bypass
     - WebLogic
       - CVE-2019-2725反序列化
       - CVE-2017-3248&CVE-2018-2628反序列化
