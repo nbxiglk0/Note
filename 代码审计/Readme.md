@@ -64,8 +64,9 @@
     - MySQL
       - CVE-2021-2471-XXE
       - JDBC Driver反序列化
-    - PostgreSQL
+    - PostgreSQL jdbc
       - CVE-2022-21724-RCE
+      - CVE-2022-31197 SQL注入
     - Spring DataMongdb
       - CVE-2022-222980 SPEL表达式注入
     - Spring Cloud GateWay
