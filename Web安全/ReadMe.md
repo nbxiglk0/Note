@@ -3,6 +3,7 @@
     - 跨域安全
     - CSRF
     - XSS
+    - Web cache poisoning
   - API安全
   - AEM Security
   - GraplQL
