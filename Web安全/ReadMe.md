@@ -3,7 +3,6 @@
     - 跨域安全
     - CSRF
     - XSS
-    - Web cache poisoning
   - API安全
   - AEM Security
   - GraplQL
@@ -17,7 +16,10 @@
     - Hessian
   - Mssql
   - Mysql
+  - Cache poisoning
+    - Web cache poisoning
   - OAuth
+    - JWT Attacks
   - PHP安全
     - FPM&DiableFunction
     - PHP-TMP-LFI
