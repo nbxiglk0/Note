@@ -1,6 +1,6 @@
 - Web安全
   - 前端安全
-    - 跨域安全
+    - CORS
     - CSRF
     - XSS
   - API安全
