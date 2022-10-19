@@ -1,5 +1,90 @@
+- [GraphQL 安全](#graphql-安全)
+  - [基础查询](#基础查询)
+    - [Interospection Query](#interospection-query)
+  - [Json --> form-urlencoded --> CSRF](#json----form-urlencoded----csrf)
 # GraphQL 安全
+## 基础查询
+### Interospection Query
+该查询可以返回所有系统定义的字段。
+```graphql
+  query IntrospectionQuery {
+    __schema {
+      queryType { name }
+      mutationType { name }
+      subscriptionType { name }
+      types {
+        ...FullType
+      }
+      directives {
+        name
+        description
+        args {
+          ...InputValue
+        }
+        onOperation
+        onFragment
+        onField
+      }
+    }
+  }
 
+  fragment FullType on __Type {
+    kind
+    name
+    description
+    fields(includeDeprecated: true) {
+      name
+      description
+      args {
+        ...InputValue
+      }
+      type {
+        ...TypeRef
+      }
+      isDeprecated
+      deprecationReason
+    }
+    inputFields {
+      ...InputValue
+    }
+    interfaces {
+      ...TypeRef
+    }
+    enumValues(includeDeprecated: true) {
+      name
+      description
+      isDeprecated
+      deprecationReason
+    }
+    possibleTypes {
+      ...TypeRef
+    }
+  }
+
+  fragment InputValue on __InputValue {
+    name
+    description
+    type { ...TypeRef }
+    defaultValue
+  }
+
+  fragment TypeRef on __Type {
+    kind
+    name
+    ofType {
+      kind
+      name
+      ofType {
+        kind
+        name
+        ofType {
+          kind
+          name
+        }
+      }
+    }
+  }
+```
 ## Json --> form-urlencoded --> CSRF
 
 正常GraphQL查询的content-type为application/json

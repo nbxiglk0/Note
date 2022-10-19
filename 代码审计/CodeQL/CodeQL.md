@@ -95,6 +95,6 @@ import java
 from Call call select call,call.getQualifier()
 ```   
 如logger.info()中的info调用,该调用的限定表达式就是logger,返回类型也是Expr.
-![](2022-09-28-15-35-38.png)
+![](2022-09-28-15-39-27.png)
 ## 参考
 https://codeql.github.com/docs

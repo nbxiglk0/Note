@@ -74,5 +74,6 @@ UA: chrome
 ## 修复方案
 1. 完全禁用缓存(不现实)
 2. 保证缓存的内容为真正的全静态内容，不是动态生成的响应。
+3. 
 ## 参考
 https://portswigger.net/web-security/web-cache-poisoning
