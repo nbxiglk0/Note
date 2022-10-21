@@ -1,10 +1,14 @@
 - [GraphQL 安全](#graphql-安全)
   - [基础查询](#基础查询)
-    - [Interospection Query](#interospection-query)
+    - [GraphQL Field Suggestions](#graphql-field-suggestions)
+    - [Interospection Query(自省查询)](#interospection-query自省查询)
   - [Json --> form-urlencoded --> CSRF](#json----form-urlencoded----csrf)
 # GraphQL 安全
 ## 基础查询
-### Interospection Query
+### GraphQL Field Suggestions
+GraphQL字段自动推测,当开启开功能时，如果输入不存在的字段,GraphQL会自动回显相似的字段。
+![](2022-10-21-17-46-55.png)
+### Interospection Query(自省查询)
 该查询可以返回所有系统定义的字段。
 ```graphql
   query IntrospectionQuery {

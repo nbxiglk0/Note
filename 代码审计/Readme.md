@@ -1,157 +1,155 @@
 - 代码审计
   - JAVA
     - Apache Flume
-      - CVE-2022-25167-JNDI注入
-      - CVE-2022-34916-JNDI注入
+      - [CVE-2022-25167-JNDI注入](./Java/Apache%20Flume/CVE-2022-25167/CVE-2022-25167.md)
+      - [CVE-2022-34916-JNDI注入](./Java/Apache%20Flume/CVE-2022-34916/CVE-2022-34916.md)
     - Apache NIFI XXE
-      - CVE-2022-29265-XXE
+      - [CVE-2022-29265-XXE](./java/Apache%20Nifi/CVE-2022-29265/CVE-2022-29265.md)
     - ApacheStorm
-      - CVE-2021-40865-反序列化
-      - CVE-2021-38294-命令注入
+      - [CVE-2021-40865-反序列化](./java/ApacheStorm/CVE-2021-40865/CVE-2021-40865.md)
+      - [CVE-2021-38294-命令注入](./java/ApacheStorm/CVE-2021-38294/CVE-2021-38294.md)
     - ApacheKylin
-      - CVE-2021-45456-RCE
+      - [CVE-2021-45456-RCE](./Java/ApacheKylin/CVE-2021-45456/CVE-2021-45456.md)
     - ApacheJspWiki
-      - CVE-2021-44140-FileDelete
+      - [CVE-2021-44140-FileDelete](./java/ApacheJspWiki/CVE-2021-44140/CVE-2021-44140.md)
     - ApacheAny23
-      - CVE-2022-25312-XXE
+      - [CVE-2022-25312-XXE](./java/ApacheAny23/CVE-2022-25312/CVE-2022-25312.md)
     - ApacheSpark
-      - SparkShell Command Inject
+      - [SparkShell Command Inject](./java/ApacheSpark/SparkShell%20Commd%20Inject/SparkShell%20Commd%20Inject.md)
     - Confluence
-      - CVE-2021-26084 OGNL Inject
-      - CVE-2022-26134 OGNL Inject
+      - [CVE-2021-26084 OGNL Inject](./java/Confluence/CVE-2021-26084/CVE-2021-26084.md)
+      - [CVE-2022-26134 OGNL Inject](./java/Confluence/CVE-2022-26134/CVE-2022-26134.md)
     - Druid
-      - CVE-2021-25646 远程代码执行
-      - CVE-2021-26919 远程代码执行
+      - [CVE-2021-25646 远程代码执行](./java/ApacheDruid/CVE-2021-25646/CVE-2021-25646.md)
+      - [CVE-2021-26919 远程代码执行](./java/ApacheDruid/CVE-2021-26919/CVE-2021-26919.md)
     - FastJson
-      - FastJson反序列化
+      - [FastJson反序列化](./java/FastJson/FastJson反序列化.md)
     - F5 Bigip
-      - CVE-2022-1388 RCE
+      - [CVE-2022-1388 RCE](./java/F5%20BigIP/CVE-2022-1388/CVE-2022-1388.md)
     - Hessian
-      - Hessian反序列化
+      - [Hessian反序列化](./Java/Hessian/Hessian反序列化/Hessian反序列化.md)
     - H2
-      - CVE-2021-42392-JNDI Inject
-      - CVE-2022-23221-RCE
+      - [CVE-2021-42392-JNDI Inject](./Java/H2/CVE-2021-42392/CVE-2021-42392.md)
+      - [CVE-2022-23221-RCE](./Java/H2/CVE-2022-23221/CVE-2022-23221.md)
     - Jira
-      - CVE-2019-1158 未授权模板注入
-      - CVE-2021-39115 模板注入
-      - CVE-2021-43947 模板注入
-      - CVE-2022-0540 authentication_Bypass
-      - CVE-2022-26135 SSRF
-      - CVE-2022-36799 模板注入
+      - [CVE-2019-11581 未授权模板注入](./java/Jira/CVE-2019-11581-%E6%9C%AA%E6%8E%88%E6%9D%83SSTI/CVE-2019-11581%20%E6%9C%AA%E6%8E%88%E6%9D%83%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5.md)
+      - [CVE-2021-39115 模板注入](./java/jira/CVE-2021-39115-模板注入/CVE-2021-39115-模板注入.md)
+      - [CVE-2021-43947 模板注入](./java/jira/CVE-2021-43947-%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5/CVE-2021-43947-%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5.md)
+      - [CVE-2022-0540 authentication_Bypass](./Java/Jira/CVE-2022-0540-AuthenticationBypass/CVE-2022-0540.md)
+      - [CVE-2022-26135 SSRF]()
+      - [CVE-2022-36799 模板注入]()
     - Zoho ManageEngine 
       - ADSelfService
-        - CVE-2021-40539-RCE
+        - [CVE-2021-40539-RCE]()
       - DesktopCentral
-        - CVE-2021-44515-authentication_Bypass&RCE
+        - [CVE-2021-44515-authentication_Bypass&RCE]()
       - ServiceDesk Plus
-        - CVE-2021-44077-RCE
+        - [CVE-2021-44077-RCE]()
     - Zimbra Mail
-      - CVE-2022-27925 授权RCE
-    - FastJson
-      - FastJson反序列化
+      - [CVE-2022-27925 授权RCE]()
     - Jboss
-      - JMX反序列化
-      - CVE-2017-12149
-      - CVE-2017-7504
+      - [JMX反序列化]()
+      - [CVE-2017-12149]()
+      - [CVE-2017-7504]()
     - Log4j
-      - CVE-2021-44228
+      - [CVE-2021-44228]()
     - Liquibase
-      - CVE-2022-0839-XXE
+      - [CVE-2022-0839-XXE]()
     - MetaBase
-      - CVE-2021-41227-FileRead
+      - [CVE-2021-41227-FileRead]()
     - Metersphere
-      - 未授权RCE
+      - [未授权RCE]()
     - MySQL
-      - CVE-2021-2471-XXE
-      - JDBC Driver反序列化
+      - [CVE-2021-2471-XXE]()
+      - [JDBC Driver反序列化]()
     - PostgreSQL jdbc
-      - CVE-2022-21724-RCE
-      - CVE-2022-31197 SQL注入
+      - [CVE-2022-21724-RCE]()
+      - [CVE-2022-31197 SQL注入]()
     - Spring DataMongdb
-      - CVE-2022-222980 SPEL表达式注入
+      - [CVE-2022-222980 SPEL表达式注入]()
     - Spring Cloud GateWay
-      - CVE-2022-22947 SPEL表达式注入
+      - [CVE-2022-22947 SPEL表达式注入]()
     - Struts2
-      - CVE-2019-0230(s2-059)OGNL注入
-      - CVE-2020-17530(s2-061)OGNL Sandbox bypass
-      - CVE-20210-31895(S2-062)OGNL Sandbox bypass
-      - OGNL SandBox Escape History
+      - [CVE-2019-0230(s2-059)OGNL注入]
+      - [CVE-2020-17530(s2-061)OGNL Sandbox bypass]()
+      - [CVE-20210-31895(S2-062)OGNL Sandbox bypass]()
+      - [OGNL SandBox Escape History]()
     - Spring MVC
-      - CVE-2022-22965 远程代码执行
+      - [CVE-2022-22965 远程代码执行]()
     - Shiro
-      - CVE-2016-4437-RCE
-      - CVE-2020-1957-Bypass
+      - [CVE-2016-4437-RCE]()
+      - [CVE-2020-1957-Bypass]()
     - Spring Cloud Function
-      - Function Routing SPEL 注入
+      - [Function Routing SPEL 注入]()
     - VcenterSrever
-      - CVE-2021-21972-SSRF
-      - CVE-2021-21973-RCE
-      - CVE-2021-21985-RCE
-      - CVE-2021-22005-RCE
-      - CVE-2021-22017-Bypass&RCE
+      - [CVE-2021-21972-SSRF]()
+      - [CVE-2021-21973-RCE]()
+      - [CVE-2021-21985-RCE]()
+      - [CVE-2021-22005-RCE]()
+      - [CVE-2021-22017-Bypass&RCE]()
     - VMware Carbon Black
-      - CVE-2021-21982-认证绕过漏洞
+      - [CVE-2021-21982-认证绕过漏洞]()
     - VMware WorkSpace ONE Access
-      - CVE-2022-22954-SSTI
-      - CVE-2022-22957(22958) JDBC URL Attack
-      - CVE-2022–31656 authentication_Bypass
+      - [CVE-2022-22954-SSTI]()
+      - [CVE-2022-22957(22958) JDBC URL Attack]()
+      - [C]VE-2022–31656 authentication_Bypass]()
     - WebLogic
-      - CVE-2019-2725反序列化
-      - CVE-2017-3248&CVE-2018-2628反序列化
-      - CVE-2017-12071反序列化
-      - CVE-2014-4210SSRF
-      - CVE-2022-21306反序列化
-      - Attack T3协议 反序列化
+      - [CVE-2019-2725反序列化]()
+      - [CVE-2017-3248&CVE-2018-2628反序列化]()
+      - [CVE-2017-12071反序列化]()
+      - [CVE-2014-4210SSRF]()
+      - [CVE-2022-21306反序列化]()
+      - [Attack T3协议 反序列化]()
     - XMLDecoder
-      - XMLDecoder反序列化
+      - [XMLDecoder反序列化]()
     - XStream
-      - CVE-2013-7285&CVE-2019-10193-反序列化
-      - CVE-2020-26217-RCE
-      - CVE-2020-26258-SSRF
-      - CVE-2020-26259-FileDelete
-      - CVE-2021-21344(45 47 50 51)-RCE
+      - [CVE-2013-7285&CVE-2019-10193-反序列化]()
+      - [CVE-2020-26217-RCE]()
+      - [CVE-2020-26258-SSRF]()
+      - [CVE-2020-26259-FileDelete]()
+      - [CVE-2021-21344(45 47 50 51)-RCE]()
     - 反序列化Gadgets
-      - 7u21
-      - CC1
-      - CC2
-      - CC3
-      - CC4 
-      - CC5
-      - CC6
-      - CC7
-      - JdbcRowSetImpl
-      - TemplatesImpl
-      - URLDNS
+      - [7u21]()
+      - [CC1]()
+      - [CC2]()
+      - [CC3]()
+      - [CC4]()
+      - [CC5]()
+      - [CC6]()
+      - [CC7]()
+      - [JdbcRowSetImpl]()
+      - [TemplatesImpl]()
+      - [URLDNS]()
   - PHP
     - Drupal
-      - CVE-2018-7600
+      - [CVE-2018-7600]()
     - ImpressCMS
-      - CVE-2022-24977
+      - [CVE-2022-24977]()
     - joomla
-      - CVE-2015-8562
+      - [CVE-2015-8562]()
     - Thinkphp
-      - tp5代码执行_Request
-      - tp5代码执行_任意模块调用
-      - tp5代码执行_缓存文件
-      - tp5反序列化利用链
-        - 5.0.x
-        - 5.1.x
-        - 5.2.x
-      - tp5文件包含
+      - [tp5代码执行_Request]()
+      - [tp5代码执行_任意模块调用]()
+      - [tp5代码执行_缓存文件]()
+      - [tp5反序列化利用链]()
+        - [5.0.x]()
+        - [5.1.x]()
+        - [5.2.x]()
+      - [tp5文件包含]()
     - SuiteCRM
-      - CVE-2021-45897
+      - [CVE-2021-45897]()
     - Smarty
-      - CVE-2021-26120
+      - [CVE-2021-26120]()
   - Go
     - Apache APISIX Dashboard
-      - CVE-2021-45232-RCE
+      - [CVE-2021-45232-RCE]()
     - Grafana
-      - CVE-2021-43798-FileRead 
+      - [CVE-2021-43798-FileRead]()
   - Python
     - Flask
-      - SSTI
+      - [SSTI]()
   - JS
     - SqlPad
-      - CVE-2022-0944-模板注入
-  - CodeQL Study
-  - 漏洞修复
+      - [CVE-2022-0944-模板注入]()
+  - [CodeQL Study]()
+  - [漏洞修复]()
