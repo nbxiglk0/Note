@@ -10,6 +10,8 @@
     - [防御](#防御)
   - [其它跨域解决方案](#其它跨域解决方案)
     - [通过jsonp跨域](#通过jsonp跨域)
+      - [jsonp劫持](#jsonp劫持)
+        - [修复方案](#修复方案)
     - [document.domain + iframe跨域](#documentdomain--iframe跨域)
     - [location.hash + iframe](#locationhash--iframe)
     - [window.name + iframe跨域](#windowname--iframe跨域)
@@ -134,8 +136,22 @@ https://subdomain.vulnerable-website.com/?xss=<script>cors poc</script>
 5.CORS 不能替代服务器端安全策略
 CORS定义了浏览器行为，绝不能替代服务器端对敏感数据的保护 - 攻击者可以直接伪造来自任何受信任来源的请求。因此，除了正确配置的 CORS 之外，Web 服务器还应继续对敏感数据（如身份验证和会话管理）应用保护。
 ## 其它跨域解决方案
-
 ### 通过jsonp跨域
+Jsonp(JSON with Padding) 是 json 的一种"使用模式"，可以让网页从别的域名（网站）那获取资料，即跨域读取数据。它利用的是script标签的 src 属性不受同源策略影响的特性，使网页可以得到从其他来源动态产生的 json 数据，因此可以用来实现跨域读取数据.  
+#### jsonp劫持
+当网站通过 JSONP 方式传递用户敏感信息时，攻击者可以伪造 JSONP 调用页面，诱导被攻击者访问来达到窃取用户信息的目的；jsonp 数据劫持就是攻击者获取了本应该传给网站其他接口的数据.  
+其实就是客户端A需要访问B的数据时,先在本地写一个回调函数用于处理获取的数据,然后访问B提供的jsonp接口,并在callback参数填写本地的回调函数,这样B返回信息后会自动调用callback函数,如果整个过程中缺少安全认证的话则可以用类似于CSRF的方式诱导受害者访问恶意页面后获取到其敏感的json数据.
+```javascript
+function myData(data) {
+    console.log('[!] DATA: ', data);
+}
+<script src="http://root.cool/userinfo?fn=myData"></script>
+```
+##### 修复方案
+1. 接受请求时检查referer来源；
+2. 在请求中添加token并在后端进行验证；
+3. 严格过滤 callback 函数名及 JSON 里数据的输出。
+
 ### document.domain + iframe跨域
 ### location.hash + iframe
 ### window.name + iframe跨域
@@ -147,4 +163,5 @@ CORS定义了浏览器行为，绝不能替代服务器端对敏感数据的保�
 # 参考
 
 https://segmentfault.com/a/1190000011145364  
-https://portswigger.net/web-security/cors
+https://portswigger.net/web-security/cors  
+http://drops.xmd5.com/static/drops/papers-6630.html
