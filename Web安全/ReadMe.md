@@ -3,6 +3,8 @@
   - [CSRF](./CSRF/CSRF.md)
   - [XSS](./XSS/XSS.md)
   - [CRLF](./CRLF/CRLF.md)
+  - [SSRF](./SSRF/SSRF.md)
+  - [XXE](./XXE/XXE.md)
   - [AEM Security](./AEM%20Security/AEM.md)
   - [GraplQL](./GraphQL/GraphQL.md)
   - [HTTP Request smuggling](./HTTP%20request%20smuggling/HTTP%20request%20smuggling.md)
@@ -16,4 +18,3 @@
     - [JWT Attacks](./OAuth/JWT%20attacks/JWT%20attacks.md)
     - [OAuth2.0](./OAuth/OAuth2.0.md)
   - [WAF](./WAF/WAF.md)
-  - [XML安全](./XML安全/XML安全.md)
