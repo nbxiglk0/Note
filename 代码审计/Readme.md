@@ -16,6 +16,9 @@
       - [CVE-2022-25312-XXE](./java/ApacheAny23/CVE-2022-25312/CVE-2022-25312.md)
     - ApacheSpark
       - [SparkShell Command Inject](./java/ApacheSpark/SparkShell%20Commd%20Inject/SparkShell%20Commd%20Inject.md)
+    - ApacheBatik
+      - [CVE-2022-38398-SSRF](./java/Apache%20Batik/CVE-2022-38398/CVE-2022-38398.md)
+      - [CVE-2022-40146-RCE](./java/Apache%20Batik/CVE-2022-40146/CVE-2022-40146.md)
     - Confluence
       - [CVE-2021-26084 OGNL Inject](./java/Confluence/CVE-2021-26084/CVE-2021-26084.md)
       - [CVE-2022-26134 OGNL Inject](./java/Confluence/CVE-2022-26134/CVE-2022-26134.md)
