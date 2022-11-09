@@ -16,6 +16,9 @@
       - [CVE-2022-25312-XXE](./java/ApacheAny23/CVE-2022-25312/CVE-2022-25312.md)
     - ApacheSpark
       - [SparkShell Command Inject](./java/ApacheSpark/SparkShell%20Commd%20Inject/SparkShell%20Commd%20Inject.md)
+    - ApacheBatik
+      - [CVE-2022-38398-SSRF](./java/Apache%20Batik/CVE-2022-38398/CVE-2022-38398.md)
+      - [CVE-2022-40146-RCE](./java/Apache%20Batik/CVE-2022-40146/CVE-2022-40146.md)
     - Confluence
       - [CVE-2021-26084 OGNL Inject](./java/Confluence/CVE-2021-26084/CVE-2021-26084.md)
       - [CVE-2022-26134 OGNL Inject](./java/Confluence/CVE-2022-26134/CVE-2022-26134.md)
@@ -36,120 +39,119 @@
       - [CVE-2021-39115 模板注入](./java/jira/CVE-2021-39115-模板注入/CVE-2021-39115-模板注入.md)
       - [CVE-2021-43947 模板注入](./java/jira/CVE-2021-43947-%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5/CVE-2021-43947-%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5.md)
       - [CVE-2022-0540 authentication_Bypass](./Java/Jira/CVE-2022-0540-AuthenticationBypass/CVE-2022-0540.md)
-      - [CVE-2022-26135 SSRF]()
-      - [CVE-2022-36799 模板注入]()
+      - [CVE-2022-26135 SSRF](./java/jira/CVE-2022-26135-SSRF/CVE-2022-26135.md)
+      - [CVE-2022-36799 模板注入](./Java/Jira/CVE-2022-36799-%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5/CVE-2022-36799.md)
     - Zoho ManageEngine 
       - ADSelfService
-        - [CVE-2021-40539-RCE]()
+        - [CVE-2021-40539-RCE](./java/Zoho%20ManageEngine/ADSelfService/CVE-2021-40539-%E6%9C%AA%E6%8E%88%E6%9D%83%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/CVE-2021-40539-%E6%9C%AA%E6%8E%88%E6%9D%83%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C.md)
       - DesktopCentral
-        - [CVE-2021-44515-authentication_Bypass&RCE]()
+        - [CVE-2021-44515-authentication_Bypass&RCE](./JAVA/Zoho%20ManageEngine/DesktopCentral/CVE-2021-44515/CVE-2021-44515.md)
       - ServiceDesk Plus
-        - [CVE-2021-44077-RCE]()
+        - [CVE-2021-44077-RCE](./Java/Zoho%20ManageEngine/ServiceDesk%20Plus/CVE-2021-44077/CVE-2021-44077-RCE.md)
     - Zimbra Mail
-      - [CVE-2022-27925 授权RCE]()
+      - [CVE-2022-27925 授权RCE](./Java/Zimbra/CVE-2022-27925/CVE-2022-27925.md)
     - Jboss
-      - [JMX反序列化]()
-      - [CVE-2017-12149]()
-      - [CVE-2017-7504]()
+      - [JMX反序列化](./java/Jboss/JMX反序列化/JMX反序列化.md)
+      - [CVE-2017-12149](./java/Jboss/CVE-2017-12149%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-12149.md)
+      - [CVE-2017-7504](./java/Jboss/CVE-2017-7504%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-7504.md)
     - Log4j
-      - [CVE-2021-44228]()
+      - [CVE-2021-44228](./java/Log4j/CVE-2021-44228-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/CVE-2021-44228-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C.md)
     - Liquibase
-      - [CVE-2022-0839-XXE]()
+      - [CVE-2022-0839-XXE](./java/Liquibase/CVE-2022-0839/CVE-2022-0839.md)
     - MetaBase
-      - [CVE-2021-41227-FileRead]()
+      - [CVE-2021-41227-FileRead](./java/MetaBase/CVE-2021-41227-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96/CVE-2021-41277-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96.md)
     - Metersphere
-      - [未授权RCE]()
+      - [未授权RCE](./java/Metersphere/远程代码执行/Metersphere%20远程代码执行.md)
     - MySQL
-      - [CVE-2021-2471-XXE]()
-      - [JDBC Driver反序列化]()
+      - [CVE-2021-2471-XXE](./Java/Mysql/CVE-2021-2471/CVE-2021-2471.md)
+      - [JDBC Driver反序列化](./java/Mysql/Mysql反序列化/Mysql%20JDBC%20反序列化.md)
     - PostgreSQL jdbc
-      - [CVE-2022-21724-RCE]()
-      - [CVE-2022-31197 SQL注入]()
+      - [CVE-2022-21724-RCE](./Java/PosetgreSQL/CVE-2022-21724/CVE-2022-21724.md)
+      - [CVE-2022-31197 SQL注入](./java/PosetgreSQL/CVE-2022-31197/CVE-2022-31197.md)
     - Spring DataMongdb
-      - [CVE-2022-222980 SPEL表达式注入]()
+      - [CVE-2022-222980 SPEL表达式注入](./Java/SpringDataMongodb/CVE-2022-22980/CVE-2022-22980.md)
     - Spring Cloud GateWay
-      - [CVE-2022-22947 SPEL表达式注入]()
+      - [CVE-2022-22947 SPEL表达式注入](./java/Spring%20Cloud%20GateWay/CVE-2022-22947/CVE-2022-22947.md)
     - Struts2
-      - [CVE-2019-0230(s2-059)OGNL注入]
-      - [CVE-2020-17530(s2-061)OGNL Sandbox bypass]()
-      - [CVE-20210-31895(S2-062)OGNL Sandbox bypass]()
-      - [OGNL SandBox Escape History]()
+      - [CVE-2019-0230(s2-059)OGNL注入](./java/Struts2/CVE-2019-0230(s2-059)/cve-2019-0230(s2-059).md)
+      - [CVE-2020-17530(s2-061)OGNL Sandbox bypass](./java/Struts2/CVE-2020-17530(s2-061)/CVE-2020-17530(s2-061).md)
+      - [CVE-2021-31895(S2-062)OGNL Sandbox bypass](./java/Struts2/CVE-2021-31805(s2-062)/CVE-2021-31805(s2-062).md)
+      - [OGNL SandBox Escape History](./java/Struts2/Ognl%E6%B2%99%E7%9B%92%E9%80%83%E9%80%B8/Ognl%E6%B2%99%E7%9B%92%E9%80%83%E9%80%B8.md)
     - Spring MVC
-      - [CVE-2022-22965 远程代码执行]()
+      - [CVE-2022-22965 远程代码执行](./java/SpringFramework/CVE-2022-22965/CVE-2022-22965.md)
     - Shiro
-      - [CVE-2016-4437-RCE]()
-      - [CVE-2020-1957-Bypass]()
+      - [CVE-2016-4437-RCE](./java/shiro/Shiro1.2.4-CVE-2016-4437.md)
+      - [CVE-2020-1957-Bypass](./java/shiro/Shiro-CVE-2020-1957.md)
     - Spring Cloud Function
-      - [Function Routing SPEL 注入]()
+      - [Function Routing SPEL 注入](./java/SpringCloudFunction/Function%20Routing%20SPEL%20Inject/SpelInject.md)
     - VcenterSrever
-      - [CVE-2021-21972-SSRF]()
-      - [CVE-2021-21973-RCE]()
-      - [CVE-2021-21985-RCE]()
-      - [CVE-2021-22005-RCE]()
-      - [CVE-2021-22017-Bypass&RCE]()
+      - [CVE-2021-21972-SSRF](./JAVA/Vcenter/CVE-2021-21972/CVE-2021-21972.md)
+      - [CVE-2021-21973-RCE](./java/Vcenter/CVE-2021-21973/CVE-2021-21973.md)
+      - [CVE-2021-21985-RCE](./Java/Vcenter/CVE-2021-21985/CVE-2021-21985.md)
+      - [CVE-2021-22005-RCE](./java/Vcenter/CVE-2021-22005/CVE-2021-22005.md)
+      - [CVE-2021-22017-Bypass&RCE](./Java/Vcenter/CVE-2021-22017/CVE-2021-22017.md)
     - VMware Carbon Black
-      - [CVE-2021-21982-认证绕过漏洞]()
+      - [CVE-2021-21982-认证绕过漏洞](./Java/VMware%20Carbon%20Black/CVE-2021-21982/CVE-2021-21982.md)
     - VMware WorkSpace ONE Access
-      - [CVE-2022-22954-SSTI]()
-      - [CVE-2022-22957(22958) JDBC URL Attack]()
-      - [C]VE-2022–31656 authentication_Bypass]()
+      - [CVE-2022-22954-SSTI](./java/VMware%20Workspace%20One%20Acess/CVE-2022-22954/CVE-2022-22954.md)
+      - [CVE-2022-22957(22958) JDBC URL Attack](./java/VMware%20Workspace%20One%20Acess/CVE-2022-22957(22958)/CVE-2022-22957(22958).md)
+      - [CVE-2022–31656 authentication_Bypass](./java/VMware%20Workspace%20One%20Acess/CVE-2022%E2%80%9331656/CVE-2022%E2%80%9331656.md)
     - WebLogic
-      - [CVE-2019-2725反序列化]()
-      - [CVE-2017-3248&CVE-2018-2628反序列化]()
-      - [CVE-2017-12071反序列化]()
-      - [CVE-2014-4210SSRF]()
-      - [CVE-2022-21306反序列化]()
-      - [Attack T3协议 反序列化]()
+      - [CVE-2019-2725反序列化](./java/Weblogic/CVE-2019-2725%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2019-2725-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
+      - [CVE-2017-3248&CVE-2018-2628反序列化](./java/Weblogic/CVE-2017-3248%26CVE-2018-2628%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-3248%26CVE-2018-2628-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
+      - [CVE-2017-12071反序列化](./java/Weblogic/CVE-2017-12071%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-12071-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
+      - [CVE-2022-21306反序列化](./java/Weblogic/CVE-2022-21306%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2022-21306%20%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
+      - [Attack T3协议 反序列化](./java/Weblogic/Attack%20T3协议%20反序列化/Attack%20T3协议%20反序列化Attack%20T3协议%20反序列化.md)
     - XMLDecoder
-      - [XMLDecoder反序列化]()
+      - [XMLDecoder反序列化](./java/XMLDecoder/XMLDecoder%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
     - XStream
-      - [CVE-2013-7285&CVE-2019-10193-反序列化]()
-      - [CVE-2020-26217-RCE]()
-      - [CVE-2020-26258-SSRF]()
-      - [CVE-2020-26259-FileDelete]()
-      - [CVE-2021-21344(45 47 50 51)-RCE]()
+      - [CVE-2013-7285&CVE-2019-10193-反序列化](./java/XStream/CVE-2013-7285%26CVE-2019-10193-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/Xstream-CVE-2013-7285反序列化.md)
+      - [CVE-2020-26217-RCE](./java/XStream/CVE-2020-26217-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/CVE-2020-26217-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C.md)
+      - [CVE-2020-26258-SSRF](./java/XStream/CVE-2020-26258-SSRF/CVE-2020-26258-SSRF.md)
+      - [CVE-2020-26259-FileDelete](./Java/XStream/CVE-2020-26259-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4/CVE-2020-26259-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4.md)
+      - [CVE-2021-21344(45 47 50 51)-RCE](./Java/XStream/cve-CVE-2021-21344(45%2047%2050%2051)-远程代码执行/CVE-2021-21344-远程代码执行.md)
     - 反序列化Gadgets
-      - [7u21]()
-      - [CC1]()
-      - [CC2]()
-      - [CC3]()
-      - [CC4]()
-      - [CC5]()
-      - [CC6]()
-      - [CC7]()
-      - [JdbcRowSetImpl]()
-      - [TemplatesImpl]()
-      - [URLDNS]()
+      - [7u21](./java/Gadgets/7u21/7u21.md)
+      - [CC1](./java/Gadgets/CC1/CC1.md)
+      - [CC2](./Java/Gadgets/CC2/CC2.md)
+      - [CC3](./Java/Gadgets/CC2/CC3.md)
+      - [CC4](./Java/Gadgets/CC2/CC4.md)
+      - [CC5](./Java/Gadgets/CC2/CC5.md)
+      - [CC6](./Java/Gadgets/CC2/CC6.md)
+      - [CC7](./Java/Gadgets/CC2/CC7.md)
+      - [JdbcRowSetImpl](./Java/Gadgets/JdbcRowSetImpl/JdbcRowSetImpl.md)
+      - [TemplatesImpl](./Java/Gadgets/TemplatesImpl/TemplatesImpl.md)
+      - [URLDNS](./Java/Gadgets/URLDNS/URLDNS.md)
   - PHP
     - Drupal
-      - [CVE-2018-7600]()
+      - [CVE-2018-7600](./php/Drupal/CVE-2018-7600.md)
     - ImpressCMS
-      - [CVE-2022-24977]()
+      - [CVE-2022-24977](./php/ImpressCMS/CVE-2022-24977/CVE-2022-24977.md)
     - joomla
-      - [CVE-2015-8562]()
+      - [CVE-2015-8562](./php/joomla/CVE-2015-8562-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
     - Thinkphp
-      - [tp5代码执行_Request]()
-      - [tp5代码执行_任意模块调用]()
-      - [tp5代码执行_缓存文件]()
-      - [tp5反序列化利用链]()
-        - [5.0.x]()
-        - [5.1.x]()
-        - [5.2.x]()
-      - [tp5文件包含]()
+      - [tp5代码执行_Request](./php/thinkphp/tp5%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C_Request/tp5_request.md)
+      - [tp5代码执行_任意模块调用](./php/thinkphp/tp5%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C_%E4%BB%BB%E6%84%8F%E6%A8%A1%E5%9D%97%E8%B0%83%E7%94%A8/tp5_callanyfuc.md)
+      - [tp5代码执行_缓存文件](./php/thinkphp/tp5代码执行_缓存文件/tp5_remote_code.md)
+      - [tp5反序列化利用链]
+        - [5.0.x](./php/thinkphp/tp5%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE/tp5.0.x.md)
+        - [5.1.x](./php/thinkphp/tp5%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE/tp5.1.x.md)
+        - [5.2.x](./php/thinkphp/tp5%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE/tp5.2.x.md)
+      - [tp5文件包含](./php/thinkphp/tp5文件包含/tp5.md)
     - SuiteCRM
-      - [CVE-2021-45897]()
+      - [CVE-2021-45897](./php/SuiteCRM/CVE-2021-45897/CVE-2021-45897.md)
     - Smarty
-      - [CVE-2021-26120]()
+      - [CVE-2021-26120](./php/Smarty/CVE-2021-26120/CVE-2021-26120.md)
   - Go
     - Apache APISIX Dashboard
-      - [CVE-2021-45232-RCE]()
+      - [CVE-2021-45232-RCE](./go/Apache%20APISIX%20Dashboard/CVE-2021-45232%20%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/CVE-2021-45232%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C.md)
     - Grafana
-      - [CVE-2021-43798-FileRead]()
+      - [CVE-2021-43798-FileRead](./go/Grafana/CVE-2021-43798-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96/CVE-2021-43798-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96.md)
   - Python
     - Flask
-      - [SSTI]()
+      - [SSTI](./python/Flask/Flask.md)
   - JS
     - SqlPad
-      - [CVE-2022-0944-模板注入]()
-  - [CodeQL Study]()
-  - [漏洞修复]()
+      - [CVE-2022-0944-模板注入](./Js/Sqlpad/CVE-2022-0944/CVE-2022-0944.md)
+  - [CodeQL Study](./CodeQL/CodeQL.md)
+  - [漏洞修复](./漏洞修复/Readme.md)
