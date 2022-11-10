@@ -24,5 +24,6 @@
 3. 实体编码
 
 ## 参考
-https://tech.meituan.com/2018/09/27/fe-security.html
+https://tech.meituan.com/2018/09/27/fe-security.html  
+https://security.tencent.com/index.php/blog/msg/107
 
