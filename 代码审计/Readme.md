@@ -19,6 +19,8 @@
     - ApacheBatik
       - [CVE-2022-38398-SSRF](./Java/Apache%20Batik/CVE-2022-38398/CVE-2022-38398.md)
       - [CVE-2022-40146-RCE](./Java/Apache%20Batik/CVE-2022-40146/CVE-2022-40146.md)
+    - Bitbucket 
+      - [CVE-2022-43781-RCE](./Java/Bitbucket/CVE-2022%E2%80%9343781/CVE-2022%E2%80%9343781.md)
     - Confluence
       - [CVE-2021-26084 OGNL Inject](./Java/Confluence/CVE-2021-26084/CVE-2021-26084.md)
       - [CVE-2022-26134 OGNL Inject](./Java/Confluence/CVE-2022-26134/CVE-2022-26134.md)
