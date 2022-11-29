@@ -151,7 +151,17 @@ function myData(data) {
 1. 接受请求时检查referer来源；
 2. 在请求中添加token并在后端进行验证；
 3. 严格过滤 callback 函数名及 JSON 里数据的输出。
+4. 设置SameSite: (https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Set-Cookie/SameSite)  
 
+SameSite 是 HTTP 响应头 Set-Cookie 的属性之一。它允许您声明该 Cookie 是否仅限于第一方或者同一站点上下文。
+SameSite 接受下面三个值：
+* Lax:Cookies 允许与顶级导航一起发送，并将与第三方网站发起的 GET 请求一起发送。这是浏览器中的默认值。
+
+* Strict:Cookies 只会在第一方上下文中发送，不会与第三方网站发起的请求一起发送。
+
+* None:Cookie 将在所有上下文中发送，即允许跨站发送。
+
+以前 None 是默认值，但最近的浏览器版本将 Lax 作为默认值，以便对某些类型的跨站请求伪造(CSRF)攻击具有相当强的防御能力。
 ### document.domain + iframe跨域
 ### location.hash + iframe
 ### window.name + iframe跨域
