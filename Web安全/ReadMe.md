@@ -8,6 +8,7 @@
   - [AEM Security](./AEM%20Security/AEM.md)
   - [GraplQL](./GraphQL/GraphQL.md)
   - [HTTP Request smuggling](./HTTP%20request%20smuggling/HTTP%20request%20smuggling.md)
+  - [MemoryShell](./MemoryShell/MemoryShell.md)
   - [SQL Inject](./SQL%20Inject/)
     - [Mssql](./SQL%20Inject/Mssql/mssql.md)
     - [Mysql](./SQL%20Inject/Mysql/mysql.md)
