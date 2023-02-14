@@ -79,6 +79,8 @@
       - [CVE-2020-17530(s2-061)OGNL Sandbox bypass](./Java/Struts2/CVE-2020-17530(s2-061)/CVE-2020-17530(s2-061).md)
       - [CVE-2021-31895(S2-062)OGNL Sandbox bypass](./Java/Struts2/CVE-2021-31805(s2-062)/CVE-2021-31805(s2-062).md)
       - [OGNL SandBox Escape History](./Java/Struts2/Ognl%E6%B2%99%E7%9B%92%E9%80%83%E9%80%B8/Ognl%E6%B2%99%E7%9B%92%E9%80%83%E9%80%B8.md)
+    - IBM WebShpere
+      - [CVE-2020-4450 反序列化远程代码执行](./Java/IBM%20WebSphere/CVE-2020-4450/CVE-2020-4450.md)
     - Spring MVC
       - [CVE-2022-22965 远程代码执行](./Java/SpringFramework/CVE-2022-22965/CVE-2022-22965.md)
     - Shiro
