@@ -1,4 +1,4 @@
-- [MemoryShell](#memoryshell)
+- [JAVA 内存马](#java-内存马)
   - [基于Servlet 3.0 API](#基于servlet-30-api)
     - [Filter](#filter)
       - [FilterChain](#filterchain)
@@ -54,7 +54,7 @@
     - [清除](#清除)
   - [参考](#参考)
 
-# MemoryShell
+# JAVA 内存马
 内存马的实现思路主要是通过Servlet API(或者web框架类似的功能)提供的动态修改特性(不同容器对该接口实现不同)向运行中的Web容器实时植入相关运行代码,而这种方式添加的代码会直接被加入到内存中被执行而不会在硬盘上以文件的方式存在,即无文件落地执行,从而称为内存马,这导致内存马比常规的Webshell更难被发现和查杀,隐蔽性更高,缺点則是因为是放在在内存中执行,正常情况下如果Web容器重启则相关植入的代码则会被清除.  
 ## 基于Servlet 3.0 API
 从Servlet 3.0 API开始允许用户在代码中动态注册Servlet,Filter,Listener,而Servlet,Listener,Filter都是由`javax.servlet.ServletContext`去加载.

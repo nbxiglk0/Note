@@ -66,7 +66,6 @@
       - [未授权RCE](./Java/Metersphere/远程代码执行/Metersphere%20远程代码执行.md)
     - MySQL
       - [CVE-2021-2471-XXE](./Java/Mysql/CVE-2021-2471/CVE-2021-2471.md)
-      - [JDBC Driver反序列化](./Java/Mysql/Mysql反序列化/Mysql%20JDBC%20反序列化.md)
     - PostgreSQL jdbc
       - [CVE-2022-21724-RCE](./Java/PosetgreSQL/CVE-2022-21724/CVE-2022-21724.md)
       - [CVE-2022-31197 SQL注入](./Java/PosetgreSQL/CVE-2022-31197/CVE-2022-31197.md)
