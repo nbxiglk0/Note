@@ -558,7 +558,7 @@ public class JndiDemo {
 ![](2023-02-21-14-44-10.png)  
 同样在之前的7u201和6u211版本中也添加了该属性.
 ## 高版本的JNDI利用
-当jdk版本大于等于8u191时,常规的RMI和LDAP利用受到限制,在这之后还有两种版本来利用JNDI注入.
+当jdk版本大于等于8u191时,常规的RMI和LDAP利用受到限制,在这之后还有两种方式来利用JNDI注入.
 ### 使用本地的Reference Factory类
 jdk高版本的限制在于不能远程加载Factory类,所以我们可以不利用远程类,转向利用本地的Factory类,而本地的Facotry类一般只有从其构造方法和`getObjectInstance()`方法中继续寻找利用点.
 #### Tomcat#BeanFactory
@@ -622,9 +622,9 @@ jdk高版本的限制在于不能远程加载Factory类,所以我们可以不利
 ![](2023-02-21-16-10-25.png)
 
 ## 参考  
-https://docs.oracle.com/javase/tutorial/jndi/
-https://paper.seebug.org/1091/#weblogic-rmi  
-https://blog.csdn.net/li_w_ch/article/details/110114397  
-https://xz.aliyun.com/t/7079
+https://docs.oracle.com/javase/tutorial/jndi/  
+https://paper.seebug.org/1091/#weblogic-rmi    
+https://blog.csdn.net/li_w_ch/article/details/110114397    
+https://xz.aliyun.com/t/7079  
 https://www.blackhat.com/docs/us-16/materials/us-16-Munoz-A-Journey-From-JNDI-LDAP-Manipulation-To-RCE.pdf  
 https://kingx.me/Exploit-Java-Deserialization-with-RMI.html
