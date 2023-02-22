@@ -1,5 +1,11 @@
+- [AspectJWeaver Gadget](#aspectjweaver-gadget)
+  - [依赖:](#依赖)
+  - [aspectjweaver](#aspectjweaver)
+    - [Gadget chain](#gadget-chain)
+  - [POC](#poc)
+
 # AspectJWeaver Gadget
-条件:
+## 依赖:
 ```  
 org.aspectj:aspectjweaver:1.9.2  
 commons-collections:commons-collections:3.2.2
@@ -12,7 +18,7 @@ commons-collections:commons-collections:3.2.2
 ![](2023-02-21-18-34-36.png)  
 而要触发其put方法可以利用LazyMap的get()方法,通过指定map为`StoreableCachingMap`即可,而LazyMap的get()的触发则跟之前的CC链一样.
 ![](2023-02-21-18-35-55.png)  
-## Gadget chain
+### Gadget chain
 ```
 HashSet.readObject()
     HashMap.put()
