@@ -123,6 +123,7 @@
       - [CC6](./Java/Gadgets/CC2/CC6.md)
       - [CC7](./Java/Gadgets/CC2/CC7.md)
       - [AspectJWeaver](./Java/Gadgets/AspectJWeaver/AspectJWeaver.md)
+      - [C3P0](./Java/Gadgets/C3P0/C3P0.md)
       - [JdbcRowSetImpl](./Java/Gadgets/JdbcRowSetImpl/JdbcRowSetImpl.md)
       - [TemplatesImpl](./Java/Gadgets/TemplatesImpl/TemplatesImpl.md)
       - [URLDNS](./Java/Gadgets/URLDNS/URLDNS.md)
