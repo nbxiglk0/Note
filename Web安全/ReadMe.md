@@ -23,4 +23,3 @@
   - [OAuth](./OAuth/)
     - [JWT Attacks](./OAuth/JWT%20attacks/JWT%20attacks.md)
     - [OAuth2.0](./OAuth/OAuth2.0.md)
-  - [WAF](./WAF/WAF.md)
