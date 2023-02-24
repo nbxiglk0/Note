@@ -104,7 +104,8 @@
       - [CVE-2017-3248&CVE-2018-2628反序列化](./Java/Weblogic/CVE-2017-3248%26CVE-2018-2628%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-3248%26CVE-2018-2628-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
       - [CVE-2017-12071反序列化](./Java/Weblogic/CVE-2017-12071%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-12071-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
       - [CVE-2022-21306反序列化](./Java/Weblogic/CVE-2022-21306%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2022-21306%20%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
-      - [Attack T3协议 反序列化](./Java/Weblogic/Attack%20T3协议%20反序列化/Attack%20T3协议%20反序列化Attack%20T3协议%20反序列化.md)
+      - [CVE-2023-21839 RCE](./Java/Weblogic/CVE-2023-21839%20RCE/CVE-2023-21839.md)
+      - [Weblogic T3协议](./Java/Weblogic/Weblogic%20T3%E5%8D%8F%E8%AE%AE/Weblogic%20T3%E5%8D%8F%E8%AE%AE.md)
     - XMLDecoder
       - [XMLDecoder反序列化](./Java/XMLDecoder/XMLDecoder%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
     - XStream

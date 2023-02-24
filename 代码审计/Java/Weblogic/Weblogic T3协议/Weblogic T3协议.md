@@ -1,4 +1,4 @@
-- [Attack T3协议 反序列化](#attack-t3协议-反序列化)
+- [Weblogic T3协议](#weblogic-t3协议)
   - [CVE-2015-4852](#cve-2015-4852)
     - [Exp](#exp)
     - [总结](#总结)
@@ -7,7 +7,8 @@
   - [CVE-2017-3248](#cve-2017-3248)
   - [CVE-2018-2628](#cve-2018-2628)
   - [CVE-2018-2893](#cve-2018-2893)
-# Attack T3协议 反序列化
+# Weblogic T3协议
+Weblogic T3协议是Weblogic对RMI在Weblogic中的实现协议,在原生JAVA中RMI传输是使用JRMP协议进行传输,在Weblogic中使用RMI則是使用的T3协议,T3协议针对Weblogic主要是有一些特定的增强.
 ## CVE-2015-4852
 T3协议是Weblogic对于JAVARMI通信的实现,在传输过程中会进行序列化和反序列化操作.T3协议攻击的原理就是替换或者增加在T3数据中原本的反序列化对象,因为服务端在获取的序列化对象后肯定会进行反序列化,从而触发反序列化漏洞.
 ### Exp
@@ -54,6 +55,7 @@ MarshalledObject比较符合需求,即在封装原链的基础上可以通过自
 绕过CVE-2018-2628  
 **参考:**  
 https://www.exploit-db.com/exploits/44553  
+https://mp.weixin.qq.com/s/hftsZLh_Qp1IcS8z_aM7Xw
 https://www.cnblogs.com/afanti/p/10256840.html  
 https://www.sohu.com/a/439816103_750628  
 https://xz.aliyun.com/t/2479 
