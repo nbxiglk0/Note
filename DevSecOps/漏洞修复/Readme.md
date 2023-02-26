@@ -11,6 +11,10 @@
   - [XXE](#xxe)
   - [SQL注入](#sql注入)
     - [使用预编译](#使用预编译)
+      - [MyBatis](#mybatis)
+        - [in](#in)
+      - [orderby](#orderby)
+      - [模糊查询](#模糊查询)
     - [强制转换类型](#强制转换类型)
     - [黑(白)名单](#黑白名单)
   - [RCE](#rce)
@@ -115,7 +119,23 @@ $stmt = $pdo->prepare($sql);
 $stmt->bindValue(1,"test");
 $result = $stmt->execute();
 ```
-但是order by后面的语句无法进行预编译,只能进行拼接,需要进行手动过滤,同时需要正确使用占位符,就算使用了`prepareStatement`但还是进行的拼接执行则还是存在SQL注入.  
+#### MyBatis
+MyBatis中使用`#{}`表示在底层使用`?`作为占位符使用参数化预编译,`${}`则是使用字符串拼接的方法。
+```xml
+<mapper namespace="a.v.c.aMapper">
+<select id="getUser" result="a.v.c.User">
+select * from user where id = #{id}
+</select>
+</mapper>
+```
+```java
+
+```
+##### in
+#### orderby
+order by后面的语句无法进行预编译,因为prepareStatement使用占位符占位时,传入数据的位置会被单引号包裹，而order by后面跟的只能是字段名字或者位置,如果被单引号包裹则只会被当作字符串,无法进行排序,所以orderby只能进行拼接,需要进行手动过滤。
+#### 模糊查询
+模糊查询如`%`,`_`,主要是预编译不会对`%`,`_`语句进行转义,而这两个是like模糊查询的通配符关键字
 ### 强制转换类型
 对参数的类型进行严格转换,如int类型的参数则只接受int类型的数据.
 ### 黑(白)名单
