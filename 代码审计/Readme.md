@@ -100,12 +100,15 @@
       - [CVE-2022-22957(22958) JDBC URL Attack](./Java/VMware%20Workspace%20One%20Acess/CVE-2022-22957(22958)/CVE-2022-22957(22958).md)
       - [CVE-2022–31656 authentication_Bypass](./Java/VMware%20Workspace%20One%20Acess/CVE-2022%E2%80%9331656/CVE-2022%E2%80%9331656.md)
     - WebLogic
+      - [CVE-2015-4852 反序列化](./Java/Weblogic/CVE-2015-4852%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2015-4852.md)
+      - [CVE-2018-3191 反序列化](./Java/Weblogic/CVE-2018-3191%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2018-3191.md)
+      - [CVE-2020-2551 反序列化](./Java/Weblogic/CVE-2020-2551%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2020-2551.md)
       - [CVE-2019-2725反序列化](./Java/Weblogic/CVE-2019-2725%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2019-2725-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
       - [CVE-2017-3248&CVE-2018-2628反序列化](./Java/Weblogic/CVE-2017-3248%26CVE-2018-2628%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-3248%26CVE-2018-2628-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
       - [CVE-2017-12071反序列化](./Java/Weblogic/CVE-2017-12071%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-12071-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
       - [CVE-2022-21306反序列化](./Java/Weblogic/CVE-2022-21306%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2022-21306%20%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
       - [CVE-2023-21839 RCE](./Java/Weblogic/CVE-2023-21839%20RCE/CVE-2023-21839.md)
-      - [Weblogic T3协议](./Java/Weblogic/Weblogic%20T3%E5%8D%8F%E8%AE%AE/Weblogic%20T3%E5%8D%8F%E8%AE%AE.md)
+      - [Weblogic T3协议&&IIOP](./Java/Weblogic/Weblogic%20T3%26IIOP/Weblogic%20T3%26IIOP.md)
     - XMLDecoder
       - [XMLDecoder反序列化](./Java/XMLDecoder/XMLDecoder%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
     - XStream
