@@ -88,14 +88,3 @@ public class iiopServiceImpl extends PortableRemoteObject implements iiopService
 同样IIOP协议也是通过序列化来传递数据,而触发反序列化的点在`ValueHandlerImpl#readValueData`方法中,最终会反射调用对象的`readObject()`.  
 ![](2023-02-28-16-20-44.png)  
 ![](2023-02-28-16-22-55.png)  
-<!-- ## CVE-2016-0638
-该漏洞即对上个漏洞补丁的绕过,重新寻找了weblogic.jms.common.StreamMessageImpl的readExternal()进行反序列化来绕过黑名单.
-## CVE-2016-3510
-原理也是继续绕过黑名单,原理是将反序列化的对象封装进了weblogic.corba.utils.MarshalledObject,然后再对MarshalledObject进行序列化.当字节流反序列化时MarshalledObject不在WebLogic 黑名单里,可正常反序列化,在反序列化时MarshalledObject对象调用readObject时对MarshalledObject封装的序列化对象再次反序列化,这样就逃过了黑名单的检查.
-MarshalledObject比较符合需求,即在封装原链的基础上可以通过自身的反序列化来反序列化成员变量.
-## CVE-2017-3248
-该漏洞则是利用JRMP协议进行了黑名单的绕过
-## CVE-2018-2628
-绕过CVE-2017-3248
-## CVE-2018-2893
-绕过CVE-2018-2628  -->
