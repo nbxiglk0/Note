@@ -127,6 +127,8 @@ CallableStatement对象用于执行对数据库已存在的存储过程的调用
 Spring的DAO模块提供了对JDBC、Hibernate、MyBatis等DAO层支持,JdbcDaoSupport提供了JdbcTemplate对象,通过JdbcTemplate对象进行数据库操作只需使用封装好的JdbcTemplate执行SQL语句.
 
 ## SpringMVC
+Spring MVC中，所有的请求都有DispatcherServlet来统一处理、分发。然后借助HandlerMapping定位到处理请求的控制器(Controller)。
+Controller处理完成用户请求后，返回ModelAndView对象给DispatcherServlet。
 处理流程图:
 ![](2022-01-03-14-28-00.png)
 ### HandlerMapping
