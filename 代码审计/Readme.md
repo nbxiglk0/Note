@@ -21,6 +21,7 @@
       - [CVE-2022-40146-RCE](./Java/Apache%20Batik/CVE-2022-40146/CVE-2022-40146.md)
     - ApacheDubbo
       - [CVE-2019-17564-RCE](./Java/Apache%20Dubbo/CVE-2019-17564/CVE-2019-17564.md)
+      - [CVE-2021-30179-RCE](./Java/Apache%20Dubbo/CVE-2021-30179/CVE-2021-30179.md)
     - Bitbucket 
       - [CVE-2022-43781-RCE](./Java/Bitbucket/CVE-2022%E2%80%9343781/CVE-2022%E2%80%9343781.md)
     - Confluence
