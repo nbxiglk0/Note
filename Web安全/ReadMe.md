@@ -5,6 +5,7 @@
   - [CRLF](./CRLF/CRLF.md)
   - [SSRF](./SSRF/SSRF.md)
   - [XXE](./XXE/XXE.md)
+  - [Prototype Pollution](./Prototype%20Pollution/prototype%20pollution.md)
   - [AEM Security](./AEM%20Security/AEM.md)
   - [GraplQL](./GraphQL/GraphQL.md)
   - [JAVA 安全](./JAVA%E5%AE%89%E5%85%A8/)
