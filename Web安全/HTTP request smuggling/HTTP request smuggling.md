@@ -1,12 +1,13 @@
 - [Http Request Smuggling](#http-request-smuggling)
   - [原理](#原理)
     - [处理差异](#处理差异)
-    - [Keep-Alive&Pipeline](#keep-alivepipeline)
+    - [Keep-Alive\&Pipeline](#keep-alivepipeline)
     - [TCP链接重用](#tcp链接重用)
-  - [CL&TE](#clte)
-    - [CL&TE](#clte-1)
-    - [TE&CL](#tecl)
-    - [TE&TE](#tete)
+  - [CL\&TE](#clte)
+    - [CL\&TE](#clte-1)
+    - [TE\&CL](#tecl)
+    - [TE\&TE](#tete)
+  - [参考](#参考)
 # Http Request Smuggling
 ## 原理
 ### 处理差异
@@ -49,9 +50,6 @@ test
 
 发送如下请求,前后端服务器根据Transfer-Encoding: 指定的编码来识别post请求,但其选取的Transfer-Encoding头不一致,选择Transfer-Encoding: aaaa的服务器会因为识别不了编码而直接忽略post数据,导致剩下的数据被拼接到下一个请求,导致下一个请求被破坏
 ![](pic/2020714.jpg)
-
-
-
-
+## 参考
 https://paper.seebug.org/1048/#511-cl-te  
 https://portswigger.net/web-security/request-smuggling
