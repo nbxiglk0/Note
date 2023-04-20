@@ -112,6 +112,7 @@
       - [CVE-2017-12071反序列化](./Java/Weblogic/CVE-2017-12071%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-12071-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
       - [CVE-2022-21306反序列化](./Java/Weblogic/CVE-2022-21306%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2022-21306%20%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
       - [CVE-2023-21839 RCE](./Java/Weblogic/CVE-2023-21839%20RCE/CVE-2023-21839.md)
+      - [CVE-2023-21931 RCE](./Java/Weblogic/CVE-2023-21931%20RCE/CVE-2023-21931.md)
       - [Weblogic T3协议&&IIOP](./Java/Weblogic/Weblogic%20T3%26IIOP/Weblogic%20T3%26IIOP.md)
     - XMLDecoder
       - [XMLDecoder反序列化](./Java/XMLDecoder/XMLDecoder%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96.md)
