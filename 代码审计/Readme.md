@@ -5,21 +5,21 @@
       - [CVE-2022-34916-JNDI注入](./Java/Apache%20Flume/CVE-2022-34916/CVE-2022-34916.md)
     - Apache NIFI XXE
       - [CVE-2022-29265-XXE](./Java/Apache%20Nifi/CVE-2022-29265/CVE-2022-29265.md)
-    - ApacheStorm
+    - Apache Storm
       - [CVE-2021-40865-反序列化](./Java/ApacheStorm/CVE-2021-40865/CVE-2021-40865.md)
       - [CVE-2021-38294-命令注入](./Java/ApacheStorm/CVE-2021-38294/CVE-2021-38294.md)
-    - ApacheKylin
+    - Apache Kylin
       - [CVE-2021-45456-RCE](./Java/ApacheKylin/CVE-2021-45456/CVE-2021-45456.md)
-    - ApacheJspWiki
+    - Apache JspWiki
       - [CVE-2021-44140-FileDelete](./Java/ApacheJspWiki/CVE-2021-44140/CVE-2021-44140.md)
-    - ApacheAny23
+    - Apache Any23
       - [CVE-2022-25312-XXE](./Java/ApacheAny23/CVE-2022-25312/CVE-2022-25312.md)
-    - ApacheSpark
+    - Apache Spark
       - [SparkShell Command Inject](./Java/ApacheSpark/SparkShell%20Commd%20Inject/SparkShell%20Commd%20Inject.md)
-    - ApacheBatik
+    - Apache Batik
       - [CVE-2022-38398-SSRF](./Java/Apache%20Batik/CVE-2022-38398/CVE-2022-38398.md)
       - [CVE-2022-40146-RCE](./Java/Apache%20Batik/CVE-2022-40146/CVE-2022-40146.md)
-    - ApacheDubbo
+    - Apache Dubbo
       - [CVE-2019-17564-RCE](./Java/Apache%20Dubbo/CVE-2019-17564/CVE-2019-17564.md)
       - [CVE-2021-30179-RCE](./Java/Apache%20Dubbo/CVE-2021-30179/CVE-2021-30179.md)
       - [CVE-2023-23638-RCE](./Java/Apache%20Dubbo/CVE-2023-23638/CVE-2023-23638.md)
@@ -28,9 +28,10 @@
     - Confluence
       - [CVE-2021-26084 OGNL Inject](./Java/Confluence/CVE-2021-26084/CVE-2021-26084.md)
       - [CVE-2022-26134 OGNL Inject](./Java/Confluence/CVE-2022-26134/CVE-2022-26134.md)
-    - Druid
+    - Apache Druid
       - [CVE-2021-25646 远程代码执行](./Java/ApacheDruid/CVE-2021-25646/CVE-2021-25646.md)
       - [CVE-2021-26919 远程代码执行](./Java/ApacheDruid/CVE-2021-26919/CVE-2021-26919.md)
+      - [ApacheDruid Kafka-Connect rce](./Java/ApacheDruid/ApacheDruid%20Kafka-rce/ApacheDruid%20Kafka-rce.md)
     - FastJson
       - [FastJson反序列化](./Java/FastJson/FastJson反序列化.md)
     - F5 Bigip
