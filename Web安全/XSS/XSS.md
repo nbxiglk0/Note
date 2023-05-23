@@ -3,6 +3,9 @@
     - [反射](#反射)
     - [存储](#存储)
     - [DOM](#dom)
+  - [PDF XSS](#pdf-xss)
+  - [Bypsss](#bypsss)
+    - [关键字绕过](#关键字绕过)
   - [0x04 防御](#0x04-防御)
   - [参考](#参考)
 
@@ -63,7 +66,15 @@ index()
 jQuery.parseHTML()
 $.parseHTML()
 ```
-
+## PDF XSS
+通过上传嵌入js代码的pdf文件进行XSS.    
+https://github.com/ynsmroztas/pdfsvgxsspayload/blob/main/poc.pdf
+## Bypsss
+### 关键字绕过
+alert(1):
+1. alert`1`
+2. window['alert'](document.domain)
+3. prompt(`1`)
 ## 0x04 防御
 1. Http Only
 2. 过滤JS标签
