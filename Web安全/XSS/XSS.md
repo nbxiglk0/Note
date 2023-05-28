@@ -6,6 +6,7 @@
   - [PDF XSS](#pdf-xss)
   - [Bypsss](#bypsss)
     - [关键字绕过](#关键字绕过)
+    - [注释内](#注释内)
   - [0x04 防御](#0x04-防御)
   - [参考](#参考)
 
@@ -75,6 +76,8 @@ alert(1):
 1. alert`1`
 2. window['alert'](document.domain)
 3. prompt(`1`)
+### 注释内
+当输出点在注释中,使用%0a换行新起一行绕过.
 ## 0x04 防御
 1. Http Only
 2. 过滤JS标签
