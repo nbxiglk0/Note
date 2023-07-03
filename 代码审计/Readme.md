@@ -94,6 +94,8 @@
       - [CVE-2020-1957-Bypass](./Java/shiro/Shiro-CVE-2020-1957.md)
     - Spring Cloud Function
       - [Function Routing SPEL 注入](./Java/SpringCloudFunction/Function%20Routing%20SPEL%20Inject/SpelInject.md)
+    - Nacos
+      - [Nacos Hessian 反序列化漏洞](./Java/Nacos/Nacos%20Hessian%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/Nacos%20Hessian%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E.md)
     - VcenterSrever
       - [CVE-2021-21972-SSRF](./JAVA/Vcenter/CVE-2021-21972/CVE-2021-21972.md)
       - [CVE-2021-21973-RCE](./Java/Vcenter/CVE-2021-21973/CVE-2021-21973.md)
