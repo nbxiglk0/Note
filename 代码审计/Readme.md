@@ -58,7 +58,7 @@
       - ServiceDesk Plus
         - [CVE-2021-44077-RCE](./Java/Zoho%20ManageEngine/ServiceDesk%20Plus/CVE-2021-44077/CVE-2021-44077-RCE.md)
     - Zimbra Mail
-      - [CVE-2022-27925 授权RCE](./Java/Zimbra/CVE-2022-27925/CVE-2022-27925.md)
+      - [CVE-2022-27925 RCE](./Java/Zimbra/CVE-2022-27925/CVE-2022-27925.md)
     - Jboss
       - [JMX反序列化](./Java/Jboss/JMX反序列化/JMX反序列化.md)
       - [CVE-2017-12149](./Java/Jboss/CVE-2017-12149%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/CVE-2017-12149.md)
@@ -67,6 +67,8 @@
       - [CVE-2021-44228](./Java/Log4j/CVE-2021-44228-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/CVE-2021-44228-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C.md)
     - OpenTsdb
       - [CVE-2023-25826 命令注入](./Java/Opentsdb/CVE-2023-25826/CVE-2023-25826.md)
+    - OpenFire
+      - [CVE-2023-32315 认证绕过](./Java/Openfire/CVE-2023-32315/CVE-2023-32315.md)
     - Liquibase
       - [CVE-2022-0839-XXE](./Java/Liquibase/CVE-2022-0839/CVE-2022-0839.md)
     - MetaBase
