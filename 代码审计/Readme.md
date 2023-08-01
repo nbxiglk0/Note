@@ -25,6 +25,7 @@
       - [CVE-2023-23638-RCE](./Java/Apache%20Dubbo/CVE-2023-23638/CVE-2023-23638.md)
     - Apache RocketMQ
       - [CVE-2023-33246-RCE](./Java/Apache%20RocketMQ/CVE-2023-33246/CVE-2023-33246.md)
+      - [CVE-2023-37582-RCE](./Java/Apache%20RocketMQ/CVE-2023-37582/CVE-2023-37582.md)
     - Bitbucket 
       - [CVE-2022-43781-RCE](./Java/Bitbucket/CVE-2022%E2%80%9343781/CVE-2022%E2%80%9343781.md)
     - Confluence
