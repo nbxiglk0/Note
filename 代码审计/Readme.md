@@ -74,6 +74,7 @@
       - [CVE-2022-0839-XXE](./Java/Liquibase/CVE-2022-0839/CVE-2022-0839.md)
     - MetaBase
       - [CVE-2021-41227-FileRead](./Java/MetaBase/CVE-2021-41227-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96/CVE-2021-41277-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96.md)
+      - [CVE-2023-38646-RCE](./Java/MetaBase/CVE-2023-38646/CVE-2023-38646.md)
     - Metersphere
       - [未授权RCE](./Java/Metersphere/远程代码执行/Metersphere%20远程代码执行.md)
     - MySQL
