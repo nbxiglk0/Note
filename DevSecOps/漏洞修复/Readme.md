@@ -5,6 +5,10 @@
     - [配置](#配置)
     - [Referer XSS](#referer-xss)
       - [Referrer-Policy](#referrer-policy)
+  - [点击劫持](#点击劫持)
+    - [浏览器端](#浏览器端)
+    - [X-Frame-Options](#x-frame-options)
+    - [CSP](#csp)
   - [CSRF](#csrf)
   - [SSRF](#ssrf)
     - [黑白名单](#黑白名单-1)
@@ -13,6 +17,8 @@
     - [获取访问的真实IP](#获取访问的真实ip)
   - [CORS](#cors)
     - [JSONP](#jsonp)
+  - [HTTP 请求走私](#http-请求走私)
+  - [缓存中毒](#缓存中毒)
   - [XXE](#xxe)
   - [XPath注入](#xpath注入)
     - [过滤](#过滤-1)
@@ -54,7 +60,8 @@
   - [JNDI 注入](#jndi-注入)
   - [OpenRedict](#openredict)
     - [白名单](#白名单)
-  - [Actuator未授权访问](#actuator未授权访问)
+  - [Spring系列配置错误](#spring系列配置错误)
+    - [Actuator未授权访问](#actuator未授权访问)
     - [安全配置](#安全配置)
   - [参考](#参考)
 # Web漏洞修复方案
@@ -99,6 +106,24 @@ Referrer-Policy: strict-origin——该策略更为安全些,和origin策略相�
 Referrer-Policy: strict-origin-when-cross-origin——和origin-when-cross-origin相似,只是不允许Referrer信息显示在从https网站到http网站的请求中（安全降级）。  
 Referrer-Policy: unsafe-url——浏览器总是会将完整的URL信息显示在Referrer字段中,无论请求发给任何网站。 
 ```  
+## 点击劫持
+### 浏览器端
+1. 检查并强制执行当前应用程序窗口是主窗口或顶层窗口.
+2. 使所有框架可见.
+3. 防止点击不可见的框架.
+4. 拦截并标记对用户的潜在点击劫持攻击.
+### X-Frame-Options 
+通过指定X-Frame-Options头来限制当前页面是否可以被加载到其它域中.  
+```
+X-Frame-Options: deny //拒绝被加载
+X-Frame-Options: sameorigin //只能被同源网站加载
+X-Frame-Options: allow-from https://normal-website.com //只能被指定网站加载
+```
+### CSP
+通过CSP来限制其它网站加载当前网站.  
+Content-Security-Policy: frame-ancestors 'self';
+Content-Security-Policy: frame-ancestors normal-website.com;
+Content-Security-Policy: frame-ancestors deny;
 ## CSRF
 * 在敏感页面的请求中加入唯一的Token,后端对敏感请求进行Token校验,而正常情况下(如果存在XSS可获得Token)攻击者无法获得该Token,则无法冒充用户进行敏感操作.
 
@@ -190,6 +215,16 @@ SameSite 接受下面三个值:
 * Strict:Cookies 只会在第一方上下文中发送,不会与第三方网站发起的请求一起发送。
 
 * None:Cookie 将在所有上下文中发送,即允许跨站发送。
+## HTTP 请求走私
+* 禁用代理服务器与后端服务器之间的TCP连接重用。
+* 使用HTTP/2协议。
+* 前后端使用相同的服务器。
+* 使前端服务器规范化不明确的请求，并使后端服务器拒绝任何仍不明确的请求，从而在此过程中关闭 TCP 连接。
+* 拒绝标头中包含换行符、标头名称中包含冒号以及请求方法中包含空格的请求。
+## 缓存中毒
+缓存中毒产生的原因则就是请求中的unkeyed参数会对响应内容造成变化，导致其缓存的响应内容包含了攻击者可控的内容,导致下一个用户请求时也会得到恶意的缓存内容。
+* 完全禁用缓存(不现实)。
+* 保证缓存的内容为真正的全静态内容，不是动态生成的响应。
 ## XXE
 配置相关FEATURE来关闭DTD解析禁用外部实体。
 ```java
@@ -419,7 +454,8 @@ response.sendRedirect(url);
 ### 白名单
 如果对外部传入域名进行302跳转，必须设置可信域名列表并对传入域名进行校验。
 为避免校验被绕过，应避免直接对URL进行字符串匹配。应通过通过URL解析函数进行解析，获取host或者domain后和白名单进行比较。
-## Actuator未授权访问
+## Spring系列配置错误
+### Actuator未授权访问
 错误配置:
 ```xml
 management.endpoints.web.exposure.include=*
@@ -427,6 +463,8 @@ management.endpoints.web.exposure.include=*
 ### 安全配置
 * 禁用接口 management.endpoints.enabled-by-default=false
 * 使用spring security加个认证
+
 ## 参考   
 [CVE-2022-25167](https://github.com/apache/flume/commit/dafb26c)  
-https://github.com/j3ers3/Hello-Java-Sec
+https://github.com/j3ers3/Hello-Java-Sec  
+https://portswigger.net/web-security/request-smuggling
