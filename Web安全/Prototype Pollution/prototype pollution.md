@@ -58,7 +58,8 @@ Object.getPrototypeOf(myArray);	    // Array.prototype
 let myNumber = 1;
 Object.getPrototypeOf(myNumber);    // Number.prototype
 ```
-对象会自动继承其分配的原型的所有属性,除非它们已经具有具有相同键的属性.
+对象会自动继承其分配的原型的所有属性,除非它们已经具有具有相同键的属性.  
+
 ### 继承
 每当你引用一个对象的属性时,JavaScript引擎首先会尝试直接在对象本身上访问它.如果对象没有匹配的属性,JavaScript 引擎会在对象的原型上查找它.  
 而一个对象的原型也只是另一个对象,而该对象也有自己的原型,最终构成一条原型链,而最顶层的原型对象就是Object对象,而Object对象没有原型,其原型为null.
