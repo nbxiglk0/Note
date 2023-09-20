@@ -25,6 +25,7 @@
   - [Prototype Pollution](./Prototype%20Pollution/prototype%20pollution.md)
   - [AEM Security](./AEM%20Security/AEM.md)
   - [GraplQL](./GraphQL/GraphQL.md)
+  - [SSTI](./SSTI/SSTI.md)
   - [URL Parse Difference](./URL%20Parse%20Difference/URL%20Parse%20Difference.md)
   - [JAVA Security](./JAVA%E5%AE%89%E5%85%A8/)
     - [JAVA 基础](./JAVA%E5%AE%89%E5%85%A8/JAVA%E5%9F%BA%E7%A1%80/JAVA%E8%AF%AD%E8%A8%80%E5%9F%BA%E7%A1%80.md)
