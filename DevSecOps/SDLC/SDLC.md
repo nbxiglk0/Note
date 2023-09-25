@@ -1,4 +1,4 @@
-- [SDLC（软件开发生命周期 Software Development Life Cycle）](#sdlc软件开发生命周期-software-development-life-cycle)
+- [SDLC（安全开发生命周期 Security Development Life Cycle）](#sdlc安全开发生命周期-security-development-life-cycle)
   - [SDLC中的安全工作](#sdlc中的安全工作)
     - [准备阶段](#准备阶段)
     - [开发阶段](#开发阶段)
@@ -18,7 +18,7 @@
     - [应用安全的风险面](#应用安全的风险面)
   - [参考](#参考)
 
-# SDLC（软件开发生命周期 Software Development Life Cycle）
+# SDLC（安全开发生命周期 Security Development Life Cycle）
 SDLC主要有以下流程：
 1. 软件定义和需求分析
 2. 软件设计
