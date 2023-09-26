@@ -58,7 +58,7 @@ Bean对象: 在 Spring 中，构成应用程序主干并由 Spring IoC 容器管
 org.springframework.context.ApplicationContext该接口代表 Spring IoC 容器并且负责实例化、配置和组装 Bean。容器通过 XML、Java 注释或 Java 代码来获取有关实例化、配置和装配哪些对象的元数据指令.  
 而从XML中获取元数据指令的话,用的比较多的有两个实现类`ClassPathXmlApplicationContext`和`FileSystemXmlApplicationContext`,也就是从类路径或者系统路径加载xml格式的配置文件,这个xml配置文件就包含了相关Bean加载元数据命令.    
 而整个IOC容器就会根据配置文件的元数据命令和对应的Bean对象在容器内进行配置组装.  
-![](2023-08-04-15-11-50.png)  
+![](./img/2023-08-04-15-11-50.png)  
 但IOC容器加载配置Bean的过程实际与XML配置数据无关,XML配置只是其中一种形式,也可以不使用XML文件的形式,也可以用JAVA的方式(基于注解),`@Configuration`, `@Bean`, `@Import`, `@DependsOn`.  
 而Spring配置至少有一个或多个由容器管理的Bean进行定义.    
 #### XML配置
@@ -153,10 +153,10 @@ public class DefaultServiceLocator {
 ```
 ##### Singleton 单例Bean
 Bean默认是单例模式,即在一个IOC容器内,只有一个Bean实例对象,后续所有从IOC容器中请求该Bean对象都是返回的同一个对象.  
-![](2023-08-04-17-45-09.png)
+![](./img/2023-08-04-17-45-09.png)
 ##### Prototype原型 多例Bean
 指定`scope="prototype"`,对应的Prototyep模式在每次请求该Bean对象时,IOC容器都会创建一个新的Bean对象返回.  
-![](2023-08-04-17-47-25.png)
+![](./img/2023-08-04-17-47-25.png)
 #### 嵌套类定义
 如果需要指向一个类中的静态嵌套类,那么可以通过`.`或者`$`来分隔.如`com.example.Abc`类中有一个`Edf`类,则可以用`com.examlpe.Abc$Edf`或者`com.examlpe.Abc.Edf`
 
