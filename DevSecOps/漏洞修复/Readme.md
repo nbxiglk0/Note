@@ -63,6 +63,7 @@
   - [Spring系列配置错误](#spring系列配置错误)
     - [Actuator未授权访问](#actuator未授权访问)
     - [安全配置](#安全配置)
+  - [密钥保护](#密钥保护)
   - [参考](#参考)
 # Web漏洞修复方案
 ## XSS
@@ -463,7 +464,9 @@ management.endpoints.web.exposure.include=*
 ### 安全配置
 * 禁用接口 management.endpoints.enabled-by-default=false
 * 使用spring security加个认证
-
+## 密钥保护
+1. 针对硬编码密钥漏洞可以配置进行代码审计或者扫描工具进行扫描。
+2. 实时监控泄露(github等)。
 ## 参考   
 [CVE-2022-25167](https://github.com/apache/flume/commit/dafb26c)  
 https://github.com/j3ers3/Hello-Java-Sec  
