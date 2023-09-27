@@ -63,5 +63,5 @@ PHP: PHP主要是通过替换内部函数，对原始函数进行包装，其中
 #### 实现思路
 实现思路，即对常见的source，Sink函数进行Hook，然后储存相关请求数据到一个全局属性中，关键的是追踪的过程中需要对常见的传播点函数进行Hook，也就是一些对会source进行处理赋值的函数，传播点Hook的越多，那么得到的数据传递过程自然就越详细，但通过如果传播点过于广泛那么得到的数据传递过程也会过于冗余，不利于人工排查。
 ## 参考
-https://www。freebuf。com/articles/web/290863。html  
-https://www。03sec。com/Ideas/qian-tan-bei-dong-shiiast-chan-pin-yu-ji-shu-shi-x-1。html#morphing
+https://www.freebuf.com/articles/web/290863.html  
+https://www.03sec.com/Ideas/qian-tan-bei-dong-shiiast-chan-pin-yu-ji-shu-shi-x-1.html#morphing
