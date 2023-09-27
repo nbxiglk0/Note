@@ -9,6 +9,8 @@
     - [注释内](#注释内)
     - [unicode](#unicode)
   - [0x04 防御](#0x04-防御)
+    - [Vue中的防御方式](#vue中的防御方式)
+    - [React中的防御方式](#react中的防御方式)
   - [参考](#参考)
 
 # XSS
@@ -86,8 +88,49 @@ alert(1):
 2. 过滤JS标签
 3. CSP
 4. 实体编码
-
+5. 正确设置content-type
+### Vue中的防御方式
+1. 在vue中使用v-text指令可以将数据作为纯文本插入到DOM中，而不是作为HTML代码插入到DOM中。这样可以防止恶意脚本被执行。而v-html指令可以将数据作为HTML代码插入到DOM中，这种情况下需要对插入的内容进行过滤。  
+```js
+<template>
+//使用v-text指令
+  <div v-text="message"></div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      message: 'Hello, <script>alert("XSS")</script> World!'
+    };
+  }
+};
+</script>
+```
+2. 使用vue的过滤器escape对数据进行过滤和转换。
+```js
+<template>
+  <div>{{ message | escape }}</div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      message: 'Hello, <script>alert("XSS")</script> World!'
+    };
+  },
+  filters: {
+    escape(value) {
+      // 对value进行过滤和转换
+      return value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+  }
+};
+</script>
+```
+### React中的防御方式
+在React中在渲染所有输入内容之前，默认会进行转义。但React中有一个dangerouslySetInnerHTML函数，该函数不会对输入进行任何处理并直接渲染到 HTML 中，平时开发时最好避免使用 dangerouslySetInnerHTML，如果不得不使用的话，前端或服务端必须对输入进行相关验证，例如对特殊输入进行过滤、转义等处理。
 ## 参考
 https://tech.meituan.com/2018/09/27/fe-security.html  
-https://security.tencent.com/index.php/blog/msg/107
+https://security.tencent.com/index.php/blog/msg/107  
+https://pythonjishu.com/dysdkeypmnkpprc/
 
