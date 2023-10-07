@@ -131,6 +131,17 @@ Content-Security-Policy: frame-ancestors deny;
 * 验证 HTTP Referer 字段,该方法可轻易绕过.
 
 * 在 HTTP 头中自定义属性并验证,类似于加Token,只是加在HTTP头中,即每个页面都会带上该Token校验头,而不必在每个相关页面代码中都加上Token.
+* 设置SameSite: (https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Set-Cookie/SameSite)  
+
+SameSite 是 HTTP 响应头 Set-Cookie 的属性之一。它允许您声明该 Cookie 是否仅限于第一方或者同一站点上下文。
+SameSite 接受下面三个值:
+* Lax:Cookies 允许与顶级导航一起发送,并将与第三方网站发起的 GET 请求一起发送。这是浏览器中的默认值。
+
+* Strict:Cookies 只会在第一方上下文中发送,不会与第三方网站发起的请求一起发送。
+
+* None:Cookie 将在所有上下文中发送,即允许跨站发送。  
+
+![](img/11-06-21.png)
 ## SSRF
 ### 黑白名单
 * 使用白名单: 只允许访问使用http/https协议访问可信域名和端口
@@ -207,15 +218,6 @@ CORS定义了浏览器行为,绝不能替代服务器端对敏感数据的保护
 1. 接受请求时检查referer来源；
 2. 在请求中添加token并在后端进行验证；
 3. 严格过滤 callback 函数名及 JSON 里数据的输出。
-4. 设置SameSite: (https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Set-Cookie/SameSite)  
-
-SameSite 是 HTTP 响应头 Set-Cookie 的属性之一。它允许您声明该 Cookie 是否仅限于第一方或者同一站点上下文。
-SameSite 接受下面三个值:
-* Lax:Cookies 允许与顶级导航一起发送,并将与第三方网站发起的 GET 请求一起发送。这是浏览器中的默认值。
-
-* Strict:Cookies 只会在第一方上下文中发送,不会与第三方网站发起的请求一起发送。
-
-* None:Cookie 将在所有上下文中发送,即允许跨站发送。
 ## HTTP 请求走私
 * 禁用代理服务器与后端服务器之间的TCP连接重用。
 * 使用HTTP/2协议。
