@@ -12,9 +12,10 @@
     - [反射修改RASP全局变量](#反射修改rasp全局变量)
     - [Hook不严谨](#hook不严谨)
     - [规则不严谨](#规则不严谨)
-    - [使用更底层的调用](#使用更底层的调用)
-      - [JNI技术](#jni技术)
-      - [劫持GOT表](#劫持got表)
+    - [JNI技术](#jni技术)
+    - [unsafe类](#unsafe类)
+    - [利用性能告警](#利用性能告警)
+    - [劫持GOT表](#劫持got表)
   - [参考](#参考)
 # RASP(Runtime application self-protection)
 应用运行时自我保护,简单来说是将RASP实现的自身注入到应用程序中,在应用程序运行时根据一定的规则对某些行为(敏感方法的调用)进行监控和判断,根据运行时的应用的各项数据(传入的参数等等)进行判断,如果判断为危险操作则进行告警和拦截.
@@ -242,18 +243,43 @@ vm.loadAgent之后，相应的agent就会被目标JVM进程加载，并执行age
 ### 新开线程执行
 RASP如果根据HTTP请求来进行检测,会对HTTP请求的一些变量进行检测再决定是否拦截检测,但直接新起一个线程执行的话则上下文没有HTTP请求的相关变量,导致RASP不检测而绕过.
 ### 反射修改RASP全局变量
-RASP一般会有一些全局变量的设置,可以通过反射获取到存有全局变量的相关类,直接修改Hook启动相关变量,将RASP直接关闭.
+RASP一般会有一些全局变量的设置,可以通过反射获取到存有全局变量的相关类,直接修改Hook启动相关变量,将RASP直接关闭.  
+```java
+Class clazz = Class.forName("comxxx.xxx.HookHandler");
+Field used = clazz.getDeclaredField("enableHook");
+used.setAccessible(true);
+Object enableHook = used.get(null);
+Method setMethod = AtomicBoolean.class.getDeclaredMethod("set",boolean.class)
+setMethod.invoke(enableHook,false);
+```
 ### Hook不严谨
 大部分请求我们执行命令都是使用的`Rumtime.getRuntime().exec()`来执行命令,所有有些RASP则只Hook`java.lang.Runtime`这个类,然而其实Runtime类最后执行命令是调用的Processbuilder类的方法创建进程执行命令,这就导致可以直接new Processbuilder类直接执行命令,类似如果Hook点不够底层的话都有可能被绕过.
 ### 规则不严谨
 说到底,RASP也是根据人写的规则进行拦截,只是是在函数调用时进行拦截,可以保证拿到的参数都是原始的参数,但如果检测的规则不严谨,有问题,那么规则自身本来就有缺陷也是可能被绕过的.  
-### 使用更底层的调用
-#### JNI技术
+### JNI技术
 JNI是Java Native Interface的缩写，通过使用 Java本地接口书写程序，可以确保代码在不同的平台上方便移植。从Java1.1开始，JNI标准成为java平台的一部分，它允许Java代码和其他语言写的代码进行交互。  
 * Java程序中的函数调用Native程序中的函数。Native一般指使用C/C++编写的函数。
 * Native程序中的函数调用Java程序中的函数。
-将敏感方法通过C/C++在DLL中实现来调用执行即可绕过RASP的检测.
-#### 劫持GOT表
+将敏感方法通过C/C++在DLL中实现来调用执行即可绕过RASP的检测. 通过RCE漏洞将恶意的so文件上传到服务器进行加载。 
+```java
+public class JniInvoke{
+    public static native String exec(String cmd);
+    static{
+        System.load("/home/Evilib.so")
+    }
+}
+```
+### unsafe类
+Unsafe 类提供了硬件级别的原子操作，类中的方法都是 native 方法，它们使用 JNI 的方式访问本地 C++ 实现库。由此提供了一些绕开 JVM 的更底层功能。  
+![](img/11-21-35.png)  
+* 执行命令  
+![](img/11-23-00.png)
+* 不使用反射修改属性  
+![](img/11-23-33.png)
+
+### 利用性能告警
+RASP为了不影响业务正常运行，会有一个阈值，当cpu或者内存到达设定的阈值时会自动关闭检测。
+### 劫持GOT表
 https://mp.weixin.qq.com/s?__biz=MzIzOTE1ODczMg==&mid=2247484822&idx=1&sn=71b04c0a08fee2cb239ff78a5e7a6165  
 ## 参考
 http://blog.nsfocus.net/rasp-tech/  
@@ -266,4 +292,5 @@ http://www.fanyilun.me/2017/07/18/%e8%b0%88%e8%b0%88Java%20Intrumentation%e5%92%
 https://mp.weixin.qq.com/s/sy8Td8OsWJVaqqa0H4_kKA    
 https://www.anquanke.com/post/id/241107  
 https://landgrey.me/blog/15/  
-https://mp.weixin.qq.com/s?__biz=MzA5Mzg3NTUwNQ==&mid=2447804425&idx=1&sn=91515259ee4d8a204d40e0aee8177f58
+https://mp.weixin.qq.com/s?__biz=MzA5Mzg3NTUwNQ==&mid=2447804425&idx=1&sn=91515259ee4d8a204d40e0aee8177f58  
+<<Magic in RASP-attack and defense【KCon2022】 >>
