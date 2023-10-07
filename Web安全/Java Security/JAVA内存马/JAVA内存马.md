@@ -959,6 +959,28 @@ https://www.anquanke.com/post/id/224698#h2-0
 对容器提供的动态添加特性方法进行Hook检测,但该思路容易被绕过,很多时候注入内存马的时候可以直接通过反射来修改最后相关的属性值,而不是必须调用容器提供的方法,但可以考虑对关键属性进行监听(比如Servlet内存马会修改servletContext属性,Filter等类似).
 #### Dump Class  
 针对Servlet和Filter,Listener内存马的思路即是遍历出内存中StandardContext存储的所有Filter和Servlet,Listener根据内存马没有文件的特性或者是通过漏洞注入的话ClassLoader不是常规ClassLoader来排查.  
+* 正常bootstrap class loader的result是null，而内存马一般使用了自定义Loader，其result不是null。
+```java
+xxx.class.getClassLoader() == null
+```
+
+* 正常class在硬盘上都有对应的文件，如果该class找不到文件则可能是内存马。
+```java
+private static boolean classFileIsExists(Class clazz){
+    if(clazz == null){
+        return false;
+    }
+    String className = clazz.getName();
+    String classNamePath = className.replace(".","/")+".class";
+    URL is = clazz.getClassLoader().getResource(classNamePath);
+    if(is == null){
+        return false;
+    }else{
+        return true;
+    }
+}
+```
+
 参考: https://github.com/c0ny1/java-memshell-scanner  
 #### Agent马
 通过sa-jdi.jar可以得到被加载并被java Instrumentation修改后的类,然后将其dump到class文件中进行分析.  
