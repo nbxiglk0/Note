@@ -8,6 +8,7 @@
     - [关键字绕过](#关键字绕过)
     - [注释内](#注释内)
     - [unicode](#unicode)
+    - [302+CRLF](#302crlf)
   - [0x04 防御](#0x04-防御)
     - [Vue中的防御方式](#vue中的防御方式)
     - [React中的防御方式](#react中的防御方式)
@@ -77,12 +78,17 @@ https://github.com/ynsmroztas/pdfsvgxsspayload/blob/main/poc.pdf
 ### 关键字绕过
 alert(1):
 1. alert`1`
-2. window['alert'](document.domain)
+2. `window['alert'](document.domain)`
 3. prompt(`1`)
 ### 注释内
 当输出点在注释中,使用%0a换行新起一行绕过.
 ### unicode
 ![](2023-06-02-16-18-02.png)  
+### 302+CRLF
+* Location: 空的Location响应头可以在Chrome上成功执行内容中的XSS代码。（投稿时在最新版 Chrome v86.0.4240.111测试成功）
+* Location: resource://URL 使用resource协议也可以在Firefox 81 上执行payload。（投稿时在最新版 Firefox v82.0.2测试成功）
+* ws:// (WebSocket)
+* wss:// (Secure WebSocket)
 ## 0x04 防御
 1. Http Only
 2. 过滤JS标签
