@@ -3,6 +3,9 @@
     - [过滤](#过滤)
     - [黑白名单](#黑白名单)
     - [配置](#配置)
+    - [前端框架](#前端框架)
+      - [Vue中的防御方式](#vue中的防御方式)
+      - [React中的防御方式](#react中的防御方式)
     - [Referer XSS](#referer-xss)
       - [Referrer-Policy](#referrer-policy)
   - [点击劫持](#点击劫持)
@@ -15,6 +18,7 @@
     - [过滤响应](#过滤响应)
     - [禁止跳转](#禁止跳转)
     - [获取访问的真实IP](#获取访问的真实ip)
+    - [dns重绑定](#dns重绑定)
   - [CORS](#cors)
     - [JSONP](#jsonp)
   - [HTTP 请求走私](#http-请求走私)
@@ -95,6 +99,47 @@ springframework.web.util.HtmlUtils的htmlEscape方法可对特殊字符进行转
 ### 配置
 * 正确设置响应包的Content-Type,禁止非HTML类型的响应包设置为“text/html".
 * 控制用户登录鉴权的Cookie字段 应当设置HttpOnly属性以防止被XSS漏洞/JavaScript操纵泄漏。
+### 前端框架
+#### Vue中的防御方式
+1. 在vue中使用v-text指令可以将数据作为纯文本插入到DOM中，而不是作为HTML代码插入到DOM中。这样可以防止恶意脚本被执行。而v-html指令可以将数据作为HTML代码插入到DOM中，这种情况下需要对插入的内容进行过滤。  
+```js
+<template>
+//使用v-text指令
+  <div v-text="message"></div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      message: 'Hello, <script>alert("XSS")</script> World!'
+    };
+  }
+};
+</script>
+```
+2. 使用vue的过滤器escape对数据进行过滤和转换。
+```js
+<template>
+  <div>{{ message | escape }}</div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      message: 'Hello, <script>alert("XSS")</script> World!'
+    };
+  },
+  filters: {
+    escape(value) {
+      // 对value进行过滤和转换
+      return value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+  }
+};
+</script>
+```
+#### React中的防御方式
+在React中在渲染所有输入内容之前，默认会进行转义。但React中有一个dangerouslySetInnerHTML函数，该函数不会对输入进行任何处理并直接渲染到 HTML 中，平时开发时最好避免使用 dangerouslySetInnerHTML，如果不得不使用的话，前端或服务端必须对输入进行相关验证，例如对特殊输入进行过滤、转义等处理。
 ### Referer XSS
 #### Referrer-Policy
 ```
@@ -203,6 +248,8 @@ HttpURLConnection conn = (HttpURLConnection) u.openConnection();
 conn.setInstanceFollowRedirects(false); // 不允许重定向或者对重定向后的地址做二次判断
 conn.connect();
 ```
+### dns重绑定
+针对dns重绑定，可以修改TTL值大于解析到发起请求这段时间即可，java默认情况下不受影响，其默认TTL值为10s，修改方式`java.security.Security.setProperty("networkaddress.cache.negative.ttl" , "10");`，但php默认为0，且Linux 默认不会进行 DNS 缓存。个人感觉可以在http请求前进行两次域名解析，如果两次的解析ip不一致或者第二次的Ip为内网ip则可以判定为dns Rebinding攻击。
 ## CORS
 1. 正确配置跨域请求
 如果 Web 资源包含敏感信息,则应在标头中正确指定源,配置Access-Control-Allow-Origin字段.
