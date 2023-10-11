@@ -31,6 +31,7 @@
     - Confluence
       - [CVE-2021-26084 OGNL Inject](./Java/Confluence/CVE-2021-26084/CVE-2021-26084.md)
       - [CVE-2022-26134 OGNL Inject](./Java/Confluence/CVE-2022-26134/CVE-2022-26134.md)
+      - [CVE-2023-22515 访问控制缺陷](./Java/Confluence/CVE-2023-22515/CVE-2023-22515.md)
     - Apache Druid
       - [CVE-2021-25646 远程代码执行](./Java/ApacheDruid/CVE-2021-25646/CVE-2021-25646.md)
       - [CVE-2021-26919 远程代码执行](./Java/ApacheDruid/CVE-2021-26919/CVE-2021-26919.md)
@@ -158,7 +159,7 @@
       - [tp5代码执行_Request](./php/thinkphp/tp5%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C_Request/tp5_request.md)
       - [tp5代码执行_任意模块调用](./php/thinkphp/tp5%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C_%E4%BB%BB%E6%84%8F%E6%A8%A1%E5%9D%97%E8%B0%83%E7%94%A8/tp5_callanyfuc.md)
       - [tp5代码执行_缓存文件](./php/thinkphp/tp5代码执行_缓存文件/tp5_remote_code.md)
-      - [tp5反序列化利用链]
+      - [tp5反序列化利用链](./php/thinkphp/tp5反序列化利用链/)
         - [5.0.x](./php/thinkphp/tp5%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE/tp5.0.x.md)
         - [5.1.x](./php/thinkphp/tp5%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE/tp5.1.x.md)
         - [5.2.x](./php/thinkphp/tp5%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8%E9%93%BE/tp5.2.x.md)
