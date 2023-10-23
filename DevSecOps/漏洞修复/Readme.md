@@ -431,7 +431,26 @@ public void jsEngine(String url) throws Exception {
 白名单过滤外部输入，仅允许字符、数字、下划线等。
 ## 反序列化
 ### 校验过滤
-对于来源不可信的序列化数据，不要直接进行反序列化，而应该先进行校验.
+对于来源不可信的序列化数据，不要直接进行反序列化，而应该先进行校验，如重写ObjectInputStream的resolveClass方法，在其中对类名进行校验，反序列化中的resolveClass方法主要用于读取要反序列化对象的类名。
+```java
+public class SafeObject extends ObjectInputStream{
+
+    public SafeObject(InputStream in) throws IOException {
+        super(in);
+    }
+
+    @Override
+    protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+        Class<?> clazz  = super.resolveClass(desc);
+        System.out.printf(clazz.getName());
+        if(!clazz.getName().equals("User")){
+            return null;
+        }
+        return clazz;
+    }
+}
+```
+
 #### Apache Commons IO
 使用Apache Commons IO的ValidatingObjectInputStream，accept方法来实现反序列化类白/黑名单控制.
 ```java
