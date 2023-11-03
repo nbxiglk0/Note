@@ -32,6 +32,7 @@
       - [CVE-2021-26084 OGNL Inject](./Java/Confluence/CVE-2021-26084/CVE-2021-26084.md)
       - [CVE-2022-26134 OGNL Inject](./Java/Confluence/CVE-2022-26134/CVE-2022-26134.md)
       - [CVE-2023-22515 访问控制缺陷](./Java/Confluence/CVE-2023-22515/CVE-2023-22515.md)
+      - [CVE-2023-22518 访问控制缺陷](./Java/Confluence/CVE-2023-22518/CVE-2023-22518.md)
     - Apache Druid
       - [CVE-2021-25646 远程代码执行](./Java/ApacheDruid/CVE-2021-25646/CVE-2021-25646.md)
       - [CVE-2021-26919 远程代码执行](./Java/ApacheDruid/CVE-2021-26919/CVE-2021-26919.md)
