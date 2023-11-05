@@ -20,17 +20,17 @@ OSGI模型主要用于将文件在物理上模块上进行分离,即物理模块
 一个bundle中一般包含如下的东西：
 部署描述文件（MANIFEST.MF，必要的），各类资源文件（如html、xml等，非必须的），还有类文件。这与一个普通的jar包没有任何的区别。但是，除此之外，bundle里还可以放入其它的jar包，用于提供给bundle内部的类引用，即bundle内部的lib库。
 Note：实际上bundle里可以存放任何的内容，但是在bundle内部不会有嵌套的bundle，即上面提到的存放于bundle中的jar包就只会当成是一个普通的jar包，不管这些jar包中是否含有bundle定义的信息。  
-![](2022-08-01-11-02-02.png)
+![](./img/2022-08-01-11-02-02.png)
 ### 代码访问机制
 #### ClassPath
 在JVM环境中类之间的互访是通过设置classpath来查找的,在OSGI环境中默认的classpath是bundle根目录,也可以通过Bundle-ClassPath进行指定.  
-![](2022-08-01-11-08-53.png)  
+![](./img/2022-08-01-11-08-53.png)  
 #### Export-Package
 导出该Bundle内的类.通过设置Export-Package头信息可以定义该Bundle内能被其它Bundle访问的类,可以设置多个包，只有在这里定义的包内的类可以被其它的模块进行访问。但是只能访问该包下的，该包的子包的类是不会被曝露的。   
-![](2022-08-01-11-30-42.png)  
+![](./img/2022-08-01-11-30-42.png)  
 #### Import-Package
 当某个模块曝露了某些包，那么如果你要引用相应的那个模块下的包的类的话，就需要通知OSGI引入你设置的包到该模块，即在该模块的MANIFEST中定义Import-Package头信息。  
-![](2022-08-01-11-31-58.png)
+![](./img/2022-08-01-11-31-58.png)
 #### DynamicImport-Package
 使用此头信息时，OSGI将会扫描该头信息设置的所有包,它只能设置target值，可以多个，并且target值可以使用通配符，例如  
 DynamicImport-Package: net.testm.com.test.*, net.testm.com.test2 …

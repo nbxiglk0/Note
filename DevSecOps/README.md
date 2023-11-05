@@ -14,6 +14,7 @@
   - [开发框架和Web容器](./开发框架和Web容器/)
     - [Jetty](./开发框架和Web容器/Jetty.md)
     - [数据库持久框架](./开发框架和Web容器/数据库持久框架.md)
+    - [OSGI模型](./开发框架和Web容器/OSGI模型.md)
   - [AST](./AST/AST.md)
   - [CI&CD](./CI&CD/CI&CD.md)
   - [RASP](./RASP/RASP.md)
