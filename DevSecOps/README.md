@@ -11,6 +11,8 @@
       - [Java类加载机制](./开发语言/JAVA基础/Java类加载机制.md)
       - [SPI机制](./开发语言/JAVA基础/SPI机制.md)
       - [SercurityMannager](./开发语言/JAVA基础/SercurityMannager.md)
+      - [Java泛型](./开发语言/JAVA基础/Java泛型.md)
+      - [Java序列化与反序列化](./开发语言/JAVA基础/JAVA序列化与反序列化.md)
   - [开发框架和Web容器](./开发框架和Web容器/)
     - [Jetty](./开发框架和Web容器/Jetty.md)
     - [数据库持久框架](./开发框架和Web容器/数据库持久框架.md)

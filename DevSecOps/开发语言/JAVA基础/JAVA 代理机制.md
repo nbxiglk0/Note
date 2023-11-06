@@ -1,3 +1,9 @@
+- [JAVA代理机制](#java代理机制)
+  - [静态代理](#静态代理)
+  - [动态代理](#动态代理)
+  - [调用处理器(InvocationHanlder)](#调用处理器invocationhanlder)
+  - [创建代理对象(Proxy.newProxyInstance)](#创建代理对象proxynewproxyinstance)
+
 # JAVA代理机制
 JAVA中代理的作用即可以在不修改一个类的源码情况下,对该类其相关方法进行增强.
 ## 静态代理
