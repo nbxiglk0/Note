@@ -10,7 +10,7 @@
 ### **利用**
 [利用脚本](https://github.com/vulhub/vulhub/blob/master/php/inclusion/exp.py),注意要修改在linux和window下文件名字长度不同的偏移量  
 
-![](include_1.jpg)
+![](./img/include_1.jpg)
 
 ## **php7 Segment Fault**
 条件:7.0 <= Version < 7.0.28,7.1.0 <= Version < 7.1.13, 7.2.0 <= version < 7.2.1
@@ -19,7 +19,7 @@
 ### **利用**
 1.包含php://filter/string.strip_tags/resource=index.php,出现Segment Fault,垃圾机制失效,temp文件没有被删除
 
-![](include_2.jpg)
+![](./img/include_2.jpg)
 2. 爆破文件名....  
 默认:  
 linux: /tmp/php6位随机字符  
