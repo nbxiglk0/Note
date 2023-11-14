@@ -6,6 +6,7 @@
     - [前端框架](#前端框架)
       - [Vue中的防御方式](#vue中的防御方式)
       - [React中的防御方式](#react中的防御方式)
+      - [JSP中的XSS](#jsp中的xss)
     - [Referer XSS](#referer-xss)
       - [Referrer-Policy](#referrer-policy)
   - [点击劫持](#点击劫持)
@@ -140,6 +141,12 @@ export default {
 ```
 #### React中的防御方式
 在React中在渲染所有输入内容之前，默认会进行转义。但React中有一个dangerouslySetInnerHTML函数，该函数不会对输入进行任何处理并直接渲染到 HTML 中，平时开发时最好避免使用 dangerouslySetInnerHTML，如果不得不使用的话，前端或服务端必须对输入进行相关验证，例如对特殊输入进行过滤、转义等处理。
+#### JSP中的XSS
+在JSP中`<c:out`标签有一个默认属性escapeXML，默认为true，其会将特殊字符进行转义，从而也防止了XSS。
+```jsp
+ value="<c:out value="${search.node}"/>" //不存在XSS
+ value="${search.node}" //可能导致XSS
+```
 ### Referer XSS
 #### Referrer-Policy
 ```
