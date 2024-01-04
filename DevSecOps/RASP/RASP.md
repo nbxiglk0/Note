@@ -16,6 +16,8 @@
     - [unsafe类](#unsafe类)
     - [利用性能告警](#利用性能告警)
     - [劫持GOT表](#劫持got表)
+  - [RASP技术上的命令执行攻防探索](#rasp技术上的命令执行攻防探索)
+  - [Bypass RASP NativeMethodPrefix学习](#bypass-rasp-nativemethodprefix学习)
   - [参考](#参考)
 # RASP(Runtime application self-protection)
 应用运行时自我保护,简单来说是将RASP实现的自身注入到应用程序中,在应用程序运行时根据一定的规则对某些行为(敏感方法的调用)进行监控和判断,根据运行时的应用的各项数据(传入的参数等等)进行判断,如果判断为危险操作则进行告警和拦截.
@@ -281,6 +283,10 @@ Unsafe 类提供了硬件级别的原子操作，类中的方法都是 native �
 RASP为了不影响业务正常运行，会有一个阈值，当cpu或者内存到达设定的阈值时会自动关闭检测。
 ### 劫持GOT表
 https://mp.weixin.qq.com/s?__biz=MzIzOTE1ODczMg==&mid=2247484822&idx=1&sn=71b04c0a08fee2cb239ff78a5e7a6165  
+## RASP技术上的命令执行攻防探索
+https://www.secrss.com/articles/49044
+## Bypass RASP NativeMethodPrefix学习
+https://mp.weixin.qq.com/s/JyMqqQ0awu4JAjvgXQgAag
 ## 参考
 http://blog.nsfocus.net/rasp-tech/  
 http://blog.nsfocus.net/openrasp-tech/  
