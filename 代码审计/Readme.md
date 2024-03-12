@@ -62,6 +62,9 @@
         - [CVE-2021-44515-authentication_Bypass&RCE](./JAVA/Zoho%20ManageEngine/DesktopCentral/CVE-2021-44515/CVE-2021-44515.md)
       - ServiceDesk Plus
         - [CVE-2021-44077-RCE](./Java/Zoho%20ManageEngine/ServiceDesk%20Plus/CVE-2021-44077/CVE-2021-44077-RCE.md)
+    - JetBrains TeamCity
+      - [CVE-2024-27198 Authentication Bypass](./Java/JetBrains%20TeamCity/CVE-2024-27198/CVE-2024-27198.md)
+      - [CVE-2024-27199 Authentication Bypass](./Java/JetBrains%20TeamCity/CVE-2024-27199/CVE-2024-27199.md)
     - Zimbra Mail
       - [CVE-2022-27925 RCE](./Java/Zimbra/CVE-2022-27925/CVE-2022-27925.md)
     - Jboss
