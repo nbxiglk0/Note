@@ -76,13 +76,13 @@ JNDI API 是用于访问任何命名或目录服务的通用 API。对命名或�
 Naming Service的定义包含在`javax.naming`包中,其中包含了访问Naming Service的类和接口.
 #### Context
 在`javax.naming`包中定义了一个核心的`Context`接口,在该接口中定义了查询(lookup),绑定(解除绑定)(binding/unbinding),重命名对象,创建和销毁subcontexts等操作.  
-![](2023-02-16-16-52-59.png)   
+![](img/2023-02-16-16-52-59.png)   
 而在Context中可以看到每一个naming相关的方法都有两种重载,一种接受Name类型的参数,一种接受String类型的参数.而Name类型是一个接口,代表一个含有0或多个的组件有序序列的通用名称.
 在Context中,Name类型是指CompositeName(复合名称)的实例,简单来说Name类型里面包含了一组有序的组件名称.  
 而String类型就是接受单个的简单名称.  
 ##### Bind(绑定)
 Bind即将一个name和一个object进行绑定,同样含有接受String类型和Name类型的方法,而bind是一个元组,包括object的名称,object的类名称和object自身.
-![](2023-02-16-17-20-56.png)  
+![](img/2023-02-16-17-20-56.png)  
 通过`listBindings()`和`List()`方法可以得到已绑定的name和对应object的枚举列表,区别在于`List()`方法还会返回object的名称和object的类名称,而`listBindings()`只返回绑定的Object和对应的name.
 ##### References(引用)
 object通过不同的方法存储在命名或者目录服务中,在JNDI中定义了一个Reference类来表示引用,一个reference包含了如何构造该reference关联对象的信息,而JNDI会将该reference转换为对应的java对象.
@@ -93,10 +93,10 @@ object通过不同的方法存储在命名或者目录服务中,在JNDI中定义
 Directory Service的定义在`javax.naming.directory`包中,扩展了javax.naming包，提供了除命名服务外访问目录服务的功能。这个包允许应用程序检索与存储在目录中的对象相关的信息，并使用指定的属性搜索对象。 
 ##### Directory Context
 DirContext接口表示一个目录上下文。DirContext也通过扩展Context接口表现为一个命名上下文。这意味着任何目录对象也可以提供一个命名上下文。它定义了检查和更新与一个目录条目相关的属性的方法。  
-![](2023-02-16-18-21-54.png)  
+![](img/2023-02-16-18-21-54.png)  
 可以看到其中的bind等方法多了一个Attributes参数,这就是目录服务额外的功能,可以设置绑定对象的相关属性.  
 同时可以通过`getAttributes()`方法来获取对象的所有属性或者通过`search`等方法来通过属性值搜索对象,而`Attributes`的定义如下,其内的属性值可以是无序的也可以是有序的,在构造方法中执行相应参数.    
-![](2023-02-16-18-39-52.png)  
+![](img/2023-02-16-18-39-52.png)  
 可以看到可以通过add方法来设置属性值或通过set方法来修改属性值.
 #### LDAP Package
 LDAP包(`javax.naming.ldap`)是在Direcotory包的基础上添加的支持扩展,大部分情况下使用`javax.naming.directory`包能够满足使用LDAP的需求,而`javax.naming.ldap`包主要是添加了针对`LDAP v3`协议`javax.naming.directory`包没有覆盖到的特性.  
@@ -151,7 +151,7 @@ RMI的通信过程分为服务端和客户端,服务端创建一些远程的对�
 2. 与远程对象通信: 具体细节由RMI实现,在表面看来于常规的方法调用相似.
 3. 加载传递对象的类定义: 因为对象能够来回传递,所以提供了加载对象的类定义以及传输对象的数据的机制(序列化机制)。
 RMI的通信结构如图  
-![](2023-02-17-18-36-49.png)  
+![](img/2023-02-17-18-36-49.png)  
 使用RMI注册表来获取对远程对象的引用。服务器调用注册表将一个名字与一个远程对象关联（或绑定）。客户端在服务器的注册表中通过其名称查找远程对象，然后对其调用一个方法.  
 #### 动态加载代码
 RMI的一个核心功能在于如果客户端或者服务端的jvm中没有某个对象的定义,那么客户端或服务端可以下载该对象的定义,然后在本地加载.  
@@ -159,7 +159,7 @@ RMI的一个核心功能在于如果客户端或者服务端的jvm中没有某�
 使用JAVA RMI构建的应用是由接口和类组成,而一个对象通过实现一个远程接口来成为一个远程对象.  
 
 而远程接口继承了`java.rmi.Remote`接口,远程接口用于识别其方法可以从非本地虚拟机中调用的接口。任何作为远程对象的对象必须直接或间接地实现这个接口。只有那些在 "远程接口 "中指定的方法，即扩展了java.rmi.Remote的接口才可以远程使用。  
-![](2023-02-17-18-56-17.png)  
+![](img/2023-02-17-18-56-17.png)  
 可以看到`java.rmi.Remote`接口是一个空接口,起到标识的作用.
 
 实现类可以实现任意数量的远程接口，并可以扩展其他远程实现类。RMI提供了一些方便的类(`java.rmi.server.UnicastRemoteObject和java.rmi.activation.Activatable`)，远程对象的实现可以扩展这些类，以方便创建远程对象。 
@@ -300,9 +300,9 @@ public class RmiClient {
 }
 
 ```  
-![](2023-02-20-16-51-46.png)  
+![](img/2023-02-20-16-51-46.png)  
 RMI流程图  
-![](2023-02-20-16-54-28.png)
+![](img/2023-02-20-16-54-28.png)
 ##### SecurityManager  
 SecurityManager可以保护JVM限制从其它地方加载的代码的访问权限,防止恶意代码对本地进行操作,如果RMI过程中传输的对象不需要RMI客户端和服务端从其它地方下载可以设置SecurityManager提供一定的安全性.  
 ```java
@@ -323,9 +323,9 @@ JNDI注入简单来说就是在JNDI接口在初始化时,如：InitialContext.lo
         ctx.lookup("rmi://localhost:9991/Calc");
 ```  
 这里虽然指定了ldap协议,但是如果在lookup时传入的String是一个协议格式的字符串,那么在lookup的时候会根据传入String的协议返回对应的Context.  
-![](2023-02-17-17-47-55.png)  
+![](img/2023-02-17-17-47-55.png)  
 在这里返回的是rmi协议的context,然后就会调用rmicontext的lookup方法,然后从该字符串获取对应的参数,最终得到该rmicontext所需要的各项参数.  
-![](2023-02-17-17-55-29.png)  
+![](img/2023-02-17-17-55-29.png)  
 而这所有参数都是由传入lookup的字符串来控制,所有当传入lookup的字符串可控时,就能覆盖之前的配置让服务端来访问我们自己的恶意Naming或者Directory服务.
 ### RMI利用
 通过指定协议为RMI,事服务器访问并得到我们注册中心的恶意远程对象,但是在服务端如果有类型转换则会异常并且我们并不能控制调用我们恶意远程对象的方法,在这里可以通过Reference类来达到RCE的目的.
@@ -400,14 +400,14 @@ public class JndiDemo {
 
 ```  
 恶意Factory的静态代码,构造方法,getObjectInstance()都被触发.
-![](2023-02-20-18-15-02.png)  
+![](img/2023-02-20-18-15-02.png)  
 
 总结RMI利用流程:
 1. 被攻击端lookup()URL可控,因为动态转换,访问恶意的RMI服务.
 2. RMI服务返回包含指向如何构建远程对象的Factory工厂类的远程地址Reference引用.  
 3. 被攻击端根据该引用下载该Factory工厂类,调用其`getObjectInstance()`方法创建远程对象,在实例化Factory工厂类和`getObjectInstance()`方法时触发恶意代码.  
 
-![](2023-02-20-18-29-41.png)
+![](img/2023-02-20-18-29-41.png)
 #### 基于JRMP
 JRMP是JAVA对其RMI功能实现的协议,也就是RMI在通信时使用的协议,而我们知道RMI传输的信息都是通过序列化传递的,JRMP协议也就是对该序列化传递机制的实现.
 
@@ -420,9 +420,9 @@ JRMP是JAVA对其RMI功能实现的协议,也就是RMI在通信时使用的协�
 使用JRMP协议,当客户端连上后,直接返回gadget chain的序列化数据给客户端,从而引起客户端反序列化RCE
 #### After 8u121  
 在8u121之后的版本再次执行会得到报错,这是因为在121即之后添加了一个trustURLCodebase属性,默认为False.  
-![](2023-02-20-18-58-02.png)  
+![](img/2023-02-20-18-58-02.png)  
 意思是对象的factory工厂类不受信任,该属性决定了能否加载远程的工厂类,即8u121开始默认情况下不再支持从远程加载工厂类了.
-![](2023-02-20-18-59-05.png)  
+![](img/2023-02-20-18-59-05.png)  
 同时在121版本加入了反序列化的白名单如下:
 ```
 String.clas
@@ -554,8 +554,8 @@ public class JndiDemo {
 ```
 #### After 8u191
 在8u191中同样和RMI一样对LDAP也添加了`com.sun.jndi.ldap.object.trustURLCodebase`属性,默认为False,限制了远程加载工厂类.
-![](2023-02-21-14-43-51.png)  
-![](2023-02-21-14-44-10.png)  
+![](img/2023-02-21-14-43-51.png)  
+![](img/2023-02-21-14-44-10.png)  
 同样在之前的7u201和6u211版本中也添加了该属性.
 ## 高版本的JNDI利用
 当jdk版本大于等于8u191时,常规的RMI和LDAP利用受到限制,在这之后还有两种方式来利用JNDI注入.
@@ -578,11 +578,11 @@ jdk高版本的限制在于不能远程加载Factory类,所以我们可以不利
 
 ```  
 在其`getObjectInstance()`方法中可以看到如果传入的obj是一个`ResourceRef`引用时,其会从中获取到包含的class name并且实例化该类.
-![](2023-02-21-15-00-32.png)  
+![](img/2023-02-21-15-00-32.png)  
 然后获取引用中的`forceString`属性,并进行分割来得到其`setter`方法的名称,然后从该Class中获取该名称的Method放入`forced`中.  
-![](2023-02-21-15-04-34.png)  
+![](img/2023-02-21-15-04-34.png)  
 在最后会通过反射来执行该setter方法.  
-![](2023-02-21-15-06-59.png)
+![](img/2023-02-21-15-06-59.png)
 #### POC
 可以看到其获取setter方法的逻辑只是简单的用`,`和`=`进行分割,并没有校验是否是真的setter方法,所以可以构造恶意的ref使其调用恶意方法.
 ```java
@@ -595,13 +595,13 @@ jdk高版本的限制在于不能远程加载Factory类,所以我们可以不利
             System.out.println("evilFactory reference bound");
 ```
 通过构成beanClass为`ELProcessor`,然后设置其setter方法为`eval()`,利用EL表达式注入RCE.  
-![](2023-02-21-15-24-22.png)    
-![](2023-02-21-15-23-53.png)  
+![](img/2023-02-21-15-24-22.png)    
+![](img/2023-02-21-15-23-53.png)  
 
 ### 反序列化触发本地Gadget
 #### com.sun.jndi.ldap.decodeObject#javaSerializedData
 反序列化是因为LDAP在解码的时候如果含有`javaSerializedData`属性,那么会对其进行反序列化操作,所以可以通过这个点进行反序列化攻击.  
-![](2023-02-21-16-02-28.png)  
+![](img/2023-02-21-16-02-28.png)  
 修改ldap服务器吗,在返回的Entry中添加`javaSerializedData`属性.
 ```java
  ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -619,7 +619,7 @@ jdk高版本的限制在于不能远程加载Factory类,所以我们可以不利
             ...
             e.addAttribute("javaSerializedData", bytes.toByteArray());
 ```
-![](2023-02-21-16-10-25.png)
+![](img/2023-02-21-16-10-25.png)
 
 ## 参考  
 https://docs.oracle.com/javase/tutorial/jndi/  
