@@ -12,6 +12,7 @@
   - [CSRF](./CSRF/CSRF.md)
   - [CSP](./CSP/CSP.md)
   - [XSS](./XSS/XSS.md)
+  - [Race Conditions](./Race%20Conditions/Race%20Conditions.md)
   - [CRLF](./CRLF/CRLF.md)
   - [SSRF](./SSRF/SSRF.md)
   - [XXE](./XXE/XXE.md)
