@@ -44,7 +44,8 @@
   - [高版本的JNDI利用](#高版本的jndi利用)
     - [使用本地的Reference Factory类](#使用本地的reference-factory类)
       - [Tomcat#BeanFactory](#tomcatbeanfactory)
-      - [POC](#poc)
+        - [POC](#poc)
+      - [MemoryUserDatabaseFactory写文件](#memoryuserdatabasefactory写文件)
     - [反序列化触发本地Gadget](#反序列化触发本地gadget)
       - [com.sun.jndi.ldap.decodeObject#javaSerializedData](#comsunjndildapdecodeobjectjavaserializeddata)
   - [参考](#参考)
@@ -562,7 +563,7 @@ public class JndiDemo {
 ### 使用本地的Reference Factory类
 jdk高版本的限制在于不能远程加载Factory类,所以我们可以不利用远程类,转向利用本地的Factory类,而本地的Facotry类一般只有从其构造方法和`getObjectInstance()`方法中继续寻找利用点.
 #### Tomcat#BeanFactory
-而可能利用概率较大則是Tomcat中的`BeanFactory`本地工厂类了,该利用其依赖于Tomcat环境.
+而可能利用概率较大則是Tomcat中的`BeanFactory`本地工厂类了,该利用其依赖于Tomcat环境(tomcat=7.x, tomcat8.x < 8.5.79, tomcat9.x < 9.0.63，tomcat10.x < 10.0.20).
 添加依赖包
 ```xml
 <dependency>
@@ -583,7 +584,7 @@ jdk高版本的限制在于不能远程加载Factory类,所以我们可以不利
 ![](img/2023-02-21-15-04-34.png)  
 在最后会通过反射来执行该setter方法.  
 ![](img/2023-02-21-15-06-59.png)
-#### POC
+##### POC
 可以看到其获取setter方法的逻辑只是简单的用`,`和`=`进行分割,并没有校验是否是真的setter方法,所以可以构造恶意的ref使其调用恶意方法.
 ```java
             Registry registry = LocateRegistry.createRegistry(1099);
@@ -596,8 +597,20 @@ jdk高版本的限制在于不能远程加载Factory类,所以我们可以不利
 ```
 通过构成beanClass为`ELProcessor`,然后设置其setter方法为`eval()`,利用EL表达式注入RCE.  
 ![](img/2023-02-21-15-24-22.png)    
-![](img/2023-02-21-15-23-53.png)  
+![](img/2023-02-21-15-23-53.png)   
 
+利用版本：  
+```
+tomcat < 8.5.79
+tomcat < 9.0.63
+tocmat < 10.0.20
+tocmat = 7.x
+```  
+在高版本中tomcat修复了BeanFactory中获取setter方法的方式。   
+https://github.com/apache/tomcat/commit/48dd609fd193dbe8dd94fd231c45d987da6c359f    
+
+#### MemoryUserDatabaseFactory写文件  
+https://srcincite.io/blog/2024/07/21/jndi-injection-rce-via-path-manipulation-in-memoryuserdatabasefactory.html  
 ### 反序列化触发本地Gadget
 #### com.sun.jndi.ldap.decodeObject#javaSerializedData
 反序列化是因为LDAP在解码的时候如果含有`javaSerializedData`属性,那么会对其进行反序列化操作,所以可以通过这个点进行反序列化攻击.  

