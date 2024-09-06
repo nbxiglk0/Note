@@ -6,7 +6,8 @@
   - [PDF XSS](#pdf-xss)
   - [Bypsss](#bypsss)
     - [关键字绕过](#关键字绕过)
-    - [注释内](#注释内)
+      - [编码](#编码)
+    - [注释内绕过](#注释内绕过)
     - [unicode](#unicode)
     - [302+CRLF](#302crlf)
   - [0x04 防御](#0x04-防御)
@@ -80,7 +81,13 @@ alert(1):
 1. alert`1`
 2. `window['alert'](document.domain)`
 3. prompt(`1`)
-### 注释内
+#### 编码
+不同的位置支持不同的编码方式，通过对关键字进行编码绕过检测。
+HTML内：如可以创建HTML标签
+HTML标签内：HTML实体编码，如`<a href="javascript:var a='&apos;-alert(1)-&apos;'">a</a>`。
+JavaScript标签内：Unicode编码，如\u{61}lert(1),\u0061lert(1),\u{0061}lert(1)。
+HTML属性值：
+### 注释内绕过
 当输出点在注释中,使用%0a换行新起一行绕过.
 ### unicode
 ![](2023-06-02-16-18-02.png)  
@@ -112,7 +119,7 @@ export default {
 };
 </script>
 ```
-2. 使用vue的过滤器escape对数据进行过滤和转换。
+1. 使用vue的过滤器escape对数据进行过滤和转换。
 ```js
 <template>
   <div>{{ message | escape }}</div>
