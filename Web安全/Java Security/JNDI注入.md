@@ -48,6 +48,7 @@
       - [MemoryUserDatabaseFactory写文件](#memoryuserdatabasefactory写文件)
     - [反序列化触发本地Gadget](#反序列化触发本地gadget)
       - [com.sun.jndi.ldap.decodeObject#javaSerializedData](#comsunjndildapdecodeobjectjavaserializeddata)
+  - [黑名单关键字Bypass through ldaps](#黑名单关键字bypass-through-ldaps)
   - [参考](#参考)
 # JNDI 注入
 ## Naming(命名) 
@@ -633,7 +634,8 @@ https://srcincite.io/blog/2024/07/21/jndi-injection-rce-via-path-manipulation-in
             e.addAttribute("javaSerializedData", bytes.toByteArray());
 ```
 ![](img/2023-02-21-16-10-25.png)
-
+## 黑名单关键字Bypass through ldaps
+https://www.leavesongs.com/PENETRATION/use-tls-proxy-to-exploit-ldaps.html
 ## 参考  
 https://docs.oracle.com/javase/tutorial/jndi/  
 https://paper.seebug.org/1091/#weblogic-rmi    
