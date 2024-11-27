@@ -5,6 +5,10 @@
     - [decorators.xml](#decoratorsxml)
     - [Proto文件](#proto文件)
       - [源码编译](#源码编译)
+  - [常见利用类](#常见利用类)
+    - [任意类实例化](#任意类实例化)
+      - [SpringXmlContext](#springxmlcontext)
+      - [scala.tools.nsc.interpreter.shell.ProcessResult](#scalatoolsnscinterpretershellprocessresult)
   - [参考](#参考)
 # Java 代码审计
 ## 审计思路
@@ -94,6 +98,10 @@ sitemesh应用Decorator模式的配置文件，使用filter来截取request和re
 ![](img/2023-08-21-17-11-36.png)  
 
 ![](img/2023-08-21-17-11-52.png)  
+## 常见利用类
+### 任意类实例化
+#### SpringXmlContext
+#### scala.tools.nsc.interpreter.shell.ProcessResult
 
 ## 参考
 https://www.gxlsystem.com/bianchengyuyan-772060.html  
