@@ -2,6 +2,7 @@
   - [Impact](#impact)
   - [产生SSRF的函数](#产生ssrf的函数)
     - [php](#php)
+    - [SSRF](#ssrf)
   - [SSRF中URL伪协议](#ssrf中url伪协议)
   - [云上SSRF](#云上ssrf)
   - [Bypass](#bypass)
@@ -39,6 +40,8 @@ fpm 9000
 * readfile()
 * fopen()
 * ...
+### SSRF
+主要是java.net.URL和java.net.URI类的openConnection()方法。
 ## SSRF中URL伪协议
 当没有限制请求的协议时,可以尝试使用其他的协议扩展攻击面.
 file:/// 从文件系统中获取文件内容，如，file:///etc/passwd  

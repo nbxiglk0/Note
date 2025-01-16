@@ -31,6 +31,7 @@
     - [禁止跳转](#禁止跳转)
     - [获取访问的真实IP](#获取访问的真实ip)
     - [dns重绑定](#dns重绑定)
+    - [防御方案](#防御方案)
   - [CORS](#cors)
     - [JSONP](#jsonp)
   - [HTTP 请求走私](#http-请求走私)
@@ -321,56 +322,6 @@ SameSite 接受下面三个值:
 * 对已校验通过地址进行访问时，应关闭跟进跳转功能,防止通过短链接等跳转到内网IP.
 ### 获取访问的真实IP
 * 建议通过URL解析函数进行解析，获取host或者domain后通过DNS获取其IP，然后和内网地址进行比较(注意各种进制转换绕过)。
-```java
-public String HTTPURLConnection(String url) {
-    // 校验 url 是否以 http 或 https 开头
-    if (!Security.isHttp(url)) {
-        log.error("[HTTPURLConnection] 非法的 url 协议：" + url);
-        return "不允许非http/https协议!!!";
-    }
-    // 解析 url 为 IP 地址
-    String ip = Security.urltoIp(url);
-    log.info("[HTTPURLConnection] SSRF解析IP：" + ip);
-
-    // 校验 IP 是否为内网地址
-    if (Security.isIntranet(ip)) {
-        log.error("[HTTPURLConnection] 不允许访问内网：" + ip);
-        return "不允许访问内网!!!";
-    }
-    try {
-        return HttpClientUtils.HTTPURLConnection(url);
-    } catch (Exception e) {
-        log.error("[HTTPURLConnection] 访问失败：" + e.getMessage());
-        return "访问失败，请稍后再试!!!";
-    }
-}
-// 1. 判断是否为http协议
-public static boolean isHttp(String url) {
-    return url.startsWith("http://") || url.startsWith("https://");
-}
-// 2. 解析IP地址
-public static String urltoIp(String url) {
-    try {
-        URI uri = new URI(url);
-        String host = uri.getHost().toLowerCase();
-        InetAddress ip = Inet4Address.getByName(host);
-        return ip.getHostAddress();
-    } catch (Exception e) {
-        return "127.0.0.1";
-    }
-}
-// 3. 判断是否为内网IP
-public static boolean isIntranet(String url) {
-    Pattern reg = Pattern.compile("^(127\\.0\\.0\\.1)|(localhost)|^(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|^(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|^(192\\.168\\.\\d{1,3}\\.\\d{1,3})$");
-    Matcher match = reg.matcher(url);
-    Boolean a = match.find();
-    return a;
-}
-// 4. 不允许302跳转
-HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-conn.setInstanceFollowRedirects(false); // 不允许重定向或者对重定向后的地址做二次判断
-conn.connect();
-```
 ### dns重绑定
 针对dns重绑定，java默认情况下不受影响，java中DNS请求成功的话默认缓存30s(字段为networkaddress.cache.ttl，默认情况下没有设置)，失败的默认缓存10s。（缓存时间在 /Library/Java/JavaVirtualMachines/jdk /Contents/Home/jre/lib/security/java.security 中配置，修改方式`java.security.Security.setProperty("networkaddress.cache.negative.ttl" , "10");`;
 但php默认为0，且Linux 默认也不会进行 DNS 缓存，但mac和windows会缓存，可以修改TTL值大于解析到发起请求这段时间即可。
@@ -378,7 +329,81 @@ conn.connect();
 
 1. 如果是域名，将URL中的域名替换IP后再进行校验，直接对IP发起请求，这样则不会受到域名缓存的影响，同时注意手动设置Host头为域名（防止没有Host访问不了）。
 2. 还可以在http请求前进行两次域名解析，如果两次的解析ip不一致或者第二次的Ip为内网ip则可以判定为dns Rebinding攻击。
+### 防御方案
+1. 代码
+```java
+    private final List<String> list = Arrays.asList("www.baidu.com","www.google.com");
+    public String fix(@RequestParam String url) throws IOException, URISyntaxException {
+        URL target = new URL(url);
+        String host = target.getHost();
+        String ip  = ssrfFix(url);
+        if(Objects.equals(ip, "false")){
+            return "Forbidden";
+        }
+        //使用IP访问时，因为SSL证书一般对应域名，会报错，手动覆盖SSL校验
+        HttpsURLConnection.setDefaultHostnameVerifier((s, sslSession) -> {
+            System.out.printf("Warning: URL Host: " + s + " vs. " + sslSession.getPeerHost());
+            return true;
+        });
+        String u = target.toURI().getScheme()+"://"+ip;
+        target = new URL(u);
+        HttpURLConnection connection = (HttpURLConnection) target.openConnection();
+        //使用IP访问，手动设置Host
+        connection.setRequestProperty("Host", host);
+        //禁止跳转
+        connection.setInstanceFollowRedirects(false);
+        InputStream inputStream =  connection.getInputStream();
+        return getContent(inputStream);
+    }
+    public String ssrfFix(String url) throws MalformedURLException {
+        // 校验 url 是否以 http 或 https 开头
+        try {
+            if (!isHttp(url)) {
+                return "false";
+            }
+            //白名单校验
+            if(!whiteListCheck(new URL(url).getHost())){
+                return "false";
+            };
+            // 解析 url 为 IP 地址
+            String ip = urltoIp(url);
+            // 校验 IP 是否为内网地址
+            if (isIntranet(ip)) {
+                return "false";
+            }
+                //返回解析IP，指定IP访问
+                return ip;
+            } catch (Exception e) {
+                return "false";
+        }
+    }
+    // 1. 判断是否为http协议
+    public static boolean isHttp(String url) {
+        return url.startsWith("http://") || url.startsWith("https://");
+    }
+    public  boolean whiteListCheck(String host){
+        return (list.contains(host));
 
+    }
+    // 2. 解析IP地址
+    public static String urltoIp(String url) {
+        try {
+            URI uri = new URI(url);
+            String host = uri.getHost().toLowerCase();
+            InetAddress ip = Inet4Address.getByName(host);
+            return ip.getHostAddress();
+        } catch (Exception e) {
+            return "127.0.0.1";
+        }
+    }
+    // 3. 判断是否为内网IP
+    public static boolean isIntranet(String url) {
+        Pattern reg = Pattern.compile("^(127\\.0\\.0\\.1)|(localhost)|^(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|^(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|^(192\\.168\\.\\d{1,3}\\.\\d{1,3})$");
+        Matcher match = reg.matcher(url);
+        return match.find();
+    }
+```
+2. 手动设置缓存时间
 ## CORS
 1. 正确配置跨域请求
 如果 Web 资源包含敏感信息,则应在标头中正确指定源,配置Access-Control-Allow-Origin字段.
@@ -405,16 +430,23 @@ CORS定义了浏览器行为,绝不能替代服务器端对敏感数据的保护
 * 完全禁用缓存(不现实)。
 * 保证缓存的内容为真正的全静态内容，不是动态生成的响应。
 ## XXE
-配置相关FEATURE来关闭DTD解析禁用外部实体。
+根据业务实际需求，如果不需要doctype，可以直接禁用DOCTYPE声明
 ```java
-"http://apache.org/xml/features/disallow-doctype-decl", true //禁止DOCTYPE 声明
-"http://apache.org/xml/features/nonvalidating/load-external-dtd", false //禁止导入外部dtd文件
-"http://xml.org/sax/features/external-general-entities", false //禁止外部普通实体
-"http://xml.org/sax/features/external-parameter-entities", false //禁止外部参数实体
+documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //禁止DOCTYPE 声明
+documentBuilderFactory.setXIncludeAware(false);//禁用XInclude引用
 ```
+如果需要使用到DOCTYPE声明，那么则单独禁用实体和外部DTD文件。
 ```java
-XMLConstants.ACCESS_EXTERNAL_DTD, ""
-XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""
+documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);  //禁止导入外部dtd文件
+documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);  //禁止外部普通实体
+documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);  //禁止外部参数实体
+documentBuilderFactory.setXIncludeAware(false);//禁用XInclude引用
+```
+不同解析器的名称差异可以参考:https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html#java 
+
+PHP在高版本已经默认不加载外部实体,手动设置如下
+```php
+libxml_set_external_entity_loader(null);
 ```
 ## XPath注入
 ### 过滤

