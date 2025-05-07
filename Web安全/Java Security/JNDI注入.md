@@ -49,6 +49,11 @@
     - [反序列化触发本地Gadget](#反序列化触发本地gadget)
       - [com.sun.jndi.ldap.decodeObject#javaSerializedData](#comsunjndildapdecodeobjectjavaserializeddata)
   - [黑名单关键字Bypass through ldaps](#黑名单关键字bypass-through-ldaps)
+  - [修复方案](#修复方案)
+    - [使用高版本JDK.](#使用高版本jdk)
+    - [限制出网环境,限制服务器能访问公网(白名单)的范围.](#限制出网环境限制服务器能访问公网白名单的范围)
+    - [过滤本地恶意Facotry.对高版本的JNDI利用可以在内部对Factory类做黑名单过滤.](#过滤本地恶意facotry对高版本的jndi利用可以在内部对factory类做黑名单过滤)
+    - [限制协议,只允许java协议](#限制协议只允许java协议)
   - [参考](#参考)
 # JNDI 注入
 ## Naming(命名) 
@@ -636,6 +641,17 @@ https://srcincite.io/blog/2024/07/21/jndi-injection-rce-via-path-manipulation-in
 ![](img/2023-02-21-16-10-25.png)
 ## 黑名单关键字Bypass through ldaps
 https://www.leavesongs.com/PENETRATION/use-tls-proxy-to-exploit-ldaps.html
+## 修复方案
+### 使用高版本JDK.
+### 限制出网环境,限制服务器能访问公网(白名单)的范围.
+### 过滤本地恶意Facotry.对高版本的JNDI利用可以在内部对Factory类做黑名单过滤.
+### 限制协议,只允许java协议
+```java
+        URI uri = new URI("ldap://127.0.0.1:1389");
+        String scheme = uri.getScheme();
+        assertTrue(scheme == null || scheme.equals("java"), "Unsupported JNDI URI: ");
+        System.out.println(scheme);
+```  
 ## 参考  
 https://docs.oracle.com/javase/tutorial/jndi/  
 https://paper.seebug.org/1091/#weblogic-rmi    

@@ -11,6 +11,7 @@
   - [Blind XXE](#blind-xxe)
     - [Data out-of-band](#data-out-of-band)
     - [报错回显](#报错回显)
+    - [JAVA无回显XXE](#java无回显xxe)
     - [滥用本地DTD](#滥用本地dtd)
   - [不常见的XXE攻击面](#不常见的xxe攻击面)
     - [XInclude attacks](#xinclude-attacks)
@@ -86,6 +87,7 @@ XXE的原理也是因为DTD外部实体的特性导致可以文件读取,SSRF,RC
 ### RCE
 需要php安装expect扩展.
 ### DDOS
+循环引用导致DDOS
 ## Blind XXE
 常规XXE中可以直接得到XML解析的结果,而Blind XXE即响应中没有相应的结果,无法判断执行情况.
 ### Data out-of-band
@@ -126,6 +128,7 @@ XXE的原理也是因为DTD外部实体的特性导致可以文件读取,SSRF,RC
 ```
 因为路径错误最终会将整个路径作为错误信息返回,其中则包含了`%file`实体的内容.  
 ![](2022-11-01-15-26-49.png)
+### JAVA无回显XXE
 ### 滥用本地DTD
 报错和OOB通道都是利用的外部DTD文件,但如果只能使用内部DTD的话,则无法进行利用,因为在外部DTD中,是可以在参数实体中嵌套其它参数实体的,而在内部实体中则无法进行嵌套.  
 然而当一个DTD文件中同时存在内部DTD和外部DTD声明时,那么内部的DTD是可以重新定义外部DTD中的实体的.那么则可以通过滥用一些本地的DTD来触发错误解析得到敏感数据.
@@ -186,16 +189,23 @@ Content-Length: 52
 ## XXE Tools
 [oxml_xxe](https://github.com/BuffaloWill/oxml_xxe)
 ## 修复方案
-配置相关FEATURE来禁用外部实体。
+根据业务实际需求，如果不需要doctype，可以直接禁用DOCTYPE声明
 ```java
-"http://apache.org/xml/features/disallow-doctype-decl", true //禁止DOCTYPE 声明
-"http://apache.org/xml/features/nonvalidating/load-external-dtd", false //禁止导入外部dtd文件
-"http://xml.org/sax/features/external-general-entities", false //禁止外部普通实体
-"http://xml.org/sax/features/external-parameter-entities", false //禁止外部参数实体
+documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //禁止DOCTYPE 声明
+documentBuilderFactory.setXIncludeAware(false);//禁用XInclude引用
 ```
+如果需要使用到DOCTYPE声明，那么则单独禁用实体和外部DTD文件。
 ```java
-XMLConstants.ACCESS_EXTERNAL_DTD, ""
-XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""
+documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);  //禁止导入外部dtd文件
+documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);  //禁止外部普通实体
+documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);  //禁止外部参数实体
+documentBuilderFactory.setXIncludeAware(false);//禁用XInclude引用
+```
+不同解析器的名称差异可以参考:https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html#java 
+
+PHP在高版本已经默认不加载外部实体,手动设置如下
+```php
+libxml_set_external_entity_loader(null);
 ```
 ## 参考资料
 https://portswigger.net/web-security/xxe

@@ -16,7 +16,7 @@
   - [Bypass](#bypass)
     - [双写](#双写)
     - [defineProperty时Value未赋值](#defineproperty时value未赋值)
-  - [防御](#防御)
+  - [修复方案](#修复方案)
     - [关键字过滤](#关键字过滤)
     - [禁止原型修改](#禁止原型修改)
     - [防止对象继承属性](#防止对象继承属性)
@@ -221,7 +221,7 @@ obj:绑定属性的目标对象 property:绑定的属性名 descriptor:属性描
 ```  
 导致可以通过污染原型的value属性进行利用.  
 `/?__proto__[value]=data%3A%2Calert%281%29`
-## 防御
+## 修复方案
 ### 关键字过滤
 `__proto__`,`constructor`,...
 ### 禁止原型修改

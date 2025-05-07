@@ -8,14 +8,17 @@
   - [freemarker](#freemarker)
     - [语法](#语法)
     - [new函数](#new函数)
-      - [防御](#防御)
     - [API函数](#api函数)
     - [模板注入](#模板注入-1)
   - [Thymeleaf](#thymeleaf)
     - [模板内容可控](#模板内容可控)
     - [Return内容可控](#return内容可控)
     - [URI可控](#uri可控)
-    - [防御](#防御-1)
+  - [修复方案](#修复方案)
+      - [Velocity](#velocity-1)
+      - [Freemarker](#freemarker-1)
+      - [Thymeleaf](#thymeleaf-1)
+      - [正确配置](#正确配置)
   - [Smarty](#smarty)
   - [Twig](#twig)
 - [参考](#参考)
@@ -98,13 +101,7 @@ new函数可创建任意实现了TemplateModel接口的Java对象，同时还可
 
 <#assign value="freemarker.template.utility.Execute"?new()>${value("calc")}
 ```
-#### 防御
-从 2.3.17版本以后，官方版本提供了三种TemplateClassResolver对类进行解析：
-1. UNRESTRICTED_RESOLVER：可以通过 ClassUtil.forName(className) 获取任何类。
-2. SAFER_RESOLVER：不能加载 freemarker.template.utility.JythonRuntime、freemarker.template.utility.Execute、freemarker.template.utility.ObjectConstructor这三个类。
-3. ALLOWS_NOTHING_RESOLVER：不能解析任何类。  
-  
-可通过freemarker.core.Configurable#setNewBuiltinClassResolver方法设置TemplateClassResolver，从而限制通过new()函数对freemarker.template.utility.JythonRuntime、freemarker.template.utility.Execute、freemarker.template.utility.ObjectConstructor这三个类的解析。
+
 ### API函数
 value?api 提供对 value 的 API（通常是 Java API）的访问，例如 value?api.someJavaMethod() 或 value?api.someBeanProperty。可通过 getClassLoader获取类加载器从而加载恶意类，或者也可以通过 getResource来实现任意文件读取。  
 
@@ -189,21 +186,42 @@ __${T(java.lang.Runtime).getRuntime().exec("calc.exe")}__::.x
 
 %5f%5f%24%7b%54%28%6a%61%76%61%2e%6c%61%6e%67%2e%52%75%6e%74%69%6d%65%29%2e%67%65%74%52%75%6e%74%69%6d%65%28%29%2e%65%78%65%63%28%22%63%61%6c%63%2e%65%78%65%22%29%7d%5f%5f%3a%3a%2e%78
 ```
-
 ![](img/17-53-40.png)  
+## 修复方案
+#### Velocity
+`#`关键字Velocity关键字都是使用#开头的，如#set、#if、#else、#end、#foreach等,Velocity变量都是使用`$`开头的，如:$name、$msg  
+通过`$`获取变量的的class再加载恶意类.  
+对传入到vm模板文件`$`中的内容做严格过滤.  
+#### Freemarker
+`${...}`FreeMarker将会输出真实的值来替换大括号内的表达式,这样的表达式被称为interpolation(插值).
+ftl文件中FTL标签的内容会被解析,在用户输入传递到这些标签中时需要做严格过滤.  
 
-### 防御
+利用方式有两种方式  
+API: 通过它可以访问底层Java Api Freemarker的 BeanWrappers.该配置在2.3.22版本之后默认不开启,但通过Configurable.setAPIBuiltinEnabled可以开启它。
+
+new: new()函数可创建任意实现了TemplateModel接口的Java对象，同时还可以触发没有实现 TemplateModel接口的类的静态初始化块。官方提供的一种限制方式,使用Configuration.setNewBuiltinClassResolver(TemplateClassResolver)或设置 new_builtin_class_resolver 来限制这个内建函数对类的访问。  
+
+从 2.3.17版本以后，官方版本提供了三种TemplateClassResolver对类进行解析：
+1. UNRESTRICTED_RESOLVER：可以通过 ClassUtil.forName(className) 获取任何类。
+2. SAFER_RESOLVER：不能加载 freemarker.template.utility.JythonRuntime、freemarker.template.utility.Execute、freemarker.template.utility.ObjectConstructor这三个类。
+3. ALLOWS_NOTHING_RESOLVER：不能解析任何类。  
+  
+可通过freemarker.core.Configurable#setNewBuiltinClassResolver方法设置TemplateClassResolver，从而限制通过new()函数对freemarker.template.utility.JythonRuntime、freemarker.template.utility.Execute、freemarker.template.utility.ObjectConstructor这三个类的解析。
+
+#### Thymeleaf
+在高版本Thymeleaf的中已经有一个黑名单，不能再调用Runtime.exec等危险方法。
+#### 正确配置 
 1. 设置ResponseBody注解
 如果设置ResponseBody，则不再调用模板解析
 
-2. 设置redirect重定向
+1. 设置redirect重定向
 ```java
 @GetMapping("/safe/redirect")
 public String redirect(@RequestParam String url) {
     return "redirect:" + url;
 根据spring boot定义，如果名称以redirect:开头，则不再调用ThymeleafView解析，调用RedirectView去解析controller的返回值
 ```
-3. response
+1. response
 ```java
 @GetMapping("/safe/doc/{document}")
 public void getDocument(@PathVariable String document, HttpServletResponse response) {
@@ -212,7 +230,6 @@ public void getDocument(@PathVariable String document, HttpServletResponse respo
 ```
 由于controller的参数被设置为HttpServletResponse，Spring认为它已经处理了HTTP Response，因此不会发生视图名称解析
 
-4. 在高版本Thymeleaf的中已经有一个黑名单，不能再调用Runtime.exec等危险方法。
 ## Smarty
 ## Twig
 # 参考

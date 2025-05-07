@@ -189,4 +189,3 @@
     - SqlPad
       - [CVE-2022-0944-模板注入](./Js/Sqlpad/CVE-2022-0944/CVE-2022-0944.md)
   - [CodeQL Study](./CodeQL/CodeQL.md)
-  - [漏洞修复](./漏洞修复/Readme.md)

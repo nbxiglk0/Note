@@ -16,11 +16,16 @@
     - [短链接](#短链接)
     - [DNS Rebinding](#dns-rebinding)
   - [修复方案](#修复方案)
+    - [黑白名单](#黑白名单)
+    - [过滤响应](#过滤响应)
+    - [禁止跳转](#禁止跳转)
+    - [获取访问的真实IP](#获取访问的真实ip)
+    - [dns重绑定](#dns重绑定)
+    - [参考代码](#参考代码)
   - [参考](#参考)
 # Server-side request forgery (SSRF)
 服务端请求伪造,简单来说就是可以让目标服务器作为代理去请求指定的任意地址。
 ## Impact
-
 * 访问本地或者内网服务器监听的端口  
 一些监听在本地的端口正常情况下无法被其他人访问，但通过SSRF可以使服务器自身做代理来访问到本地的端口。  
 ```
@@ -91,13 +96,100 @@ Header('Location: http://localhost:8080/console')
 ### DNS Rebinding
 DNS Rebinding主要是利用服务端在获取到域名时先对域名进行一次解析获取到其ip地址，判断ip是否合法然后再发出实际http请求，在获取到ip判断是否合法时和实际发出http请求之间存在一个细微的时间差，攻击者需要有一个可控制的dns服务器，然后将自己的域名解析委托给自己的dns服务器，同时将TTL值设为非常短(0)，即客户端不缓存解析记录，通过让服务端先请求自己的域名，攻击者控制的dns服务器先返回正常的ip地址，然后再立即修改域名解析地址为内网ip，在第二次发出实际http请求时从dns服务器解析获取的ip则为内网ip。  
 ## 修复方案
-1. 如果可以,使用白名单
-2. 对响应进行验证,过滤返回信息，验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件。那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。
-3. 统一错误信息，避免用户可以根据错误信息来判断远端服务器的端口状态。
-4. 限制请求的端口为http常用的端口，比如，80,443,8080,8090。
-5. 限制访问内网,黑名单内网ip。避免应用被用来获取获取内网数据，攻击内网。
-6. 协议限制,禁用不需要的协议。仅仅允许http和https请求。可以防止类似于file:///,gopher://,ftp:// 等引起的问题。
-7. 针对dns重绑定，可以修改TTL值大于解析到发起请求这段时间即可，java默认情况下不受影响，其默认TTL值为10s，修改方式`java.security.Security.setProperty("networkaddress.cache.negative.ttl" , "10");`，但php默认为0，且Linux 默认不会进行 DNS 缓存。个人感觉可以在http请求前进行两次域名解析，如果两次的解析ip不一致或者第二次的Ip为内网ip则可以判定为dns Rebinding攻击或者考虑在解析到合法IP后手动绑定该域名解析IP地址，防止再次进行DNS解析。
+修复思路
+![](18-21-00.png)  
+### 黑白名单
+* 使用白名单: 只允许访问使用http/https协议访问可信域名和端口
+* 使用黑名单: 禁止访问私有地址段及内网域名,禁止访问非常用http端口,禁止其它file:///,gopher://,ftp://协议访问.
+### 过滤响应
+* 统一错误信息,避免用户可以根据错误信息来判断远端服务器的端口状态。
+* 过滤返回信息,验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件。那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。  
+### 禁止跳转
+* 对已校验通过地址进行访问时，应关闭跟进跳转功能,防止通过短链接等跳转到内网IP.
+### 获取访问的真实IP
+* 建议通过URL解析函数进行解析，获取host或者domain后通过DNS获取其IP，然后和内网地址进行比较(注意各种进制转换绕过)。
+### dns重绑定
+针对dns重绑定，java默认情况下不受影响，java中DNS请求成功的话默认缓存30s(字段为networkaddress.cache.ttl，默认情况下没有设置)，失败的默认缓存10s。（缓存时间在 /Library/Java/JavaVirtualMachines/jdk /Contents/Home/jre/lib/security/java.security 中配置，修改方式`java.security.Security.setProperty("networkaddress.cache.negative.ttl" , "10");`;
+但php默认为0，且Linux 默认也不会进行 DNS 缓存，但mac和windows会缓存，可以修改TTL值大于解析到发起请求这段时间即可。
+有些公共DNS服务器，比如114.114.114.114还是会把记录进行缓存，但是8.8.8.8是严格按照DNS协议去管理缓存的，如果设置TTL为0，则不会进行缓存。
+
+1. 如果是域名，将URL中的域名替换IP后再进行校验，直接对IP发起请求，这样则不会受到域名缓存的影响，同时注意手动设置Host头为域名（防止没有Host访问不了）。
+2. 还可以在http请求前进行两次域名解析，如果两次的解析ip不一致或者第二次的Ip为内网ip则可以判定为dns Rebinding攻击。
+### 参考代码
+1. 代码
+```java
+    private final List<String> list = Arrays.asList("www.baidu.com","www.google.com");
+    public String fix(@RequestParam String url) throws IOException, URISyntaxException {
+        URL target = new URL(url);
+        String host = target.getHost();
+        String ip  = ssrfFix(url);
+        if(Objects.equals(ip, "false")){
+            return "Forbidden";
+        }
+        //使用IP访问时，因为SSL证书一般对应域名，会报错，手动覆盖SSL校验
+        HttpsURLConnection.setDefaultHostnameVerifier((s, sslSession) -> {
+            System.out.printf("Warning: URL Host: " + s + " vs. " + sslSession.getPeerHost());
+            return true;
+        });
+        String u = target.toURI().getScheme()+"://"+ip;
+        target = new URL(u);
+        HttpURLConnection connection = (HttpURLConnection) target.openConnection();
+        //使用IP访问，手动设置Host
+        connection.setRequestProperty("Host", host);
+        //禁止跳转
+        connection.setInstanceFollowRedirects(false);
+        InputStream inputStream =  connection.getInputStream();
+        return getContent(inputStream);
+    }
+    public String ssrfFix(String url) throws MalformedURLException {
+        // 校验 url 是否以 http 或 https 开头
+        try {
+            if (!isHttp(url)) {
+                return "false";
+            }
+            //白名单校验
+            if(!whiteListCheck(new URL(url).getHost())){
+                return "false";
+            };
+            // 解析 url 为 IP 地址
+            String ip = urltoIp(url);
+            // 校验 IP 是否为内网地址
+            if (isIntranet(ip)) {
+                return "false";
+            }
+                //返回解析IP，指定IP访问
+                return ip;
+            } catch (Exception e) {
+                return "false";
+        }
+    }
+    // 1. 判断是否为http协议
+    public static boolean isHttp(String url) {
+        return url.startsWith("http://") || url.startsWith("https://");
+    }
+    public  boolean whiteListCheck(String host){
+        return (list.contains(host));
+
+    }
+    // 2. 解析IP地址
+    public static String urltoIp(String url) {
+        try {
+            URI uri = new URI(url);
+            String host = uri.getHost().toLowerCase();
+            InetAddress ip = Inet4Address.getByName(host);
+            return ip.getHostAddress();
+        } catch (Exception e) {
+            return "127.0.0.1";
+        }
+    }
+    // 3. 判断是否为内网IP
+    public static boolean isIntranet(String url) {
+        Pattern reg = Pattern.compile("^(127\\.0\\.0\\.1)|(localhost)|^(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|^(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|^(192\\.168\\.\\d{1,3}\\.\\d{1,3})$");
+        Matcher match = reg.matcher(url);
+        return match.find();
+    }
+```
+2. 手动设置缓存时间
 ## 参考
 https://portswigger.net/web-security/ssrf   
 https://blog.csdn.net/qq_43378996/article/details/124050308  

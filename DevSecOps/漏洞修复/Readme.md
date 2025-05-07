@@ -5,6 +5,8 @@
     - [配置](#配置)
       - [正确设置响应ContentType](#正确设置响应contenttype)
       - [正确设置HttpOnly属性](#正确设置httponly属性)
+      - [配置 Content-Security-Policy (CSP)](#配置-content-security-policy-csp)
+      - [设置 X-XSS-Protection 头](#设置-x-xss-protection-头)
     - [前端框架防御](#前端框架防御)
       - [Vue中的防御方式](#vue中的防御方式)
       - [React中的防御方式](#react中的防御方式)
@@ -150,7 +152,37 @@ Date: Fri, 22 Nov 2024 03:04:28 GMT
 Keep-Alive: timeout=60
 Connection: keep-alive
 ```
+#### 配置 Content-Security-Policy (CSP)
+1. HTTP 响应标头 Content-Security-Policy 允许站点管理者控制用户代理能够为指定的页面加载哪些资源（`<meta>` 元素也可以被用来配置该策略），限制页面加载的资源来源,只允许加载白名单内的资源文件，防止恶意JS文件加载。  
+2. CSP 通过指定有效域——即浏览器认可的可执行脚本的有效来源。一个 CSP 兼容的浏览器将会仅执行从白名单域获取到的脚本文件，忽略所有的其他脚本（**包括内联脚本和 HTML 的事件处理属性**）。
 
+**常见用例:**
+```http
+//加载内容只允许来自站点的同一个源（不包括其子域名）。
+Content-Security-Policy: default-src 'self' 
+
+//加载内容只允许来自站点自身和受信任的子域名。
+Content-Security-Policy: default-src 'self' *.trusted.com 
+
+//允许包含来自任何源的图片，但是限制音频或视频只加载信任的域名（media1.com media2.com），可运行脚本仅允许来自于 userscripts.example.com。
+Content-Security-Policy: default-src 'self'; img-src *; media-src media1.com media2.com; script-src userscripts.example.com 
+
+//关于script-src指令 'none'表示禁止任何资源执行,
+Content-Security-Policy: script-src 'none';
+//<source-expression-list>;以空格分隔的源表达式值列表。如果此类型的资源与任何给定的源表达式匹配，则可以加载它们。
+Content-Security-Policy: script-src <source-expression-list>;
+
+//强行开启脚本内联执行（不安全）
+Content-Security-Policy: script-src 'unsafe-inline';
+
+<!-- 在某些业务场景下需要执行内联脚本，但又需要防止恶意脚本执行
+另一种方法是使用文件哈希值指定允许的脚本。使用此方法，只有当 <script> 元素中的外部文件完整性属性中的所有有效哈希值与 CSP 标头中的允许值匹配时，才能加载和执行该文件。子资源完整性功能还会检查下载的文件是否具有指定的哈希值，即文件是否未被修改。这比信任域名更安全，因为即使文件是从受攻击的站点加载的，也只有在文件未经修改的情况下才会被使用。然而，这种方法更细粒度，并且要求每当相关脚本发生更改时，CSP 和脚本元素中的哈希值也必须更新。 -->
+Content-Security-Policy: script-src 'sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC' 'sha256-fictional_value'
+
+```
+
+#### 设置 X-XSS-Protection 头
+启用浏览器的 XSS 过滤器，当检测到跨站脚本攻击 (XSS) 时，浏览器将停止加载页面。
 ### 前端框架防御
 #### Vue中的防御方式
 1. 在vue中使用v-text指令可以将数据作为纯文本插入到DOM中，而不是作为HTML代码插入到DOM中。这样可以防止恶意脚本被执行。而v-html指令可以将数据作为HTML代码插入到DOM中，这种情况下需要对插入的内容进行过滤。  

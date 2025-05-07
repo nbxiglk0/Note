@@ -27,7 +27,7 @@
 跨域是指一个域下的文档或脚本试图去请求另一个域下的资源.
 1. 资源跳转：A链接、重定向、表单提交.
 2. 资源嵌入：`<link>、<script>、<img>、<frame>`等dom标签，还有样式中background:url()、@font-face()等文件外.
-3. 脚本请求：js发起的ajax请求、dom和js对象的跨域操作等.
+3. 脚本请求：js发起的ajax请求（XMLHttpRequest或Fetch）、dom和js对象的跨域操作等.
 ## 同源策略(SOP)
 同源策略/SOP（Same origin policy）是一种约定,所谓同源是指"**协议+域名+端口**"三者相同,即便两个不同的域名指向同一个ip地址,也非同源.
 
@@ -45,7 +45,7 @@
 ```
 Access-Control-Allow-Origin: https://www.a.com  
 ```
-这将允许htpps://www.a.com访问自己页面的内容,但默认情况下无法通过CORS请求凭据(cookie,csrf令牌).  
+这将允许https://www.a.com访问自己页面的内容,但默认情况下无法通过CORS请求凭据(cookie,csrf令牌).  
 如果需要携带凭据访问的话则需要服务器启用以下Header.  
 ```
 Access-Control-Allow-Credentials: true

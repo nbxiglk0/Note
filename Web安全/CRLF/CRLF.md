@@ -2,7 +2,7 @@
   - [绕过XSS Filter](#绕过xss-filter)
   - [XSS](#xss)
   - [GBK编码](#gbk编码)
-  - [修复](#修复)
+  - [修复方案](#修复方案)
 # CRLF Inject
 CRLF代表特殊字符回车符（\r）和换行符（\n），这是特定操作系统（如Windows）中使用的两个元素，以及各种互联网协议（如HTTP）。回车符表示行的末尾，而换行符表示新行。
 
@@ -55,5 +55,5 @@ Set-cookie:test\r\n
 Payload: CRLF ---> 嘍嘊(GBK) ---> `%E5%98%8D%E5%98%8A`(URLEncode)  
 exp:`https://subDomain/%E5%98%8D%E5%98%8ASet-Cookie:crlfinjection=test`  
 [$6000 with Microsoft Hall of Fame | Microsoft Firewall Bypass | CRLF to XSS | Microsoft Bug Bounty](https://infosecwriteups.com/6000-with-microsoft-hall-of-fame-microsoft-firewall-bypass-crlf-to-xss-microsoft-bug-bounty-8f6615c47922)
-## 修复
+## 修复方案
 过滤\r 、\n之类的换行符，避免输入的数据污染到其他HTTP头。
