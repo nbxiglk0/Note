@@ -4,7 +4,7 @@
     - [JSON格式](#json格式)
     - [XHR](#xhr)
     - [307 Flash跳转](#307-flash跳转)
-  - [防御](#防御)
+  - [修复方案](#修复方案)
     - [CSRF Token](#csrf-token)
     - [校验HTTP Referer](#校验http-referer)
     - [自定义Header Token](#自定义header-token)
@@ -49,11 +49,12 @@ Content-Type头需要设置为application/json。设置自定义Header需要使�
 https://github.com/appsecco/json-flash-csrf-poc
 ## 修复方案
 ### CSRF Token
-在敏感页面的请求中加入唯一的Token,后端对敏感请求进行Token校验,而正常情况下(如果存在XSS可获得Token)攻击者无法获得该Token,则无法冒充用户进行敏感操作.
+在敏感页面的请求中加入唯一的Token,后端对敏感请求进行Token校验,而正常情况下(如果存在XSS或暴露在URL请求中仍然可能导致获得Token)攻击者无法获得该Token,则无法冒充用户进行敏感操作.
 ### 校验HTTP Referer
 验证 HTTP Referer 字段，是否是从信任域名发送请求.
 ### 自定义Header Token
-HTTP 头中自定义属性并验证,类似于加Token,只是加在HTTP头中,即每个页面都会带上该Token校验头,而不必在每个相关页面代码中都加上Token. 
+HTTP 头中自定义属性（如Authorization）并验证,类似于加Token,只是加在HTTP头中,即每个页面都会带上该Token校验头,而不必在每个相关页面代码中都加上Token. 
+
 ### 设置 SameSite 
 设置SameSite: (https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Set-Cookie/SameSite) 
 SameSite是 HTTP 响应头 Set-Cookie 的属性之一。它允许您声明该 Cookie 是否仅限于第一方或者同一站点上下文。  
