@@ -19,7 +19,6 @@
 			- [子类Bean](#子类bean)
 	- [常用注解](#常用注解)
 		- [@Autowired](#autowired)
-	- [Code Demo](#code-demo)
 
 # Spring MVC
 主要是阅读官方文档时的一些摘要.  
@@ -250,4 +249,3 @@ https://docs.spring.io/spring-framework/reference/core/beans/child-bean-definiti
 ```
 
 **原理**: 在启动spring IoC时，容器自动装载了一个AutowiredAnnotationBeanPostProcessor后置处理器，当容器扫描到@Autowied、@Resource或@Inject时，就会在IoC容器自动查找需要的bean，并装配给该对象的属性
-## Code Demo
