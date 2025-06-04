@@ -50,7 +50,6 @@ Access-Control-Allow-Origin: https://www.a.com
 ```
 Access-Control-Allow-Credentials: true
 ```  
-
 CORS不支持使用通配符来匹配所有子域,如
 ```
 Access-Control-Allow-Origin: *.a.com
